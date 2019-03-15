@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.BatteryManager;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -26,7 +25,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.content.Context.BATTERY_SERVICE;
 import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 public class battery_monitoring_service extends Service {
@@ -105,7 +103,6 @@ class battery_receiver extends BroadcastReceiver {
         request_body.chat_id = battery_monitoring_service.chat_id;
         StringBuilder prebody = new StringBuilder(context.getString(R.string.system_message_head) + "\n");
         final String action = intent.getAction();
-        BatteryManager batteryManager = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
         switch (Objects.requireNonNull(action)) {
             case Intent.ACTION_BATTERY_OKAY:
                 prebody = prebody.append(context.getString(R.string.low_battery_status_end));
@@ -120,7 +117,7 @@ class battery_receiver extends BroadcastReceiver {
                 prebody = prebody.append(context.getString(R.string.ac_disconnect));
                 break;
         }
-        request_body.text = prebody.append("\n").append(context.getString(R.string.current_battery_level)).append(batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)).append("%").toString();
+        request_body.text = prebody.toString();
         Gson gson = new Gson();
         String request_body_raw = gson.toJson(request_body);
         RequestBody body = RequestBody.create(public_func.JSON, request_body_raw);
@@ -136,7 +133,7 @@ class battery_receiver extends BroadcastReceiver {
                         String msg_send_to = battery_monitoring_service.trusted_phone_number;
                         String msg_send_content = request_body.text;
                         if (msg_send_to != null) {
-                            public_func.send_fallback_sms(msg_send_to, msg_send_content, -1);
+                            public_func.send_fallback_sms(msg_send_to, msg_send_content);
                         }
                     }
                 }

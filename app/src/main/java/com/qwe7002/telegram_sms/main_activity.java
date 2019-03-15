@@ -43,8 +43,7 @@ import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATI
 
 public class main_activity extends AppCompatActivity {
     Context context = null;
-    Switch display_dual_sim_display_name;
-    @SuppressLint("BatteryLife")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +55,6 @@ public class main_activity extends AppCompatActivity {
         final Switch chat_command = findViewById(R.id.chat_command);
         final Switch fallback_sms = findViewById(R.id.fallback_sms);
         final Switch battery_monitoring_switch = findViewById(R.id.battery_monitoring);
-        display_dual_sim_display_name = findViewById(R.id.display_dual_sim);
         final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         String bot_token_save = sharedPreferences.getString("bot_token", "");
         String chat_id_save = sharedPreferences.getString("chat_id", "");
@@ -65,14 +63,7 @@ public class main_activity extends AppCompatActivity {
         if (sharedPreferences.getBoolean("initialized", false)) {
             public_func.start_service(context, sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
         }
-        boolean display_dual_sim_display_name_config = sharedPreferences.getBoolean("display_dual_sim_display_name", false);
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            if (public_func.get_active_card(context) < 2) {
-                display_dual_sim_display_name.setEnabled(false);
-                display_dual_sim_display_name_config = false;
-            }
-            display_dual_sim_display_name.setChecked(display_dual_sim_display_name_config);
-        }
+
         Button save_button = findViewById(R.id.save);
         Button get_id = findViewById(R.id.get_id);
         Button logcat = findViewById(R.id.logcat_button);
@@ -84,20 +75,6 @@ public class main_activity extends AppCompatActivity {
         battery_monitoring_switch.setChecked(sharedPreferences.getBoolean("battery_monitoring_switch", false));
         fallback_sms.setChecked(sharedPreferences.getBoolean("fallback_sms", false));
         chat_command.setChecked(sharedPreferences.getBoolean("chat_command", false));
-
-        display_dual_sim_display_name.setOnClickListener(v -> {
-            int checkPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE);
-            if (checkPermission != PackageManager.PERMISSION_GRANTED) {
-                display_dual_sim_display_name.setChecked(false);
-                ActivityCompat.requestPermissions(main_activity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, 2);
-            }
-            if (checkPermission == PackageManager.PERMISSION_GRANTED) {
-                if (public_func.get_active_card(context) < 2) {
-                    display_dual_sim_display_name.setEnabled(false);
-                    display_dual_sim_display_name.setChecked(false);
-                }
-            }
-        });
 
         logcat.setOnClickListener(v -> {
             Intent logcat_intent = new Intent(main_activity.this, logcat_activity.class);
@@ -201,20 +178,6 @@ public class main_activity extends AppCompatActivity {
                 Snackbar.make(v, R.string.trusted_phone_number_empty, Snackbar.LENGTH_LONG).show();
                 return;
             }
-
-            ActivityCompat.requestPermissions(main_activity.this, new String[]{Manifest.permission.READ_SMS, Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_CONTACTS}, 1);
-
-            PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                boolean has_ignored = powerManager.isIgnoringBatteryOptimizations(getPackageName());
-                if (!has_ignored) {
-                    Intent intent = new Intent(ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                    intent.setData(Uri.parse("package:" + getPackageName()));
-                    if (intent.resolveActivityInfo(getPackageManager(), PackageManager.MATCH_DEFAULT_ONLY) != null) {
-                        startActivity(intent);
-                    }
-                }
-            }
             final ProgressDialog progress_dialog = new ProgressDialog(main_activity.this);
             progress_dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progress_dialog.setTitle(getString(R.string.connect_wait_title));
@@ -268,7 +231,6 @@ public class main_activity extends AppCompatActivity {
                     editor.putBoolean("fallback_sms", fallback_sms.isChecked());
                     editor.putBoolean("chat_command", chat_command.isChecked());
                     editor.putBoolean("battery_monitoring_switch", battery_monitoring_switch.isChecked());
-                    editor.putBoolean("display_dual_sim_display_name", display_dual_sim_display_name.isChecked());
                     editor.putBoolean("initialized", true);
                     editor.apply();
                     public_func.stop_all_service(context);
@@ -279,19 +241,6 @@ public class main_activity extends AppCompatActivity {
                 }
             });
         });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 2) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (public_func.get_active_card(context) < 2) {
-                    display_dual_sim_display_name.setEnabled(false);
-                    display_dual_sim_display_name.setChecked(false);
-                }
-            }
-        }
     }
 }
 

@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 apply from: 'version.gradle'
 android {
-    compileSdkVersion 21
-
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.qwe7002.telegram_sms"
-        minSdkVersion 18
+        minSdkVersion 16
+        //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 21
         versionCode appVersionCode
         versionName appVersionName
@@ -43,8 +43,8 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:+'
     //noinspection GradleDynamicVersion
     implementation 'com.android.support:design:+'
-    //noinspection GradleDynamicVersion
-    implementation 'com.squareup.okhttp3:okhttp:+'
+    //noinspection GradleDependency,GradleDynamicVersion
+    implementation 'com.squareup.okhttp3:okhttp:3.5.0'
     //noinspection GradleDynamicVersion
     implementation 'com.google.code.gson:gson:+'
 }

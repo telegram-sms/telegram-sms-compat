@@ -30,7 +30,10 @@ import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 public class sms_receiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         Log.d(public_func.log_tag, "onReceive: " + intent.getAction());
-        final boolean is_default = Telephony.Sms.getDefaultSmsPackage(context).equals(context.getPackageName());
+        boolean is_default=false;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            is_default = Telephony.Sms.getDefaultSmsPackage(context).equals(context.getPackageName());
+        }
         final SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("initialized", false)) {
             Log.i(public_func.log_tag, "Uninitialized, SMS receiver is deactivated");
@@ -47,23 +50,11 @@ public class sms_receiver extends BroadcastReceiver {
         }
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
-            int slot = bundle.getInt("slot", -1);
-            String dual_sim = public_func.get_dual_sim_card_display(context, slot, sharedPreferences);
-
-            final int sub = bundle.getInt("subscription", -1);
             Object[] pdus = (Object[]) bundle.get("pdus");
             assert pdus != null;
             final SmsMessage[] messages = new SmsMessage[pdus.length];
             for (int i = 0; i < pdus.length; i++) {
                 messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                if (is_default) {
-                    ContentValues values = new ContentValues();
-                    values.put(Telephony.Sms.ADDRESS, messages[i].getOriginatingAddress());
-                    values.put(Telephony.Sms.BODY, messages[i].getMessageBody());
-                    values.put(Telephony.Sms.SUBSCRIPTION_ID, String.valueOf(sub));
-                    values.put(Telephony.Sms.READ, "1");
-                    context.getContentResolver().insert(Telephony.Sms.CONTENT_URI, values);
-                }
 
             }
             if (messages.length > 0) {
@@ -82,7 +73,7 @@ public class sms_receiver extends BroadcastReceiver {
                         display_address = display_name + "(" + display_address + ")";
                     }
                 }
-                request_body.text = "[" + dual_sim + context.getString(R.string.receive_sms_head) + "]" + "\n" + context.getString(R.string.from) + display_address + "\n" + context.getString(R.string.content) + msgBody;
+                request_body.text = "[" + context.getString(R.string.receive_sms_head) + "]" + "\n" + context.getString(R.string.from) + display_address + "\n" + context.getString(R.string.content) + msgBody;
                 assert msg_address != null;
                 if (checkSelfPermission(context, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
                     if (msg_address.equals(sharedPreferences.getString("trusted_phone_number", null))) {
@@ -101,7 +92,7 @@ public class sms_receiver extends BroadcastReceiver {
                                 }
                                 msg_send_content.append(msg_send_list[i]);
                             }
-                            new Thread(() -> public_func.send_sms(context, msg_send_to, msg_send_content.toString(), slot, sub)).start();
+                            new Thread(() -> public_func.send_sms(context, msg_send_to, msg_send_content.toString())).start();
                             return;
                         }
                     }
@@ -123,7 +114,7 @@ public class sms_receiver extends BroadcastReceiver {
                             String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
                             String msg_send_content = request_body.text;
                             if (msg_send_to != null) {
-                                public_func.send_fallback_sms(msg_send_to, msg_send_content, sub);
+                                public_func.send_fallback_sms(msg_send_to, msg_send_content);
                             }
                         }
                     }
@@ -137,7 +128,7 @@ public class sms_receiver extends BroadcastReceiver {
                         }
                         if (response.code() == 200) {
                             assert response.body() != null;
-                            public_func.add_message_list(context, public_func.get_message_id(response.body().string()), msg_address, bundle.getInt("slot", -1));
+                            public_func.add_message_list(context, public_func.get_message_id(response.body().string()), msg_address);
                         }
                     }
                 });

@@ -1,13 +1,12 @@
 # Telegram SMS
 
-![pipeline status](https://badges.git.reallct.com/qwe7002/telegram-sms/badges/master/pipeline.svg)
-![Min Android Version](https://img.shields.io/badge/android-22+-orange.svg)
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/qwe7002/telegram-sms/blob/master/LICENSE)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fqwe7002%2Ftelegram-sms.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fqwe7002%2Ftelegram-sms?ref=badge_shield)
+![pipeline status](https://badges.git.reallct.com/qwe7002/telegram-sms-compat/badges/master/pipeline.svg)
+![Min Android Version](https://img.shields.io/badge/android-16+-red.svg)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/qwe7002/telegram-sms-compat/blob/master/LICENSE)
 
-A robot running on your Android device.
+A robot running on your outdated Android device. 
 
-[Download](https://github.com/qwe7002/telegram-sms/releases)
+[Download](https://github.com/qwe7002/telegram-sms-compat/releases)
 
 **There may be unknown bugs in the pre-release version,Please use at your own risk.**
 
@@ -33,7 +32,6 @@ This app requires the following permissions:
 
 - Contact : Get the contact information and automatically identify the incoming caller's number.
 
-You can set this app as the default SMS app, which will block all SMS notifications and automatically set the SMS to read.
 
 ## User manual
 
@@ -76,8 +74,6 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fqwe7002%2Ftelegram-sms.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fqwe7002%2Ftelegram-sms?ref=badge_large)
-
 ## Acknowledgements
 
 This software uses these open source libraries:
@@ -96,7 +92,7 @@ Thanks for their translation and support of this project document:
 
 - en_US:[@tangbao](https://github.com/tangbao)
 
-- ja-JP:[@Lollycc](https://github.com/lollycc) []()
+- ja-JP:[@Lollycc](https://github.com/lollycc)
 
 The following organizations for providing image storage for this page:
 

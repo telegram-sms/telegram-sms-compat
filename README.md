@@ -8,6 +8,8 @@ A robot running on your outdated Android device.
 
 [Download](https://github.com/qwe7002/telegram-sms-compat/releases)
 
+
+
 **There may be unknown bugs in the pre-release version,Please use at your own risk.**
 
 ## Features

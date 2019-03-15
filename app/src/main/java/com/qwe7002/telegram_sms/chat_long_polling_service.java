@@ -93,7 +93,7 @@ public class chat_long_polling_service extends Service {
 
 
     void start_long_polling() throws IOException {
-        Request request_test = new Request.Builder().url("https://www.google.com/generate_204").build();
+        Request request_test = new Request.Builder().url("https://api.telegram.org/generate_204").build();
         Call call_test = okhttp_test_client.newCall(request_test);
         try {
             if (!public_func.check_network(context)) {
@@ -181,7 +181,7 @@ public class chat_long_polling_service extends Service {
 
         assert from_obj != null;
         String from_id = from_obj.get("id").getAsString();
-        if (!Objects.equals(chat_id, from_id)) {
+        if (!chat_id.equals(from_id)) {
             public_func.write_log(context, "Chat ID[" + from_id + "] not allow");
             return;
         }
@@ -204,28 +204,12 @@ public class chat_long_polling_service extends Service {
         if (!message_obj.has("reply_to_message")) {
             public_func.write_log(context, "request command: " + command);
             switch (command) {
-                case "/start":
-                    String dual_card = "\n" + getString(R.string.sendsms);
-                    if (public_func.get_active_card(context) == 2) {
-                        dual_card = "\n" + getString(R.string.sendsms_dual);
-                    }
-                    request_body.text = getString(R.string.system_message_head) + "\n" + getString(R.string.available_command) + dual_card;
-                    break;
                 case "/ping":
                 case "/getinfo":
-                    BatteryManager batteryManager = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
-                    String card_info = "";
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                        card_info = "\nSIM:" + public_func.get_sim_display_name(context, 0);
-                        if (public_func.get_active_card(context) == 2) {
-                            card_info = "\nSIM1:" + public_func.get_sim_display_name(context, 0) + "\nSIM2:" + public_func.get_sim_display_name(context, 1);
-                        }
-                    }
-                    request_body.text = getString(R.string.system_message_head) + "\n" + context.getString(R.string.current_battery_level) + batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) + "%\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + card_info;
+                case "/start":
+                    request_body.text = getString(R.string.system_message_head)+ "\n"+ getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms);
                     break;
                 case "/sendsms":
-                case "/sendsms1":
-                case "/sendsms2":
                     request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.command_format_error) + "\n\n" + getString(R.string.command_error_tip);
                     String[] msg_send_list = request_msg.split("\n");
                     if (msg_send_list.length > 2) {
@@ -238,26 +222,8 @@ public class chat_long_polling_service extends Service {
                                 }
                                 msg_send_content.append(msg_send_list[i]);
                             }
-                            if (public_func.get_active_card(context) == 1) {
-                                public_func.send_sms(context, msg_send_to, msg_send_content.toString(), -1, -1);
-                                return;
-                            }
-                            int slot = -1;
-                            switch (command) {
-                                case "/sendsms":
-                                case "/sendsms1":
-                                    slot = 0;
-                                    break;
-                                case "/sendsms2":
-                                    slot = 1;
-                                    break;
-                            }
-                            request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.unable_to_get_information);
-                            int sub_id = public_func.get_sub_id(context, slot);
-                            if (sub_id != -1) {
-                                public_func.send_sms(context, msg_send_to, msg_send_content.toString(), slot, sub_id);
-                                return;
-                            }
+                            public_func.send_sms(context, msg_send_to, msg_send_content.toString());
+                            return;
                         }
                     }
 
@@ -277,16 +243,9 @@ public class chat_long_polling_service extends Service {
             if (message_list.has(reply_id)) {
                 JsonObject message_item_obj = message_list.get(reply_id).getAsJsonObject();
                 String phone_number = message_item_obj.get("phone").getAsString();
-                int card_slot = message_item_obj.get("card").getAsInt();
-                int sub_id = -1;
-                if (card_slot != -1) {
-                    sub_id = public_func.get_sub_id(context, card_slot);
-                }
-                if (sub_id != -1) {
-                    public_func.send_sms(context, phone_number, request_msg, card_slot, sub_id);
-                    return;
-                }
-                request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.unable_to_get_information);
+                public_func.send_sms(context, phone_number, request_msg);
+                return;
+
             }
         }
 

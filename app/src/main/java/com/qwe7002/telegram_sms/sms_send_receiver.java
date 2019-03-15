@@ -78,7 +78,7 @@ public class sms_send_receiver extends BroadcastReceiver {
                         String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
                         String msg_send_content = request_body.text;
                         if (msg_send_to != null) {
-                            public_func.send_fallback_sms(msg_send_to, msg_send_content, Objects.requireNonNull(intent.getExtras()).getInt("sub_id"));
+                            public_func.send_fallback_sms(msg_send_to, msg_send_content);
                         }
                     }
                 }

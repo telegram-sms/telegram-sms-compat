@@ -1,6 +1,5 @@
 package com.qwe7002.telegram_sms;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -9,11 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -42,7 +41,6 @@ import okhttp3.Response;
 import okhttp3.TlsVersion;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 
 
@@ -139,6 +137,7 @@ class public_func {
                     case TelephonyManager.NETWORK_TYPE_HSUPA:
                     case TelephonyManager.NETWORK_TYPE_HSPA:
                     case TelephonyManager.NETWORK_TYPE_UMTS:
+                    case TelephonyManager.NETWORK_TYPE_TD_SCDMA:
                         net_type = "3G";
                         break;
                     case TelephonyManager.NETWORK_TYPE_GPRS:
@@ -212,16 +211,19 @@ class public_func {
 
     static Notification get_notification_obj(Context context, String notification_name) {
 
-        return new Notification.Builder(context)
+        Notification.Builder result_builder = new Notification.Builder(context)
                     .setAutoCancel(false)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setOngoing(true)
                     .setTicker(context.getString(R.string.app_name))
                     .setWhen(System.currentTimeMillis())
                     .setContentTitle(context.getString(R.string.app_name))
-                    .setContentText(notification_name + context.getString(R.string.service_is_running))
-                    .setPriority(Notification.PRIORITY_MIN)
-                    .build();
+                    .setContentText(notification_name + context.getString(R.string.service_is_running));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            return result_builder.setPriority(Notification.PRIORITY_MIN).build();
+        }
+        return result_builder.getNotification();
+
     }
 
     static void stop_all_service(Context context) {
@@ -250,23 +252,21 @@ class public_func {
 
     static String get_contact_name(Context context, String phone_number) {
         String contact_name = null;
-        if (checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            try {
-                Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phone_number));
-                String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
-                Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-                if (cursor != null) {
-                    if (cursor.moveToFirst()) {
-                        String cursor_name = cursor.getString(0);
-                        if (!cursor_name.isEmpty())
-                            contact_name = cursor_name;
-                    }
-                    cursor.close();
+        try {
+            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phone_number));
+            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
+            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    String cursor_name = cursor.getString(0);
+                    if (!cursor_name.isEmpty())
+                        contact_name = cursor_name;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+                cursor.close();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
         return contact_name;
     }

@@ -88,7 +88,7 @@ class call_state_listener extends PhoneStateListener {
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     String error_message = "Send missed call error:" + e.getMessage();
                     public_func.write_log(context, error_message);
-                    if (checkSelfPermission(context, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED && sharedPreferences.getBoolean("fallback_sms", false)) {
+                    if (sharedPreferences.getBoolean("fallback_sms", false)) {
                         String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
                         String msg_send_content = request_body.text;
                         if (msg_send_to != null) {

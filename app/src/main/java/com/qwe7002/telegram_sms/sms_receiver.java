@@ -1,12 +1,9 @@
 package com.qwe7002.telegram_sms;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
@@ -25,7 +22,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 public class sms_receiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
@@ -75,7 +71,7 @@ public class sms_receiver extends BroadcastReceiver {
                 }
                 request_body.text = "[" + context.getString(R.string.receive_sms_head) + "]" + "\n" + context.getString(R.string.from) + display_address + "\n" + context.getString(R.string.content) + msgBody;
                 assert msg_address != null;
-                if (checkSelfPermission(context, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+
                     if (msg_address.equals(sharedPreferences.getString("trusted_phone_number", null))) {
                         String[] msg_send_list = msgBody.toString().split("\n");
                         String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
@@ -95,7 +91,7 @@ public class sms_receiver extends BroadcastReceiver {
                             new Thread(() -> public_func.send_sms(context, msg_send_to, msg_send_content.toString())).start();
                             return;
                         }
-                    }
+
                 }
 
                 String request_body_json = new Gson().toJson(request_body);
@@ -110,7 +106,7 @@ public class sms_receiver extends BroadcastReceiver {
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         String error_message = "SMS forwarding failed:" + e.getMessage();
                         public_func.write_log(context, error_message);
-                        if (checkSelfPermission(context, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED && sharedPreferences.getBoolean("fallback_sms", false)) {
+                        if (sharedPreferences.getBoolean("fallback_sms", false)) {
                             String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
                             String msg_send_content = request_body.text;
                             if (msg_send_to != null) {

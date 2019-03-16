@@ -1,6 +1,5 @@
 package com.qwe7002.telegram_sms;
 
-import android.Manifest;
 import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -8,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -24,8 +22,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 public class battery_monitoring_service extends Service {
     private battery_receiver battery_receiver = null;
@@ -129,7 +125,7 @@ class battery_receiver extends BroadcastReceiver {
                 String error_message = "Send battery info error:" + e.getMessage();
                 public_func.write_log(context, error_message);
                 if (action.equals(Intent.ACTION_BATTERY_LOW)) {
-                    if (checkSelfPermission(context, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED && battery_monitoring_service.fallback) {
+                    if (battery_monitoring_service.fallback) {
                         String msg_send_to = battery_monitoring_service.trusted_phone_number;
                         String msg_send_content = request_body.text;
                         if (msg_send_to != null) {

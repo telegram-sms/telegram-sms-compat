@@ -4,8 +4,8 @@
     <string name="content">Content: </string>
     <string name="from">From: </string>
     <string name="to">To: </string>
-    <string name="send_sms_head">Send</string>
-    <string name="system_message_head">[SYSTEM]</string>
+    <string name="send_sms_head">Send SMS</string>
+    <string name="system_message_head">[System information]</string>
     <string name="success_connect">Connected to the Telegram API Server.</string>
     <string name="connect_wait_title">Connecting to the Telegram API server...</string>
     <string name="connect_wait_message">Please wait...</string>
@@ -37,7 +37,7 @@
     <string name="Battery_monitoring">Battery monitor</string>
     <string name="chat_command_service_name">Chat command</string>
     <string name="success">Success</string>
-    <string name="receive_sms_head">Received SMS</string>
+    <string name="receive_sms_head">Receive SMS</string>
     <string name="available_command">Available Commands:\n/getinfo - Get system information</string>
     <string name="restart_service">Background service has been restarted.</string>
     <string name="status">Status:</string>

@@ -1,6 +1,6 @@
-# Telegram SMS
+# Telegram SMS compat
 
-![pipeline status](https://badges.git.reallct.com/qwe7002/telegram-sms-compat/badges/master/pipeline.svg)
+![pipeline status](https://badges.git.reallct.com/qwe7002/telegram-sms_outdated_android/badges/master/pipeline.svg)
 ![Min Android Version](https://img.shields.io/badge/android-16+-red.svg)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/qwe7002/telegram-sms-compat/blob/master/LICENSE)
 

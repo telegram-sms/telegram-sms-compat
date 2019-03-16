@@ -46,7 +46,6 @@ public class sms_send_receiver extends BroadcastReceiver {
             request_body.message_id = message_id;
         }
 
-
         request_body.text = Objects.requireNonNull(intent.getExtras()).getString("message_text") + "\n" + context.getString(R.string.status);
         switch (getResultCode()) {
             case Activity.RESULT_OK:
@@ -73,13 +72,11 @@ public class sms_send_receiver extends BroadcastReceiver {
             public void onFailure(Call call, IOException e) {
                 String error_message = "failed to send SMS status:" + e.getMessage();
                 public_func.write_log(context, error_message);
-                if (checkSelfPermission(context, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-                    if (sharedPreferences.getBoolean("fallback_sms", false)) {
-                        String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
-                        String msg_send_content = request_body.text;
-                        if (msg_send_to != null) {
-                            public_func.send_fallback_sms(msg_send_to, msg_send_content);
-                        }
+                if (sharedPreferences.getBoolean("fallback_sms", false)) {
+                    String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
+                    String msg_send_content = request_body.text;
+                    if (msg_send_to != null) {
+                        public_func.send_fallback_sms(msg_send_to, msg_send_content);
                     }
                 }
             }

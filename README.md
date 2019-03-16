@@ -8,7 +8,9 @@ A robot running on your outdated Android device.
 
 [Download](https://github.com/qwe7002/telegram-sms-compat/releases)
 
+[Android 5.1 or higher? Click here to download bthe latest and greatest.](https://github.com/qwe7002/telegram-sms)
 
+**This is a compatible version of Telegram SMS, designed for outdated phones. Some features are missing. If your phone system version is greater than or equal to 5.1, please use the version linked above.**
 
 **There may be unknown bugs in the pre-release version,Please use at your own risk.**
 
@@ -28,7 +30,7 @@ This app requires the following permissions:
 
 - SMS : Read and send a text message.
 
-- Phone : Get whether it is a dual card phone, card status and identifier ID.
+- Phone : Get caller information.
 
 - Call log : Get the incoming number.
 
@@ -47,7 +49,7 @@ This app requires the following permissions:
 ```
 BSD 3-Clause License
 
-Copyright (c) 2018, qwe7002
+Copyright (c) 2019, qwe7002
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -92,7 +94,7 @@ The birth of this software is inseparable from their help:
 
 Thanks for their translation and support of this project document:
 
-- en_US:[@tangbao](https://github.com/tangbao)
+- en_US:[@tangbao](https://github.com/tangbao) [@jixunmoe](https://github.com/jixunmoe)
 
 - ja-JP:[@Lollycc](https://github.com/lollycc)
 

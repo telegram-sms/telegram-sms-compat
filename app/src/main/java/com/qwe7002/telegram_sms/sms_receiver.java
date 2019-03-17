@@ -38,11 +38,9 @@ public class sms_receiver extends BroadcastReceiver {
         String bot_token = sharedPreferences.getString("bot_token", "");
         String chat_id = sharedPreferences.getString("chat_id", "");
         String request_uri = public_func.get_url(bot_token, "sendMessage");
-        if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction())) {
-            if (is_default) {
+        if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction()) && is_default) {
                 //When it is the default application, it will receive two broadcasts.
                 return;
-            }
         }
         Bundle bundle = intent.getExtras();
         if (bundle != null) {

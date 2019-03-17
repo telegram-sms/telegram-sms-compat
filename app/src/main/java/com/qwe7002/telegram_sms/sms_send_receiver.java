@@ -1,12 +1,11 @@
 package com.qwe7002.telegram_sms;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.util.Log;
 
@@ -23,12 +22,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 public class sms_send_receiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         Log.d(public_func.log_tag, "onReceive: " + intent.getAction());
+        Bundle extras = intent.getExtras();
+        assert extras != null;
         context.getApplicationContext().unregisterReceiver(this);
         SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("initialized", false)) {
@@ -40,13 +40,14 @@ public class sms_send_receiver extends BroadcastReceiver {
         final message_json request_body = new message_json();
         request_body.chat_id = chat_id;
         String request_uri = public_func.get_url(bot_token, "sendMessage");
-        int message_id = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(intent.getExtras()).getString("message_id")));
+
+        int message_id = Integer.parseInt(Objects.requireNonNull(extras.getString("message_id")));
         if (message_id != -1) {
             request_uri = public_func.get_url(bot_token, "editMessageText");
             request_body.message_id = message_id;
         }
 
-        request_body.text = Objects.requireNonNull(intent.getExtras()).getString("message_text") + "\n" + context.getString(R.string.status);
+        request_body.text = extras.getString("message_text") + "\n" + context.getString(R.string.status);
         switch (getResultCode()) {
             case Activity.RESULT_OK:
                 request_body.text += context.getString(R.string.success);

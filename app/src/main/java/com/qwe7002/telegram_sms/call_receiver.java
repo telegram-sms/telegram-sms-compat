@@ -1,11 +1,9 @@
 package com.qwe7002.telegram_sms;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -25,10 +23,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 public class call_receiver extends BroadcastReceiver {
     private static String incoming_number;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(public_func.log_tag, "onReceive: " + intent.getAction());
@@ -47,8 +45,8 @@ public class call_receiver extends BroadcastReceiver {
 
 class call_state_listener extends PhoneStateListener {
     private static int lastState = TelephonyManager.CALL_STATE_IDLE;
-    private Context context;
     private static String incoming_number;
+    private Context context;
 
     call_state_listener(Context context, String incoming_number) {
         super();

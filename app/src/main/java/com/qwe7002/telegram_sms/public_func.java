@@ -43,10 +43,7 @@ import okhttp3.TlsVersion;
 import static android.content.Context.MODE_PRIVATE;
 
 
-
-
 class public_func {
-
 
 
     static final String log_tag = "telegram-sms";
@@ -79,7 +76,7 @@ class public_func {
 
     static OkHttpClient get_okhttp_obj() {
         ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                .tlsVersions(TlsVersion.TLS_1_2,TlsVersion.TLS_1_0,TlsVersion.TLS_1_1,TlsVersion.TLS_1_3)
+                .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_3)
                 .cipherSuites(
                         CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
                         CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
@@ -212,13 +209,13 @@ class public_func {
     static Notification get_notification_obj(Context context, String notification_name) {
 
         Notification.Builder result_builder = new Notification.Builder(context)
-                    .setAutoCancel(false)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setOngoing(true)
-                    .setTicker(context.getString(R.string.app_name))
-                    .setWhen(System.currentTimeMillis())
-                    .setContentTitle(context.getString(R.string.app_name))
-                    .setContentText(notification_name + context.getString(R.string.service_is_running));
+                .setAutoCancel(false)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setOngoing(true)
+                .setTicker(context.getString(R.string.app_name))
+                .setWhen(System.currentTimeMillis())
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(notification_name + context.getString(R.string.service_is_running));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             return result_builder.setPriority(Notification.PRIORITY_MIN).build();
         }
@@ -240,12 +237,12 @@ class public_func {
         Intent battery_service = new Intent(context, battery_monitoring_service.class);
         Intent chat_long_polling_service = new Intent(context, chat_long_polling_service.class);
 
-            if (battery_switch) {
-                context.startService(battery_service);
-            }
-            if (chat_command_switch) {
-                context.startService(chat_long_polling_service);
-            }
+        if (battery_switch) {
+            context.startService(battery_service);
+        }
+        if (chat_command_switch) {
+            context.startService(chat_long_polling_service);
+        }
 
     }
 

@@ -26,7 +26,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class sms_receiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         Log.d(public_func.log_tag, "onReceive: " + intent.getAction());
-        boolean is_default=false;
+        boolean is_default = false;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             is_default = Telephony.Sms.getDefaultSmsPackage(context).equals(context.getPackageName());
         }
@@ -39,8 +39,8 @@ public class sms_receiver extends BroadcastReceiver {
         String chat_id = sharedPreferences.getString("chat_id", "");
         String request_uri = public_func.get_url(bot_token, "sendMessage");
         if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction()) && is_default) {
-                //When it is the default application, it will receive two broadcasts.
-                return;
+            //When it is the default application, it will receive two broadcasts.
+            return;
         }
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
@@ -70,25 +70,25 @@ public class sms_receiver extends BroadcastReceiver {
                 request_body.text = "[" + context.getString(R.string.receive_sms_head) + "]" + "\n" + context.getString(R.string.from) + display_address + "\n" + context.getString(R.string.content) + msgBody;
                 assert msg_address != null;
 
-                    if (msg_address.equals(sharedPreferences.getString("trusted_phone_number", null))) {
-                        String[] msg_send_list = msgBody.toString().split("\n");
-                        String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
-                        if (msgBody.toString().equals("restart-service")) {
-                            public_func.stop_all_service(context.getApplicationContext());
-                            public_func.start_service(context.getApplicationContext(), sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
-                            request_body.text = context.getString(R.string.system_message_head) + "\n" + context.getString(R.string.restart_service);
-                        }
-                        if (public_func.is_numeric(msg_send_to) && msg_send_list.length != 1) {
-                            StringBuilder msg_send_content = new StringBuilder();
-                            for (int i = 1; i < msg_send_list.length; i++) {
-                                if (msg_send_list.length != 2 && i != 1) {
-                                    msg_send_content.append("\n");
-                                }
-                                msg_send_content.append(msg_send_list[i]);
+                if (msg_address.equals(sharedPreferences.getString("trusted_phone_number", null))) {
+                    String[] msg_send_list = msgBody.toString().split("\n");
+                    String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
+                    if (msgBody.toString().equals("restart-service")) {
+                        public_func.stop_all_service(context.getApplicationContext());
+                        public_func.start_service(context.getApplicationContext(), sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
+                        request_body.text = context.getString(R.string.system_message_head) + "\n" + context.getString(R.string.restart_service);
+                    }
+                    if (public_func.is_numeric(msg_send_to) && msg_send_list.length != 1) {
+                        StringBuilder msg_send_content = new StringBuilder();
+                        for (int i = 1; i < msg_send_list.length; i++) {
+                            if (msg_send_list.length != 2 && i != 1) {
+                                msg_send_content.append("\n");
                             }
-                            new Thread(() -> public_func.send_sms(context, msg_send_to, msg_send_content.toString())).start();
-                            return;
+                            msg_send_content.append(msg_send_list[i]);
                         }
+                        new Thread(() -> public_func.send_sms(context, msg_send_to, msg_send_content.toString())).start();
+                        return;
+                    }
 
                 }
 

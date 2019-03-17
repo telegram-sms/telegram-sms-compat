@@ -1,6 +1,5 @@
 package com.qwe7002.telegram_sms;
 
-import android.Manifest;
 import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -8,11 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.BatteryManager;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -21,7 +17,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -207,7 +202,7 @@ public class chat_long_polling_service extends Service {
                 case "/ping":
                 case "/getinfo":
                 case "/start":
-                    request_body.text = getString(R.string.system_message_head)+ "\n"+ getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms);
+                    request_body.text = getString(R.string.system_message_head) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms);
                     break;
                 case "/sendsms":
                     request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.command_format_error) + "\n\n" + getString(R.string.command_error_tip);
@@ -260,6 +255,7 @@ public class chat_long_polling_service extends Service {
                 String error_message = "Send reply failed:" + e.getMessage();
                 public_func.write_log(context, error_message);
             }
+
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.code() != 200) {

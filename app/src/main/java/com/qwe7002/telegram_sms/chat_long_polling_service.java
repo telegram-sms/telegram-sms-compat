@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -20,7 +19,6 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -249,22 +247,17 @@ public class chat_long_polling_service extends Service {
         RequestBody body = RequestBody.create(public_func.JSON, gson.toJson(request_body));
         Request send_request = new Request.Builder().url(request_uri).method("POST", body).build();
         Call call = okhttp_client.newCall(send_request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                String error_message = "Send reply failed:" + e.getMessage();
-                public_func.write_log(context, error_message);
+        try {
+            Response response = call.execute();
+            if (response.code() != 200) {
+                assert response.body() != null;
+                public_func.write_log(context, "Send reply failed:" + response.body().string());
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+            public_func.write_log(context, "Send reply failed:" + e.getMessage());
 
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.code() != 200) {
-                    assert response.body() != null;
-                    String error_message = "Send reply failed:" + response.body().string();
-                    public_func.write_log(context, error_message);
-                }
-            }
-        });
+        }
     }
 
     class stop_broadcast_receiver extends BroadcastReceiver {

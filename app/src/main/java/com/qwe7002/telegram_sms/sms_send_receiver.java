@@ -73,8 +73,7 @@ public class sms_send_receiver extends BroadcastReceiver {
             }
             return;
         }
-        Gson gson = new Gson();
-        String request_body_raw = gson.toJson(request_body);
+        String request_body_raw = new Gson().toJson(request_body);
         RequestBody body = RequestBody.create(public_func.JSON, request_body_raw);
         OkHttpClient okhttp_client = public_func.get_okhttp_obj();
         Request request = new Request.Builder().url(request_uri).method("POST", body).build();

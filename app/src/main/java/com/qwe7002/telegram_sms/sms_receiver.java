@@ -44,7 +44,10 @@ public class sms_receiver extends BroadcastReceiver {
         String chat_id = sharedPreferences.getString("chat_id", "");
         String request_uri = public_func.get_url(bot_token, "sendMessage");
         Bundle bundle = intent.getExtras();
-        if (bundle != null) {
+        if (bundle == null) {
+            Log.d(public_func.log_tag, "reject: Error Extras");
+            return;
+        }
             Object[] pdus = (Object[]) bundle.get("pdus");
             assert pdus != null;
             final SmsMessage[] messages = new SmsMessage[pdus.length];
@@ -140,7 +143,7 @@ public class sms_receiver extends BroadcastReceiver {
                     }
                 });
             }
-        }
+
     }
 }
 

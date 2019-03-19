@@ -113,6 +113,21 @@ class battery_receiver extends BroadcastReceiver {
                 break;
         }
         request_body.text = prebody.toString();
+
+        if (!public_func.check_network(context)) {
+            public_func.write_log(context, "Send Message:No network connection");
+            if (action.equals(Intent.ACTION_BATTERY_LOW)) {
+                if (battery_monitoring_service.fallback) {
+                    String msg_send_to = battery_monitoring_service.trusted_phone_number;
+                    String msg_send_content = request_body.text;
+                    if (msg_send_to != null) {
+                        public_func.send_fallback_sms(msg_send_to, msg_send_content);
+                    }
+                }
+            }
+            return;
+        }
+
         Gson gson = new Gson();
         String request_body_raw = gson.toJson(request_body);
         RequestBody body = RequestBody.create(public_func.JSON, request_body_raw);

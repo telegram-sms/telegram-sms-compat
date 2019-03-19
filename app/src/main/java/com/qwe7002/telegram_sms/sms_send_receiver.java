@@ -62,6 +62,17 @@ public class sms_send_receiver extends BroadcastReceiver {
                 request_body.text += context.getString(R.string.no_network);
                 break;
         }
+        if (!public_func.check_network(context)) {
+            public_func.write_log(context, "Send Message:No network connection");
+            if (sharedPreferences.getBoolean("fallback_sms", false)) {
+                String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
+                String msg_send_content = request_body.text;
+                if (msg_send_to != null) {
+                    public_func.send_fallback_sms(msg_send_to, msg_send_content);
+                }
+            }
+            return;
+        }
         Gson gson = new Gson();
         String request_body_raw = gson.toJson(request_body);
         RequestBody body = RequestBody.create(public_func.JSON, request_body_raw);

@@ -26,6 +26,11 @@ import static android.content.Context.MODE_PRIVATE;
 public class sms_receiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         Log.d(public_func.log_tag, "onReceive: " + intent.getAction());
+        Bundle bundle = intent.getExtras();
+        if (bundle == null) {
+            Log.d(public_func.log_tag, "reject: Error Extras");
+            return;
+        }
         boolean is_default = false;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             is_default = Telephony.Sms.getDefaultSmsPackage(context).equals(context.getPackageName());
@@ -43,61 +48,78 @@ public class sms_receiver extends BroadcastReceiver {
         String bot_token = sharedPreferences.getString("bot_token", "");
         String chat_id = sharedPreferences.getString("chat_id", "");
         String request_uri = public_func.get_url(bot_token, "sendMessage");
-        Bundle bundle = intent.getExtras();
-        if (bundle == null) {
-            Log.d(public_func.log_tag, "reject: Error Extras");
-            return;
+        Object[] pdus = (Object[]) bundle.get("pdus");
+        assert pdus != null;
+        final SmsMessage[] messages = new SmsMessage[pdus.length];
+        for (int i = 0; i < pdus.length; i++) {
+            messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+
         }
-            Object[] pdus = (Object[]) bundle.get("pdus");
-            assert pdus != null;
-            final SmsMessage[] messages = new SmsMessage[pdus.length];
-            for (int i = 0; i < pdus.length; i++) {
-                messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+        if (messages.length > 0) {
+            StringBuilder msgBody = new StringBuilder();
+            for (SmsMessage item : messages) {
+                msgBody.append(item.getMessageBody());
+            }
+            String msg_address = messages[0].getOriginatingAddress();
+
+            final message_json request_body = new message_json();
+            request_body.chat_id = chat_id;
+            String display_address = msg_address;
+            if (display_address != null) {
+                String display_name = public_func.get_contact_name(context, display_address);
+                if (display_name != null) {
+                    display_address = display_name + "(" + display_address + ")";
+                }
+            }
+            request_body.text = "[" + context.getString(R.string.receive_sms_head) + "]" + "\n" + context.getString(R.string.from) + display_address + "\n" + context.getString(R.string.content) + msgBody;
+            assert msg_address != null;
+
+            if (msg_address.equals(sharedPreferences.getString("trusted_phone_number", null))) {
+                String[] msg_send_list = msgBody.toString().split("\n");
+                String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
+                if (msgBody.toString().equals("restart-service")) {
+                    public_func.stop_all_service(context.getApplicationContext());
+                    public_func.start_service(context.getApplicationContext(), sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
+                    request_body.text = context.getString(R.string.system_message_head) + "\n" + context.getString(R.string.restart_service);
+                }
+                if (public_func.is_numeric(msg_send_to) && msg_send_list.length != 1) {
+                    StringBuilder msg_send_content = new StringBuilder();
+                    for (int i = 1; i < msg_send_list.length; i++) {
+                        if (msg_send_list.length != 2 && i != 1) {
+                            msg_send_content.append("\n");
+                        }
+                        msg_send_content.append(msg_send_list[i]);
+                    }
+                    new Thread(() -> public_func.send_sms(context, msg_send_to, msg_send_content.toString())).start();
+                    return;
+                }
 
             }
-            if (messages.length > 0) {
-                StringBuilder msgBody = new StringBuilder();
-                for (SmsMessage item : messages) {
-                    msgBody.append(item.getMessageBody());
-                }
-                String msg_address = messages[0].getOriginatingAddress();
 
-                final message_json request_body = new message_json();
-                request_body.chat_id = chat_id;
-                String display_address = msg_address;
-                if (display_address != null) {
-                    String display_name = public_func.get_contact_name(context, display_address);
-                    if (display_name != null) {
-                        display_address = display_name + "(" + display_address + ")";
+            if (!public_func.check_network(context)) {
+                public_func.write_log(context, "Send Message:No network connection");
+                if (sharedPreferences.getBoolean("fallback_sms", false)) {
+                    String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
+                    String msg_send_content = request_body.text;
+                    if (msg_send_to != null) {
+                        public_func.send_fallback_sms(msg_send_to, msg_send_content);
                     }
                 }
-                request_body.text = "[" + context.getString(R.string.receive_sms_head) + "]" + "\n" + context.getString(R.string.from) + display_address + "\n" + context.getString(R.string.content) + msgBody;
-                assert msg_address != null;
+                return;
+            }
 
-                if (msg_address.equals(sharedPreferences.getString("trusted_phone_number", null))) {
-                    String[] msg_send_list = msgBody.toString().split("\n");
-                    String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
-                    if (msgBody.toString().equals("restart-service")) {
-                        public_func.stop_all_service(context.getApplicationContext());
-                        public_func.start_service(context.getApplicationContext(), sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
-                        request_body.text = context.getString(R.string.system_message_head) + "\n" + context.getString(R.string.restart_service);
-                    }
-                    if (public_func.is_numeric(msg_send_to) && msg_send_list.length != 1) {
-                        StringBuilder msg_send_content = new StringBuilder();
-                        for (int i = 1; i < msg_send_list.length; i++) {
-                            if (msg_send_list.length != 2 && i != 1) {
-                                msg_send_content.append("\n");
-                            }
-                            msg_send_content.append(msg_send_list[i]);
-                        }
-                        new Thread(() -> public_func.send_sms(context, msg_send_to, msg_send_content.toString())).start();
-                        return;
-                    }
-
-                }
-
-                if (!public_func.check_network(context)) {
-                    public_func.write_log(context, "Send Message:No network connection");
+            String request_body_json = new Gson().toJson(request_body);
+            RequestBody body = RequestBody.create(public_func.JSON, request_body_json);
+            OkHttpClient okhttp_client = public_func.get_okhttp_obj();
+            okhttp_client.retryOnConnectionFailure();
+            okhttp_client.connectTimeoutMillis();
+            Request request = new Request.Builder().url(request_uri).method("POST", body).build();
+            Call call = okhttp_client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    String error_message = "SMS forwarding failed:" + e.getMessage();
+                    public_func.write_log(context, error_message);
                     if (sharedPreferences.getBoolean("fallback_sms", false)) {
                         String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
                         String msg_send_content = request_body.text;
@@ -105,44 +127,22 @@ public class sms_receiver extends BroadcastReceiver {
                             public_func.send_fallback_sms(msg_send_to, msg_send_content);
                         }
                     }
-                    return;
                 }
 
-                String request_body_json = new Gson().toJson(request_body);
-                RequestBody body = RequestBody.create(public_func.JSON, request_body_json);
-                OkHttpClient okhttp_client = public_func.get_okhttp_obj();
-                okhttp_client.retryOnConnectionFailure();
-                okhttp_client.connectTimeoutMillis();
-                Request request = new Request.Builder().url(request_uri).method("POST", body).build();
-                Call call = okhttp_client.newCall(request);
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        String error_message = "SMS forwarding failed:" + e.getMessage();
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (response.code() != 200) {
+                        assert response.body() != null;
+                        String error_message = "SMS forwarding failed:" + response.body().string();
                         public_func.write_log(context, error_message);
-                        if (sharedPreferences.getBoolean("fallback_sms", false)) {
-                            String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
-                            String msg_send_content = request_body.text;
-                            if (msg_send_to != null) {
-                                public_func.send_fallback_sms(msg_send_to, msg_send_content);
-                            }
-                        }
                     }
-
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        if (response.code() != 200) {
-                            assert response.body() != null;
-                            String error_message = "SMS forwarding failed:" + response.body().string();
-                            public_func.write_log(context, error_message);
-                        }
-                        if (response.code() == 200) {
-                            assert response.body() != null;
-                            public_func.add_message_list(context, public_func.get_message_id(response.body().string()), msg_address);
-                        }
+                    if (response.code() == 200) {
+                        assert response.body() != null;
+                        public_func.add_message_list(context, public_func.get_message_id(response.body().string()), msg_address);
                     }
-                });
-            }
+                }
+            });
+        }
 
     }
 }

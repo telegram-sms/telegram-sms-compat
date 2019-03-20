@@ -90,6 +90,14 @@
                 android:paddingLeft="3dp"
                 tools:ignore="RtlSymmetry" />
 
+            <Switch
+                android:id="@+id/doh_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="3dp"
+                android:paddingLeft="3dp"
+                android:text="@string/using_doh" />
+
             <Button
                 android:id="@+id/get_id"
                 android:layout_width="match_parent"

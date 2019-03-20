@@ -37,7 +37,7 @@ public class sms_receiver extends BroadcastReceiver {
         }
         if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction()) && is_default) {
             //When it is the default application, it will receive two broadcasts.
-            Log.d(public_func.log_tag, "reject: android.provider.Telephony.SMS_RECEIVED");
+            Log.i(public_func.log_tag, "reject: android.provider.Telephony.SMS_RECEIVED");
             return;
         }
         final SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
@@ -110,7 +110,7 @@ public class sms_receiver extends BroadcastReceiver {
 
             String request_body_json = new Gson().toJson(request_body);
             RequestBody body = RequestBody.create(public_func.JSON, request_body_json);
-            OkHttpClient okhttp_client = public_func.get_okhttp_obj();
+            OkHttpClient okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));
             okhttp_client.retryOnConnectionFailure();
             okhttp_client.connectTimeoutMillis();
             Request request = new Request.Builder().url(request_uri).method("POST", body).build();

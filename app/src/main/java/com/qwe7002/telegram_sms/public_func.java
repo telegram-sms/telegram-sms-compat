@@ -24,6 +24,8 @@ import com.google.gson.JsonParser;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,12 +35,14 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
 import okhttp3.CipherSuite;
 import okhttp3.ConnectionSpec;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.TlsVersion;
+import okhttp3.dnsoverhttps.DnsOverHttps;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -74,7 +78,7 @@ class public_func {
         return "https://api.telegram.org/bot" + token + "/" + func;
     }
 
-    static OkHttpClient get_okhttp_obj() {
+    static OkHttpClient get_okhttp_obj(boolean doh_switch) {
         ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                 .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_3)
                 .cipherSuites(
@@ -85,16 +89,30 @@ class public_func {
                         CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
                 )
                 .build();
-
-        return new OkHttpClient.Builder()
+        OkHttpClient.Builder okhttp = new OkHttpClient.Builder()
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .readTimeout(15, TimeUnit.SECONDS)
                 .writeTimeout(15, TimeUnit.SECONDS)
                 .connectionSpecs(Collections.singletonList(spec))
-                .retryOnConnectionFailure(true)
-                .build();
+                .retryOnConnectionFailure(true);
+        if (doh_switch) {
+            okhttp.dns(new DnsOverHttps.Builder().client(new OkHttpClient.Builder().retryOnConnectionFailure(true).build())
+                    .url(HttpUrl.get("https://cloudflare-dns.com/dns-query"))
+                    .bootstrapDnsHosts(getByIp("1.1.1.1"))
+                    .includeIPv6(true)
+                    .build());
+        }
+        return okhttp.build();
     }
 
+    private static InetAddress getByIp(String host) {
+        try {
+            return InetAddress.getByName(host);
+        } catch (UnknownHostException e) {
+            // unlikely
+            throw new RuntimeException(e);
+        }
+    }
     static boolean is_numeric(String str) {
         for (int i = str.length(); --i >= 0; ) {
             char c = str.charAt(i);
@@ -169,7 +187,7 @@ class public_func {
         Gson gson = new Gson();
         String request_body_raw = gson.toJson(request_body);
         RequestBody body = RequestBody.create(public_func.JSON, request_body_raw);
-        OkHttpClient okhttp_client = public_func.get_okhttp_obj();
+        OkHttpClient okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));
         Request request = new Request.Builder().url(request_uri).method("POST", body).build();
         Call call = okhttp_client.newCall(request);
         try {
@@ -207,7 +225,6 @@ class public_func {
     }
 
     static Notification get_notification_obj(Context context, String notification_name) {
-
         Notification.Builder result_builder = new Notification.Builder(context)
                 .setAutoCancel(false)
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -220,7 +237,6 @@ class public_func {
             return result_builder.setPriority(Notification.PRIORITY_MIN).build();
         }
         return result_builder.getNotification();
-
     }
 
     static void stop_all_service(Context context) {

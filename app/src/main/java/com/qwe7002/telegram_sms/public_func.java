@@ -86,7 +86,10 @@ class public_func {
                         CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
                         CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
                         CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+                        CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
+                        CipherSuite.TLS_AES_256_GCM_SHA384,
+                        CipherSuite.TLS_AES_128_GCM_SHA256
                 )
                 .build();
         OkHttpClient.Builder okhttp = new OkHttpClient.Builder()
@@ -96,7 +99,7 @@ class public_func {
                 .connectionSpecs(Collections.singletonList(spec))
                 .retryOnConnectionFailure(true);
         if (doh_switch) {
-            okhttp.dns(new DnsOverHttps.Builder().client(new OkHttpClient.Builder().retryOnConnectionFailure(true).build())
+            okhttp.dns(new DnsOverHttps.Builder().client(new OkHttpClient.Builder().retryOnConnectionFailure(true).connectionSpecs(Collections.singletonList(spec)).build())
                     .url(HttpUrl.get("https://cloudflare-dns.com/dns-query"))
                     .bootstrapDnsHosts(getByIp("1.1.1.1"))
                     .includeIPv6(true)

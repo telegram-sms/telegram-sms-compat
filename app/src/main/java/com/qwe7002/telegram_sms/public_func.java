@@ -224,7 +224,7 @@ class public_func {
 
         }
         SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
-        if (!sharedPreferences.getBoolean("fallback", false)) {
+        if (!sharedPreferences.getBoolean("fallback_sms", false)) {
             return;
         }
         android.telephony.SmsManager sms_manager = android.telephony.SmsManager.getDefault();

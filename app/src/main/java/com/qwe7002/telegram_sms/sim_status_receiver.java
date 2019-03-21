@@ -24,6 +24,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 
 public class sim_status_receiver extends BroadcastReceiver {
+    static int last_status;
     @Override
     public void onReceive(Context context, Intent intent) {
         String message = context.getString(R.string.system_message_head) + "\n";
@@ -37,6 +38,10 @@ public class sim_status_receiver extends BroadcastReceiver {
         String request_uri = public_func.get_url(bot_token, "sendMessage");
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Service.TELEPHONY_SERVICE);
         int state = tm.getSimState();
+        if (last_status == state) {
+            return;
+        }
+        last_status = state;
         switch (state) {
             case TelephonyManager.SIM_STATE_READY:
                 message += context.getString(R.string.sim_card_insert);

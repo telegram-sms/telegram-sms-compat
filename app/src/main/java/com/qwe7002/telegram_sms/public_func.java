@@ -1,5 +1,6 @@
 package com.qwe7002.telegram_sms;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -45,6 +47,7 @@ import okhttp3.TlsVersion;
 import okhttp3.dnsoverhttps.DnsOverHttps;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 
 class public_func {
@@ -215,11 +218,19 @@ class public_func {
         sms_manager.sendMultipartTextMessage(send_to, null, divideContents, send_receiver_list, null);
     }
 
-    static void send_fallback_sms(String send_to, String content) {
-        android.telephony.SmsManager sms_manager;
-        sms_manager = android.telephony.SmsManager.getDefault();
+    static void send_fallback_sms(Context context, String content) {
+        if (checkSelfPermission(context, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            return;
+
+        }
+        SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
+        if (!sharedPreferences.getBoolean("fallback", false)) {
+            return;
+        }
+        android.telephony.SmsManager sms_manager = android.telephony.SmsManager.getDefault();
         ArrayList<String> divideContents = sms_manager.divideMessage(content);
-        sms_manager.sendMultipartTextMessage(send_to, null, divideContents, null, null);
+        sms_manager.sendMultipartTextMessage(sharedPreferences.getString("trusted_phone_number", null), null, divideContents, null, null);
+
     }
 
     static String get_message_id(String result) {

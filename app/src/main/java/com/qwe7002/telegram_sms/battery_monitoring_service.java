@@ -118,13 +118,7 @@ class battery_receiver extends BroadcastReceiver {
         if (!public_func.check_network(context)) {
             public_func.write_log(context, "Send Message:No network connection");
             if (action.equals(Intent.ACTION_BATTERY_LOW)) {
-                if (battery_monitoring_service.fallback) {
-                    String msg_send_to = battery_monitoring_service.trusted_phone_number;
-                    String msg_send_content = request_body.text;
-                    if (msg_send_to != null) {
-                        public_func.send_fallback_sms(msg_send_to, msg_send_content);
-                    }
-                }
+                public_func.send_fallback_sms(context, request_body.text);
             }
             return;
         }
@@ -139,13 +133,7 @@ class battery_receiver extends BroadcastReceiver {
                 String error_message = "Send battery info error:" + e.getMessage();
                 public_func.write_log(context, error_message);
                 if (action.equals(Intent.ACTION_BATTERY_LOW)) {
-                    if (battery_monitoring_service.fallback) {
-                        String msg_send_to = battery_monitoring_service.trusted_phone_number;
-                        String msg_send_content = request_body.text;
-                        if (msg_send_to != null) {
-                            public_func.send_fallback_sms(msg_send_to, msg_send_content);
-                        }
-                    }
+                    public_func.send_fallback_sms(context, request_body.text);
                 }
             }
 

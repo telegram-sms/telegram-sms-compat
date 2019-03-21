@@ -79,13 +79,7 @@ class call_state_listener extends PhoneStateListener {
 
             if (!public_func.check_network(context)) {
                 public_func.write_log(context, "Send Message:No network connection");
-                if (sharedPreferences.getBoolean("fallback_sms", false)) {
-                    String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
-                    String msg_send_content = request_body.text;
-                    if (msg_send_to != null) {
-                        public_func.send_fallback_sms(msg_send_to, msg_send_content);
-                    }
-                }
+                public_func.send_fallback_sms(context, request_body.text);
                 return;
             }
             String request_body_raw = new Gson().toJson(request_body);
@@ -98,13 +92,7 @@ class call_state_listener extends PhoneStateListener {
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     String error_message = "Send missed call error:" + e.getMessage();
                     public_func.write_log(context, error_message);
-                    if (sharedPreferences.getBoolean("fallback_sms", false)) {
-                        String msg_send_to = sharedPreferences.getString("trusted_phone_number", null);
-                        String msg_send_content = request_body.text;
-                        if (msg_send_to != null) {
-                            public_func.send_fallback_sms(msg_send_to, msg_send_content);
-                        }
-                    }
+                    public_func.send_fallback_sms(context, request_body.text);
                 }
 
                 @Override

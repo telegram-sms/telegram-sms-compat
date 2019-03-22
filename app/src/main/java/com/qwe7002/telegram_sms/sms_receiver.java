@@ -105,8 +105,6 @@ public class sms_receiver extends BroadcastReceiver {
             String request_body_json = new Gson().toJson(request_body);
             RequestBody body = RequestBody.create(public_func.JSON, request_body_json);
             OkHttpClient okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));
-            okhttp_client.retryOnConnectionFailure();
-            okhttp_client.connectTimeoutMillis();
             Request request = new Request.Builder().url(request_uri).method("POST", body).build();
             Call call = okhttp_client.newCall(request);
             call.enqueue(new Callback() {

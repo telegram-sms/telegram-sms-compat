@@ -53,7 +53,10 @@ public class sim_status_receiver extends BroadcastReceiver {
             case TelephonyManager.SIM_STATE_PIN_REQUIRED:
             case TelephonyManager.SIM_STATE_PUK_REQUIRED:
             case TelephonyManager.SIM_STATE_NETWORK_LOCKED:
+                message += context.getString(R.string.sim_card_lock);
+                break;
             default:
+                Log.d("sim_status", "onReceive: " + state);
                 message += context.getString(R.string.sim_card_error);
                 break;
         }

@@ -1,7 +1,6 @@
 package com.qwe7002.telegram_sms;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -30,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -49,8 +49,6 @@ import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 
 class public_func {
-
-
     static final String log_tag = "telegram-sms";
     static final String broadcast_stop_service = "com.qwe7002.telegram_sms.stop_all";
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -210,7 +208,6 @@ class public_func {
     static void send_fallback_sms(Context context, String content) {
         if (checkSelfPermission(context, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
             return;
-
         }
         SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("fallback_sms", false)) {
@@ -289,7 +286,7 @@ class public_func {
 
     static void write_log(Context context, String log) {
         Log.i(public_func.log_tag, log);
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         Date ts = new Date(System.currentTimeMillis());
         String error_log = read_file(context, "error.log") + "\n" + simpleDateFormat.format(ts) + " " + log;
         write_file(context, "error.log", error_log);

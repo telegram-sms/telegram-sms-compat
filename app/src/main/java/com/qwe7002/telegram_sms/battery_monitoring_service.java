@@ -116,7 +116,7 @@ class battery_receiver extends BroadcastReceiver {
         request_body.text = prebody.toString();
 
         if (!public_func.check_network(context)) {
-            public_func.write_log(context, "Send Message:No network connection");
+            public_func.write_log(context, public_func.network_error);
             if (action.equals(Intent.ACTION_BATTERY_LOW)) {
                 public_func.send_fallback_sms(context, request_body.text);
             }
@@ -127,10 +127,11 @@ class battery_receiver extends BroadcastReceiver {
         RequestBody body = RequestBody.create(public_func.JSON, request_body_raw);
         Request request = new Request.Builder().url(request_uri).method("POST", body).build();
         Call call = okhttp_client.newCall(request);
+        final String error_head = "Send battery info failed:";
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                String error_message = "Send battery info error:" + e.getMessage();
+                String error_message = error_head + e.getMessage();
                 public_func.write_log(context, error_message);
                 if (action.equals(Intent.ACTION_BATTERY_LOW)) {
                     public_func.send_fallback_sms(context, request_body.text);
@@ -141,7 +142,7 @@ class battery_receiver extends BroadcastReceiver {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.code() != 200) {
                     assert response.body() != null;
-                    String error_message = "Send battery info error:" + response.body().string();
+                    String error_message = error_head + response.body().string();
                     public_func.write_log(context, error_message);
                 }
             }

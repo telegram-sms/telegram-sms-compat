@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -196,8 +197,8 @@ public class chat_long_polling_service extends Service {
             }
         }
 
+        Log.d(public_func.log_tag, "receive_handle: " + command);
         if (!message_obj.has("reply_to_message")) {
-            public_func.write_log(context, "request command: " + command);
             switch (command) {
                 case "/ping":
                 case "/getinfo":
@@ -226,8 +227,10 @@ public class chat_long_polling_service extends Service {
                         request_body.text = getString(R.string.system_message_head) + builder.toString();
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
+                        return;
                     } catch (IOException e) {
                         e.printStackTrace();
+                        return;
                     }
                     break;
                 case "/sendsms":

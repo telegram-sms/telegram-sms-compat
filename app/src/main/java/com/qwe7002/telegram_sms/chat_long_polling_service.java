@@ -16,7 +16,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -199,6 +203,32 @@ public class chat_long_polling_service extends Service {
                 case "/getinfo":
                 case "/start":
                     request_body.text = getString(R.string.system_message_head) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms);
+                    break;
+                case "/log":
+                    try {
+                        FileInputStream file_stream = context.openFileInput("error.log");
+                        FileChannel channel = file_stream.getChannel();
+                        ByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+                        buffer.position((int) channel.size());
+                        int count = 0;
+                        StringBuilder builder = new StringBuilder();
+                        for (long i = channel.size() - 1; i >= 0; i--) {
+                            char c = (char) buffer.get((int) i);
+                            builder.insert(0, c);
+                            if (c == '\n') {
+                                if (count == 9) {
+                                    break;
+                                }
+                                count++;
+                            }
+                        }
+                        channel.close();
+                        request_body.text = getString(R.string.system_message_head) + builder.toString();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case "/sendsms":
                     request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.command_format_error) + "\n\n" + getString(R.string.command_error_tip);

@@ -200,6 +200,7 @@ public class chat_long_polling_service extends Service {
         Log.d(public_func.log_tag, "receive_handle: " + command);
         if (!message_obj.has("reply_to_message")) {
             switch (command) {
+                case "/help":
                 case "/ping":
                 case "/getinfo":
                 case "/start":

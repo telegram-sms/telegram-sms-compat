@@ -23,7 +23,6 @@ public class logcat_activity extends AppCompatActivity {
         this.setTitle(R.string.logcat);
         logcat.setText(public_func.read_log(context));
         observer = new file_observer(context, logcat);
-
     }
 
     @Override
@@ -69,7 +68,6 @@ public class logcat_activity extends AppCompatActivity {
             }
         }
     }
-
 }
 
 

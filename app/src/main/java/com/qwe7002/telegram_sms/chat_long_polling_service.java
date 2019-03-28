@@ -207,6 +207,7 @@ public class chat_long_polling_service extends Service {
                     request_body.text = getString(R.string.system_message_head) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms);
                     break;
                 case "/log":
+                    String result = getString(R.string.no_logs);
                     try {
                         FileInputStream file_stream = context.openFileInput("error.log");
                         FileChannel channel = file_stream.getChannel();
@@ -225,7 +226,9 @@ public class chat_long_polling_service extends Service {
                             }
                         }
                         channel.close();
-                        request_body.text = getString(R.string.system_message_head) + builder.toString();
+                        if (!builder.toString().isEmpty()) {
+                            result = builder.toString();
+                        }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                         return;
@@ -233,6 +236,7 @@ public class chat_long_polling_service extends Service {
                         e.printStackTrace();
                         return;
                     }
+                    request_body.text = getString(R.string.system_message_head) + result;
                     break;
                 case "/sendsms":
                     request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.command_format_error) + "\n\n" + getString(R.string.command_error_tip);

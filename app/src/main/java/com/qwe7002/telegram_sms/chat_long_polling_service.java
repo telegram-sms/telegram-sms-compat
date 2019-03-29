@@ -207,7 +207,7 @@ public class chat_long_polling_service extends Service {
                     request_body.text = getString(R.string.system_message_head) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms);
                     break;
                 case "/log":
-                    String result = getString(R.string.no_logs);
+                    String result = "\n" + getString(R.string.no_logs);
                     try {
                         FileInputStream file_stream = context.openFileInput("error.log");
                         FileChannel channel = file_stream.getChannel();

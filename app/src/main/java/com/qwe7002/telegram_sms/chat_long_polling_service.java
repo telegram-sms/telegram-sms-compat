@@ -98,12 +98,12 @@ public class chat_long_polling_service extends Service {
             call_test.execute();
             error_magnification = 1;
         } catch (IOException e) {
-            int sleep_time = 30 * error_magnification;
+            int sleep_time = 5 * error_magnification;
 
             public_func.write_log(context, "No network service,try again after " + sleep_time + " seconds");
 
             magnification = 1;
-            if (error_magnification <= 9) {
+            if (error_magnification <= 59) {
                 error_magnification++;
             }
             try {

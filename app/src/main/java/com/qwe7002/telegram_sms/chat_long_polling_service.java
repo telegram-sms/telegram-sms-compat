@@ -194,6 +194,10 @@ public class chat_long_polling_service extends Service {
                 int command_offset = entities_obj_command.get("offset").getAsInt();
                 int command_end_offset = command_offset + entities_obj_command.get("length").getAsInt();
                 command = request_msg.substring(command_offset, command_end_offset).trim().toLowerCase();
+                if (command.contains("@")) {
+                    int command_at_location = command.indexOf("@");
+                    command = command.substring(0, command_at_location);
+                }
             }
         }
 

@@ -63,17 +63,11 @@ public class chat_long_polling_service extends Service {
         bot_token = sharedPreferences.getString("bot_token", "");
         okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));
 
-
         new Thread(() -> {
             while (true) {
-                try {
-                    start_long_polling();
-                } catch (IOException e) {
-                    if (magnification > 1) {
-                        magnification--;
-                    }
-                    e.printStackTrace();
-                }
+
+                start_long_polling();
+
             }
         }).start();
 
@@ -87,7 +81,7 @@ public class chat_long_polling_service extends Service {
     }
 
 
-    void start_long_polling() throws IOException {
+    void start_long_polling() {
         int read_timeout = 30 * magnification;
         OkHttpClient okhttp_client_new = okhttp_client.newBuilder()
                 .readTimeout((read_timeout + 5), TimeUnit.SECONDS)
@@ -125,7 +119,14 @@ public class chat_long_polling_service extends Service {
         }
         if (response != null && response.code() == 200) {
             assert response.body() != null;
-            JsonObject result_obj = new JsonParser().parse(response.body().string()).getAsJsonObject();
+            String result;
+            try {
+                result = response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+            JsonObject result_obj = new JsonParser().parse(result).getAsJsonObject();
             if (result_obj.get("ok").getAsBoolean()) {
                 JsonArray result_array = result_obj.get("result").getAsJsonArray();
                 for (JsonElement item : result_array) {

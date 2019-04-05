@@ -65,9 +65,7 @@ public class chat_long_polling_service extends Service {
 
         new Thread(() -> {
             while (true) {
-
                 start_long_polling();
-
             }
         }).start();
 
@@ -83,7 +81,6 @@ public class chat_long_polling_service extends Service {
 
     void start_long_polling() {
         int read_timeout = 30 * magnification;
-        Log.d(public_func.log_tag, "read timeout: " + read_timeout);
         OkHttpClient okhttp_client_new = okhttp_client.newBuilder()
                 .readTimeout((read_timeout + 5), TimeUnit.SECONDS)
                 .writeTimeout((read_timeout + 5), TimeUnit.SECONDS)
@@ -104,21 +101,20 @@ public class chat_long_polling_service extends Service {
             error_magnification = 1;
         } catch (IOException e) {
             int sleep_time = 5 * error_magnification;
-
             public_func.write_log(context, "No network service,try again after " + sleep_time + " seconds");
-
             magnification = 1;
             if (error_magnification <= 59) {
                 error_magnification++;
             }
+
             try {
                 Thread.sleep(sleep_time * 1000);
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             }
             return;
-
         }
+
         if (response != null && response.code() == 200) {
             assert response.body() != null;
             String result;

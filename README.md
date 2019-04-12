@@ -6,7 +6,7 @@
 
 A robot running on your outdated Android device. 
 
-You can come [here](https://bbs.qwe7002.com) to submit an issue or discuss any issues with this project.
+You can come [https://reall.uk](https://reall.uk) to submit an issue or discuss any issues with this project.
 
 [Download](https://github.com/qwe7002/telegram-sms-compat/releases)
 

@@ -244,8 +244,8 @@ class public_func {
                 .setOngoing(true)
                 .setTicker(context.getString(R.string.app_name))
                 .setWhen(System.currentTimeMillis())
-                .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(notification_name + context.getString(R.string.service_is_running));
+                .setContentTitle(notification_name)
+                .setContentText(context.getString(R.string.service_is_running));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             return result_builder.setPriority(Notification.PRIORITY_MIN).build();
         }

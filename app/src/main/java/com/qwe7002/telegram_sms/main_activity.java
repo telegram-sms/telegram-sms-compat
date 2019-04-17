@@ -48,7 +48,7 @@ public class main_activity extends AppCompatActivity {
         final Switch battery_monitoring_switch = findViewById(R.id.battery_monitoring);
         final Switch doh_switch = findViewById(R.id.doh_switch);
         final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-
+        final Switch charger_status = findViewById(R.id.charger_status);
         String bot_token_save = sharedPreferences.getString("bot_token", "");
         String chat_id_save = sharedPreferences.getString("chat_id", "");
         assert bot_token_save != null;
@@ -66,6 +66,8 @@ public class main_activity extends AppCompatActivity {
 
         trusted_phone_number.setText(sharedPreferences.getString("trusted_phone_number", ""));
         battery_monitoring_switch.setChecked(sharedPreferences.getBoolean("battery_monitoring_switch", false));
+        charger_status.setEnabled(battery_monitoring_switch.isChecked());
+        charger_status.setChecked(sharedPreferences.getBoolean("charger_status", false));
         fallback_sms.setChecked(sharedPreferences.getBoolean("fallback_sms", false));
         chat_command.setChecked(sharedPreferences.getBoolean("chat_command", false));
         doh_switch.setChecked(sharedPreferences.getBoolean("doh_switch", true));

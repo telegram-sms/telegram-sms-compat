@@ -106,7 +106,7 @@ The following organizations for providing image storage for this page:
 
 ## Give a cup of coffee and let me better maintain this project?
 
-- [Support me in Paypal](https://paypal.me/qwe7002)
+- [Support me in Paypal](https://paypal.me/nico_ranshi)
 
 - Support me in Bitcoin (**17wmCCzy7hSSENnRBfUBMUSi7kdHYePrae**)
 

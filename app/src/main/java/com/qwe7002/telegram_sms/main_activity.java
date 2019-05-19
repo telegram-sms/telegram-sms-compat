@@ -10,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -69,8 +71,34 @@ public class main_activity extends AppCompatActivity {
         charger_status.setEnabled(battery_monitoring_switch.isChecked());
         charger_status.setChecked(sharedPreferences.getBoolean("charger_status", false));
         fallback_sms.setChecked(sharedPreferences.getBoolean("fallback_sms", false));
+        if (trusted_phone_number.length() == 0) {
+            fallback_sms.setEnabled(false);
+            fallback_sms.setChecked(false);
+        }
         chat_command.setChecked(sharedPreferences.getBoolean("chat_command", false));
         doh_switch.setChecked(sharedPreferences.getBoolean("doh_switch", true));
+        trusted_phone_number.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (count != 0) {
+                    fallback_sms.setEnabled(true);
+                }
+                if (count == 0) {
+                    fallback_sms.setEnabled(false);
+                    fallback_sms.setChecked(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         logcat.setOnClickListener(v -> {
             Intent logcat_intent = new Intent(main_activity.this, logcat_activity.class);
             startActivity(logcat_intent);
@@ -91,11 +119,11 @@ public class main_activity extends AppCompatActivity {
             String request_uri = public_func.get_url(bot_token.getText().toString().trim(), "getUpdates");
             OkHttpClient okhttp_client = public_func.get_okhttp_obj(doh_switch.isChecked());
             okhttp_client = okhttp_client.newBuilder()
-                    .readTimeout((120 + 5), TimeUnit.SECONDS)
+                    .readTimeout((60), TimeUnit.SECONDS)
                     .build();
             polling_json request_body = new polling_json();
             request_body.offset = 0;
-            request_body.timeout = 120;
+            request_body.timeout = 60;
             RequestBody body = RequestBody.create(public_func.JSON, new Gson().toJson(request_body));
             Request request = new Request.Builder().url(request_uri).method("POST", body).build();
             Call call = okhttp_client.newCall(request);

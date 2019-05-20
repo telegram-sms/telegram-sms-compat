@@ -119,7 +119,7 @@ public class main_activity extends AppCompatActivity {
             String request_uri = public_func.get_url(bot_token.getText().toString().trim(), "getUpdates");
             OkHttpClient okhttp_client = public_func.get_okhttp_obj(doh_switch.isChecked());
             okhttp_client = okhttp_client.newBuilder()
-                    .readTimeout((60), TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
                     .build();
             polling_json request_body = new polling_json();
             request_body.offset = 0;

@@ -126,6 +126,7 @@ class battery_receiver extends BroadcastReceiver {
             }
             return;
         }
+
         OkHttpClient okhttp_client = public_func.get_okhttp_obj(battery_monitoring_service.doh_switch);
         String request_body_raw = new Gson().toJson(request_body);
         RequestBody body = RequestBody.create(public_func.JSON, request_body_raw);

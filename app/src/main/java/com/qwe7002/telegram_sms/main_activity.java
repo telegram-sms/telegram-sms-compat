@@ -85,10 +85,10 @@ public class main_activity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (count != 0) {
+                if (trusted_phone_number.length() != 0) {
                     fallback_sms.setEnabled(true);
                 }
-                if (count == 0) {
+                if (trusted_phone_number.length() == 0) {
                     fallback_sms.setEnabled(false);
                     fallback_sms.setChecked(false);
                 }

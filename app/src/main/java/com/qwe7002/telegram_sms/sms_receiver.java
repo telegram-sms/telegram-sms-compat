@@ -136,4 +136,3 @@ public class sms_receiver extends BroadcastReceiver {
 
     }
 }
-

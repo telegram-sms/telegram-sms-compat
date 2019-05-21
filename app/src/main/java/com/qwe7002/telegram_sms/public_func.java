@@ -305,8 +305,7 @@ class public_func {
         Log.i(public_func.log_tag, log);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         Date ts = new Date(System.currentTimeMillis());
-        String error_log = read_file(context, "error.log") + "\n" + simpleDateFormat.format(ts) + " " + log;
-        write_file(context, "error.log", error_log);
+        append_file(context, "error.log", "\n" + simpleDateFormat.format(ts) + " " + log);
     }
 
     static String read_log(Context context) {
@@ -325,9 +324,18 @@ class public_func {
         public_func.write_file(context, "message.json", new Gson().toJson(message_list_obj));
     }
 
+    private static void append_file(Context context, String file_name, String write_string) {
+        private_write_file(context, file_name, write_string, Context.MODE_APPEND);
+    }
+
     static void write_file(Context context, String file_name, String write_string) {
+        private_write_file(context, file_name, write_string, Context.MODE_PRIVATE);
+
+    }
+
+    private static void private_write_file(Context context, String file_name, String write_string, int mode) {
         try {
-            FileOutputStream file_stream = context.openFileOutput(file_name, MODE_PRIVATE);
+            FileOutputStream file_stream = context.openFileOutput(file_name, mode);
             byte[] bytes = write_string.getBytes();
             file_stream.write(bytes);
             file_stream.close();

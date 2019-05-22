@@ -3,11 +3,7 @@ package com.qwe7002.telegram_sms;
 import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -17,13 +13,13 @@ import android.os.Build;
 import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import okhttp3.*;
+import okhttp3.dnsoverhttps.DnsOverHttps;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -34,18 +30,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
-import okhttp3.Call;
-import okhttp3.CipherSuite;
-import okhttp3.ConnectionSpec;
-import okhttp3.HttpUrl;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.TlsVersion;
-import okhttp3.dnsoverhttps.DnsOverHttps;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.support.v4.content.PermissionChecker.checkSelfPermission;
@@ -353,10 +339,27 @@ class public_func {
             file_stream.read(buffer);
             result = new String(buffer);
             file_stream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        return result;
+    }
+
+    static String get_verification_code(String body) {
+        Pattern verification_code_foot = Pattern.compile("^.*?(?:(?:verification(?:\\s*code)?(?: for .* )?(?:\\s*is|\\s*[:：]?))|(?:(?:驗證|验证|校[验驗]|安全|登[錄录入]|短信密)[码碼](?:[为為是])?(?:[:：])?)|(?:(?:認証)?\\s*コード(?:は)?(?:[:：])?))[\\s ]*(\\d{4,6}).*$");
+        Matcher match1 = verification_code_foot.matcher(body);
+        String result = null;
+        if (match1.find()) {
+            result = match1.group(1);
+            Log.d(log_tag, "get_verification_code: Match1:" + result);
+        }
+        if (result == null) {
+            Pattern verification_code_head = Pattern.compile("^.*?(\\d{4,6})(?:(?:(?:\\s*is).*?verification(?:\\s*code)?)|(?:(?:\\s*[为為是])?.*?(?:驗證|验证|校[验驗]|安全|登[錄录入]|短信密)[码碼])|(?:(?:\\s*は).*?(?:認証)?コード)).*$");
+            Matcher match2 = verification_code_head.matcher(body);
+            if (match2.find()) {
+                result = match2.group(1);
+                Log.d(log_tag, "get_verification_code: Match2:" + result);
+            }
         }
         return result;
     }

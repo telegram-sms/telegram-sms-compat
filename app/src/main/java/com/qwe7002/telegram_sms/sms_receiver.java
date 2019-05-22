@@ -9,17 +9,10 @@ import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.telephony.SmsMessage;
 import android.util.Log;
-
 import com.google.gson.Gson;
+import okhttp3.*;
 
 import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -101,7 +94,12 @@ public class sms_receiver extends BroadcastReceiver {
                 public_func.send_fallback_sms(context, request_body.text);
                 return;
             }
-
+            String raw_request_body_text = request_body.text;
+            String verification = public_func.get_verification_code(msgBody.toString());
+            if (verification != null) {
+                request_body.parse_mode = "html";
+                request_body.text = request_body.text.replace(verification, "<code>" + verification + "</code>");
+            }
             String request_body_json = new Gson().toJson(request_body);
             RequestBody body = RequestBody.create(public_func.JSON, request_body_json);
             OkHttpClient okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));
@@ -113,7 +111,7 @@ public class sms_receiver extends BroadcastReceiver {
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     String error_message = error_head + e.getMessage();
                     public_func.write_log(context, error_message);
-                    public_func.send_fallback_sms(context, request_body.text);
+                    public_func.send_fallback_sms(context, raw_request_body_text);
                 }
 
                 @Override
@@ -122,7 +120,7 @@ public class sms_receiver extends BroadcastReceiver {
                         assert response.body() != null;
                         String error_message = error_head + response.code() + " " + response.body().string();
                         public_func.write_log(context, error_message);
-                        public_func.send_fallback_sms(context, request_body.text);
+                        public_func.send_fallback_sms(context, raw_request_body_text);
                     }
                     if (response.code() == 200) {
                         assert response.body() != null;

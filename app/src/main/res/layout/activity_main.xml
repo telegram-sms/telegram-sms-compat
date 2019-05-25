@@ -98,6 +98,13 @@
                 android:text="@string/chat_command"
                 android:paddingLeft="3dp"
                 tools:ignore="RtlSymmetry" />
+            <Switch
+                android:id="@+id/verification_code_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="3dp"
+                android:text="@string/using_verification_code_identification" tools:ignore="RtlSymmetry"
+                android:paddingLeft="3dp" />
 
             <Switch
                 android:id="@+id/doh_switch"

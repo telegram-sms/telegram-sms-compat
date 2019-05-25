@@ -94,10 +94,12 @@ public class sms_receiver extends BroadcastReceiver {
                 return;
             }
             String raw_request_body_text = request_body.text;
-            String verification = public_func.get_verification_code(msgBody.toString());
-            if (verification != null) {
-                request_body.parse_mode = "html";
-                request_body.text = request_body.text.replace(verification, "<code>" + verification + "</code>");
+            if (sharedPreferences.getBoolean("verification_code", false)) {
+                String verification = public_func.get_verification_code(msgBody.toString());
+                if (verification != null) {
+                    request_body.parse_mode = "html";
+                    request_body.text = request_body.text.replace(verification, "<code>" + verification + "</code>");
+                }
             }
             String request_body_json = new Gson().toJson(request_body);
             RequestBody body = RequestBody.create(public_func.JSON, request_body_json);

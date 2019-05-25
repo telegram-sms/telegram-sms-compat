@@ -1,4 +1,4 @@
-package com.qwe7002.telegram_sms;
+package com.qwe7002.telegram_sms_compat;
 
 import android.app.Notification;
 import android.app.Service;

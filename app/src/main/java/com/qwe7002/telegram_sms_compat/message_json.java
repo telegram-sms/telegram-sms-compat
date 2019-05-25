@@ -1,4 +1,4 @@
-package com.qwe7002.telegram_sms;
+package com.qwe7002.telegram_sms_compat;
 
 class message_json {
     final boolean disable_web_page_preview = true;

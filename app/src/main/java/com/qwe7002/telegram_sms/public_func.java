@@ -193,6 +193,7 @@ class public_func {
             }
             message_id = get_message_id(response.body().string());
         } catch (IOException e) {
+            e.printStackTrace();
             public_func.write_log(context, "failed to send message:" + e.getMessage());
         }
         ArrayList<String> divideContents = sms_manager.divideMessage(content);
@@ -310,7 +311,7 @@ class public_func {
         public_func.write_file(context, "message.json", new Gson().toJson(message_list_obj));
     }
 
-    private static void append_file(Context context, String file_name, String write_string) {
+    static void append_file(Context context, String file_name, String write_string) {
         private_write_file(context, file_name, write_string, Context.MODE_APPEND);
     }
 
@@ -346,20 +347,25 @@ class public_func {
     }
 
     static String get_verification_code(String body) {
-        Pattern verification_code_foot = Pattern.compile("^.*?(?:(?:verification(?:\\s*code)?(?: for .* )?(?:\\s*is|\\s*[:：]?))|(?:(?:驗證|验证|校[验驗]|安全|登[錄录入]|短信密)[码碼](?:[为為是])?(?:[:：])?)|(?:(?:認証)?\\s*コード(?:は)?(?:[:：])?))[\\s ]*(\\d{4,6}).*$");
-        Matcher match1 = verification_code_foot.matcher(body);
         String result = null;
-        if (match1.find()) {
-            result = match1.group(1);
-            Log.d(log_tag, "get_verification_code: Match1:" + result);
-        }
-        if (result == null) {
-            Pattern verification_code_head = Pattern.compile("^.*?(\\d{4,6})(?:(?:(?:\\s*is).*?verification(?:\\s*code)?)|(?:(?:\\s*[为為是])?.*?(?:驗證|验证|校[验驗]|安全|登[錄录入]|短信密)[码碼])|(?:(?:\\s*は).*?(?:認証)?コード)).*$");
-            Matcher match2 = verification_code_head.matcher(body);
-            if (match2.find()) {
-                result = match2.group(1);
-                Log.d(log_tag, "get_verification_code: Match2:" + result);
+        String[] regexp_list = {"^.*?(?:(?:verification(?:\\s*code)?(?: for .* )?(?:\\s*is|\\s*[:：]?))|(?:(?:驗證|验证|校[验驗]|安全|登[錄录入]|短信密)[码碼](?:[为為是])?(?:[:：])?)|(?:(?:認証)?\\s*コード(?:は)?(?:[:：])?))[\\s ]*(\\d{4,6}).*$"
+                , "^.*?(\\d{4,6})(?:(?:(?:\\s*is).*?verification(?:\\s*code)?)|(?:(?:\\s*[为為是])?.*?(?:驗證|验证|校[验驗]|安全|登[錄录入]|短信密)[码碼])|(?:(?:\\s*は).*?(?:認証)?コード)).*$"};
+        for (String item : regexp_list) {
+            result = get_regexp(item, body);
+            if (result != null) {
+                break;
             }
+        }
+        return result;
+    }
+
+    private static String get_regexp(String regexp, String body) {
+        Pattern regexp_pattern = Pattern.compile(regexp);
+        Matcher match = regexp_pattern.matcher(body);
+        String result = null;
+        if (match.find()) {
+            result = match.group(1);
+            Log.d(log_tag, "get_regexp: " + result);
         }
         return result;
     }

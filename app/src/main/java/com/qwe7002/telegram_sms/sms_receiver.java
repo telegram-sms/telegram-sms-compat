@@ -86,7 +86,6 @@ public class sms_receiver extends BroadcastReceiver {
                     new Thread(() -> public_func.send_sms(context, msg_send_to, msg_send_content.toString())).start();
                     return;
                 }
-
             }
 
             if (!public_func.check_network(context)) {

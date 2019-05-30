@@ -8,7 +8,7 @@ A robot running on your outdated Android device.
 
 You can come [https://reall.uk](https://reall.uk) to submit an issue or discuss any issues with this project.
 
-[Download](https://github.com/qwe7002/telegram-sms-compat/releases)
+[Download](https://github.com/telegram-sms/telegram-sms-compat/releases)
 
 [Android 5.1 or higher? Click here to download bthe latest and greatest.](https://github.com/qwe7002/telegram-sms)
 
@@ -16,35 +16,7 @@ You can come [https://reall.uk](https://reall.uk) to submit an issue or discuss 
 
 **There may be unknown bugs in the pre-release version,Please use at your own risk.**
 
-## Features
-
-- Forward SMS to Telegram
-
-- Monitor missed calls
-
-- Monitor device battery power changes
-
-- Remote control via chat command or SMS.
-
-## Permission
-
-This app requires the following permissions:
-
-- SMS : Read and send a text message.
-
-- Phone : Get caller information.
-
-- Call log : Get the incoming number.
-
-- Contact : Get the contact information and automatically identify the incoming caller's number.
-
-
-## User manual
-
-- [English](https://github.com/qwe7002/telegram-sms/wiki/User_manual)
-- [简体中文](https://github.com/qwe7002/telegram-sms/wiki/用户手册)
-- [繁體中文](https://github.com/qwe7002/telegram-sms/wiki/用戶手冊)
-- [日本語](https://github.com/qwe7002/telegram-sms/wiki/マニュアル)
+[please click here for related information](https://github.com/telegram-sms/telegram-sms/blob/master/README.md)
 
 ## License
 
@@ -79,30 +51,6 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
-
-## Acknowledgements
-
-This software uses these open source libraries:
-
-- [okhttp](https://github.com/square/okhttp)
-
-- [Gson](https://github.com/google/gson)
-
-The birth of this software is inseparable from their help:
-
-- [@SumiMakito](https://github.com/SumiMakito)
-
-- [@zsxsoft](https://github.com/zsxsoft)
-
-Thanks for their translation and support of this project document:
-
-- en:[@tangbao](https://github.com/tangbao) [@jixunmoe](https://github.com/jixunmoe)
-
-- ja:[@Lollycc](https://github.com/lollycc) [@AisakaMk2](https://github.com/AisakaMk2)
-
-The following organizations for providing image storage for this page:
-
-- [sm.ms](https://sm.ms)
 
 ## Give a cup of coffee and let me better maintain this project?
 

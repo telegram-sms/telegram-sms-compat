@@ -6,13 +6,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Telephony;
-import android.support.annotation.NonNull;
 import android.telephony.SmsMessage;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
-import okhttp3.*;
 
 import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 

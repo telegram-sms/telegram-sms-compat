@@ -1,10 +1,12 @@
 package com.qwe7002.telegram_sms_compat;
 
-import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.content.*;
-import android.content.pm.PackageManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,11 +15,10 @@ import android.os.Build;
 import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import okhttp3.*;
-import okhttp3.dnsoverhttps.DnsOverHttps;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,11 +31,20 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import okhttp3.Call;
+import okhttp3.CipherSuite;
+import okhttp3.ConnectionSpec;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.TlsVersion;
+import okhttp3.dnsoverhttps.DnsOverHttps;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 
 class public_func {
@@ -210,9 +220,6 @@ class public_func {
     }
 
     static void send_fallback_sms(Context context, String content) {
-        if (checkSelfPermission(context, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
         SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("fallback_sms", false)) {
             return;
@@ -311,7 +318,7 @@ class public_func {
         public_func.write_file(context, "message.json", new Gson().toJson(message_list_obj));
     }
 
-    static void append_file(Context context, String file_name, String write_string) {
+    private static void append_file(Context context, String file_name, String write_string) {
         private_write_file(context, file_name, write_string, Context.MODE_APPEND);
     }
 

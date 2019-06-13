@@ -62,7 +62,8 @@
                     android:hint="@string/trusted_phone_number"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    tools:ignore="TextFields" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Switch

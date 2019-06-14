@@ -1,5 +1,6 @@
 package com.qwe7002.telegram_sms_compat;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -7,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -23,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -31,6 +35,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
 
 public class chat_long_polling_service extends Service {
     static int offset = 0;
@@ -42,7 +48,9 @@ public class chat_long_polling_service extends Service {
     SharedPreferences sharedPreferences;
     OkHttpClient okhttp_client;
     private stop_broadcast_receiver stop_broadcast_receiver = null;
-
+    Boolean wakelock_switch;
+    private PowerManager.WakeLock wakelock;
+    private WifiManager.WifiLock wifiLock;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Notification notification = public_func.get_notification_obj(getApplicationContext(), getString(R.string.chat_command_service_name));
@@ -51,6 +59,7 @@ public class chat_long_polling_service extends Service {
 
     }
 
+    @SuppressLint("InvalidWakeLockTag")
     @Override
     public void onCreate() {
         super.onCreate();
@@ -64,9 +73,24 @@ public class chat_long_polling_service extends Service {
         bot_token = sharedPreferences.getString("bot_token", "");
         okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));
 
+        wifiLock = ((WifiManager) Objects.requireNonNull(context.getApplicationContext().getSystemService(Context.WIFI_SERVICE))).createWifiLock(WifiManager.WIFI_MODE_FULL, "bot_command_polling_wifi");
+        wifiLock.acquire();
+
+        wakelock_switch = sharedPreferences.getBoolean("wakelock", false);
+        if (wakelock_switch) {
+            wakelock = ((PowerManager) Objects.requireNonNull(context.getSystemService(Context.POWER_SERVICE))).newWakeLock(PARTIAL_WAKE_LOCK, "bot_command_polling");
+            wakelock.setReferenceCounted(false);
+        }
+
         new Thread(() -> {
             while (true) {
+                if (wakelock_switch) {
+                    wakelock.acquire(90000);
+                }
                 start_long_polling();
+                if (wakelock_switch) {
+                    wakelock.release();
+                }
             }
         }).start();
 
@@ -76,6 +100,7 @@ public class chat_long_polling_service extends Service {
     public void onDestroy() {
         unregisterReceiver(stop_broadcast_receiver);
         stopForeground(true);
+        wifiLock.release();
         super.onDestroy();
     }
 

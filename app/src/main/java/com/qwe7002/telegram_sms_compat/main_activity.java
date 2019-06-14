@@ -53,10 +53,10 @@ public class main_activity extends AppCompatActivity {
         final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         final Switch charger_status = findViewById(R.id.charger_status);
         final Switch verification_code = findViewById(R.id.verification_code_switch);
+        final Switch wakelock_switch = findViewById(R.id.wakelock_switch);
         String bot_token_save = sharedPreferences.getString("bot_token", "");
         String chat_id_save = sharedPreferences.getString("chat_id", "");
-        assert bot_token_save != null;
-        assert chat_id_save != null;
+
         if (sharedPreferences.getBoolean("initialized", false)) {
             public_func.start_service(context, sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
         }
@@ -80,6 +80,8 @@ public class main_activity extends AppCompatActivity {
         chat_command.setChecked(sharedPreferences.getBoolean("chat_command", false));
         verification_code.setChecked(sharedPreferences.getBoolean("verification_code", false));
         doh_switch.setChecked(sharedPreferences.getBoolean("doh_switch", true));
+        wakelock_switch.setChecked(sharedPreferences.getBoolean("wakelock", false));
+        wakelock_switch.setEnabled(chat_command.isChecked());
         trusted_phone_number.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

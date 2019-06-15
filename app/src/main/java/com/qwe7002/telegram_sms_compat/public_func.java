@@ -61,16 +61,16 @@ class public_func {
                 .replace(")", "");
     }
 
-    static boolean check_network(Context context) {
+    static boolean check_network_status(Context context) {
 
         ConnectivityManager manager = (ConnectivityManager) context
                 .getApplicationContext().getSystemService(
                         Context.CONNECTIVITY_SERVICE);
         if (manager == null) {
-            return false;
+            return true;
         }
         NetworkInfo networkinfo = manager.getActiveNetworkInfo();
-        return networkinfo != null && networkinfo.isConnected();
+        return networkinfo == null || !networkinfo.isConnected();
     }
 
     static String get_url(String token, String func) {

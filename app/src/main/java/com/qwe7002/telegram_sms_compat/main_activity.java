@@ -79,9 +79,16 @@ public class main_activity extends AppCompatActivity {
         }
         chat_command.setChecked(sharedPreferences.getBoolean("chat_command", false));
         verification_code.setChecked(sharedPreferences.getBoolean("verification_code", false));
+        verification_code.setEnabled(chat_command.isChecked());
         doh_switch.setChecked(sharedPreferences.getBoolean("doh_switch", true));
         wakelock_switch.setChecked(sharedPreferences.getBoolean("wakelock", false));
         wakelock_switch.setEnabled(chat_command.isChecked());
+
+        chat_command.setOnClickListener(v -> {
+            wakelock_switch.setEnabled(chat_command.isChecked());
+            verification_code.setEnabled(chat_command.isChecked());
+        });
+
         trusted_phone_number.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

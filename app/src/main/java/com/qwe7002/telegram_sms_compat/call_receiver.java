@@ -78,7 +78,7 @@ class call_state_listener extends PhoneStateListener {
 
             request_body.text = "[" + context.getString(R.string.missed_call_head) + "]" + "\n" + context.getString(R.string.Incoming_number) + display_address;
 
-            if (!public_func.check_network(context)) {
+            if (public_func.check_network_status(context)) {
                 public_func.write_log(context, public_func.network_error);
                 public_func.send_fallback_sms(context, request_body.text);
                 return;

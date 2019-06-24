@@ -142,6 +142,9 @@ class public_func {
                 break;
             case ConnectivityManager.TYPE_MOBILE:
                 switch (network_info.getSubtype()) {
+                    case TelephonyManager.NETWORK_TYPE_NR:
+                        net_type = "5G";
+                        break;
                     case TelephonyManager.NETWORK_TYPE_LTE:
                         net_type = "LTE/4G";
                         break;

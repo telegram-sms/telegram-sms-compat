@@ -196,7 +196,6 @@ public class main_activity extends AppCompatActivity {
                                     if (chat_obj.has("last_name")) {
                                         username += " " + chat_obj.get("last_name").getAsString();
                                     }
-
                                 }
                                 chat_name_list.add(username + "(" + chat_obj.get("type").getAsString() + ")");
                                 chat_id_list.add(chat_obj.get("id").getAsString());
@@ -211,7 +210,7 @@ public class main_activity extends AppCompatActivity {
                             }
                         }
                     }
-                    main_activity.this.runOnUiThread(() -> new AlertDialog.Builder(v.getContext()).setTitle(R.string.select_chat).setItems(chat_name_list.toArray(new String[0]), (dialogInterface, i) -> chat_id.setText(chat_id_list.get(i))).setPositiveButton("Cancel", null).show());
+                    main_activity.this.runOnUiThread(() -> new AlertDialog.Builder(context).setTitle(R.string.select_chat).setItems(chat_name_list.toArray(new String[0]), (dialogInterface, i) -> chat_id.setText(chat_id_list.get(i))).setPositiveButton("Cancel", null).show());
                     Looper.loop();
                 }
             });

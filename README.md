@@ -1,7 +1,7 @@
 # Telegram SMS compat
 
 ![pipeline status](https://badges.git.reallct.com/qwe7002/telegram-sms_outdated_android/badges/master/pipeline.svg)
-![Min Android Version](https://img.shields.io/badge/Min%20Android%20Version-4.0.0+-red.svg)
+![Min Android Version](https://img.shields.io/badge/Min%20Android%20Version-4.1+-red.svg)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/qwe7002/telegram-sms-compat/blob/master/LICENSE)
 
 A robot running on your outdated Android device. 

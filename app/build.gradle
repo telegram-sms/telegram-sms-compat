@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply from: 'version.gradle'
 android {
     compileSdkVersion 29
@@ -45,4 +47,9 @@ dependencies {
     //noinspection GradleDynamicVersion,GradleDependency
     implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps:3.12.+'
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation "androidx.core:core-ktx:1.0.2"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

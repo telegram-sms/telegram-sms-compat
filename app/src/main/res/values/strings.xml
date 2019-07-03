@@ -43,7 +43,6 @@
     <string name="send_failed">Failed to send</string>
     <string name="airplan_mode">Device is in Airplane mode</string>
     <string name="no_network">No service</string>
-    <string name="unable_to_get_information">Failed to get information.</string>
     <string name="sendsms">/sendsms - Send SMS</string>
     <string name="sending">Sending</string>
     <string name="command_error_tip">To send a SMS text message, use:\n/sendsms\n{Receiver phone number}\n{SMS content}</string>

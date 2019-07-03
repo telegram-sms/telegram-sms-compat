@@ -281,6 +281,7 @@ public class main_activity extends AppCompatActivity {
                     editor.putBoolean("battery_monitoring_switch", battery_monitoring_switch.isChecked());
                     editor.putBoolean("verification_code", verification_code.isChecked());
                     editor.putBoolean("doh_switch", doh_switch.isChecked());
+                    editor.putBoolean("wakelock", wakelock_switch.isChecked());
                     editor.putBoolean("initialized", true);
                     editor.apply();
                     public_func.stop_all_service(context);

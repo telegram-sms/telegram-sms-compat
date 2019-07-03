@@ -93,6 +93,10 @@ public class chat_long_polling_service extends Service {
 
     @Override
     public void onDestroy() {
+        wifiLock.release();
+        if (wakelock_switch) {
+            wakelock.release();
+        }
         unregisterReceiver(stop_broadcast_receiver);
         stopForeground(true);
         wifiLock.release();
@@ -122,7 +126,7 @@ public class chat_long_polling_service extends Service {
             error_magnification = 1;
         } catch (IOException e) {
             int sleep_time = 5 * error_magnification;
-            public_func.write_log(context, "No network service,try again after " + sleep_time + " seconds");
+            public_func.write_log(context, "No network service,try again after " + sleep_time + " seconds.");
             magnification = 1;
             if (error_magnification <= 59) {
                 error_magnification++;
@@ -180,7 +184,7 @@ public class chat_long_polling_service extends Service {
         }
         if (message_obj == null) {
             //Reject group request
-            public_func.write_log(context, "Request type is not allowed by security policy");
+            public_func.write_log(context, "Request type is not allowed by security policy.");
             return;
         }
         JsonObject from_obj = null;

@@ -60,7 +60,7 @@ class call_state_listener extends PhoneStateListener {
                 && state == TelephonyManager.CALL_STATE_IDLE) {
             final SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
             if (!sharedPreferences.getBoolean("initialized", false)) {
-                Log.i(public_func.log_tag, "Uninitialized, Phone receiver is deactivated");
+                Log.i(public_func.log_tag, "Uninitialized, Phone receiver is deactivated.");
                 return;
             }
             String bot_token = sharedPreferences.getString("bot_token", "");

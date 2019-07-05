@@ -111,6 +111,7 @@ class public_func {
         try {
             return InetAddress.getByName(host);
         } catch (UnknownHostException e) {
+            e.printStackTrace();
             // unlikely
             throw new RuntimeException(e);
         }

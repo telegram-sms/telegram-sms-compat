@@ -49,7 +49,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 class public_func {
     static final String log_tag = "telegram-sms";
-    static final String network_error = "Send Message:No network connection";
+    static final String network_error = "Send Message:No network connection.";
     static final String broadcast_stop_service = "com.qwe7002.telegram_sms.stop_all";
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final code_aux_lib parser = new code_aux_lib();
@@ -100,7 +100,7 @@ class public_func {
         if (doh_switch) {
             okhttp.dns(new DnsOverHttps.Builder().client(new OkHttpClient.Builder().retryOnConnectionFailure(true).connectionSpecs(Collections.singletonList(spec)).build())
                     .url(HttpUrl.get("https://cloudflare-dns.com/dns-query"))
-                    .bootstrapDnsHosts(getByIp("1.1.1.1"), getByIp("2606:4700:4700::1111"), getByIp("185.222.222.222"), getByIp("2a09::"))
+                    .bootstrapDnsHosts(getByIp("1.0.0.1"), getByIp("9.9.9.9"), getByIp("185.222.222.222"), getByIp("2606:4700:4700::1001"), getByIp("2620:fe::fe"), getByIp("2a09::"))
                     .includeIPv6(true)
                     .build());
         }
@@ -111,6 +111,7 @@ class public_func {
         try {
             return InetAddress.getByName(host);
         } catch (UnknownHostException e) {
+            e.printStackTrace();
             // unlikely
             throw new RuntimeException(e);
         }
@@ -174,7 +175,7 @@ class public_func {
 
     static void send_sms(Context context, String send_to, String content) {
         if (!is_numeric(send_to)) {
-            write_log(context, "[" + send_to + "] is an illegal phone number");
+            write_log(context, "[" + send_to + "] is an illegal phone number.");
             return;
         }
         SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);

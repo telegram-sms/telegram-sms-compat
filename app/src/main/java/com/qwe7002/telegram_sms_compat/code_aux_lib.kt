@@ -36,6 +36,7 @@ import android.content.Context
 import org.json.JSONObject
 import java.util.*
 
+@Suppress("UNUSED_PARAMETER")
 class code_aux_lib {
     private val preProcessOmitRegexExpressions = ArrayList<Regex>()
     private val preProcessReplaceRegexExpressions = ArrayList<Regex>()

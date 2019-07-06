@@ -47,6 +47,8 @@ public class main_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
+        final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+
         final EditText chat_id = findViewById(R.id.chat_id);
         final EditText bot_token = findViewById(R.id.bot_token);
         final EditText trusted_phone_number = findViewById(R.id.trusted_phone_number);
@@ -54,7 +56,6 @@ public class main_activity extends AppCompatActivity {
         final Switch fallback_sms = findViewById(R.id.fallback_sms);
         final Switch battery_monitoring_switch = findViewById(R.id.battery_monitoring);
         final Switch doh_switch = findViewById(R.id.doh_switch);
-        final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         final Switch charger_status = findViewById(R.id.charger_status);
         final Switch verification_code = findViewById(R.id.verification_code_switch);
         final Switch wakelock_switch = findViewById(R.id.wakelock_switch);
@@ -143,6 +144,13 @@ public class main_activity extends AppCompatActivity {
             RequestBody body = RequestBody.create(public_func.JSON, new Gson().toJson(request_body));
             Request request = new Request.Builder().url(request_uri).method("POST", body).build();
             Call call = okhttp_client.newCall(request);
+            progress_dialog.setOnKeyListener((dialogInterface, i, keyEvent) -> {
+                if (keyEvent.getKeyCode() == android.view.KeyEvent.KEYCODE_BACK) {
+                    progress_dialog.cancel();
+                    call.cancel();
+                }
+                return false;
+            });
             final String error_head = "Get chat ID failed:";
             call.enqueue(new Callback() {
                 @Override
@@ -281,6 +289,7 @@ public class main_activity extends AppCompatActivity {
                     editor.putBoolean("battery_monitoring_switch", battery_monitoring_switch.isChecked());
                     editor.putBoolean("verification_code", verification_code.isChecked());
                     editor.putBoolean("doh_switch", doh_switch.isChecked());
+                    editor.putBoolean("wakelock", wakelock_switch.isChecked());
                     editor.putBoolean("initialized", true);
                     editor.apply();
                     public_func.stop_all_service(context);

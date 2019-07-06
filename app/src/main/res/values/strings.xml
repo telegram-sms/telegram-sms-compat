@@ -21,7 +21,6 @@
     <string name="get_recent_chat_id">Get recent chat ID</string>
     <string name="test_and_save">Test and save</string>
     <string name="network_error_falls_back_to_sms">Resend using SMS when network error occurs</string>
-    <string name="current_battery_level">Battery level:</string>
     <string name="low_battery_status_end">Battery has been charged to a safe level.</string>
     <string name="logcat">View log</string>
     <string name="token_not_configure">Please configure the bot token first.</string>
@@ -41,10 +40,9 @@
     <string name="available_command">Available Commands:\n/getinfo - Get system information\n/log - Output the last 10 log records</string>
     <string name="restart_service">Background service has been restarted.</string>
     <string name="status">Status:</string>
-    <string name="send_failed">Failed to send</string>
-    <string name="airplan_mode">Device is in Airplane mode</string>
+    <string name="send_failed">Failed</string>
+    <string name="airplane_mode">Device is in Airplane mode</string>
     <string name="no_network">No service</string>
-    <string name="unable_to_get_information">Failed to get information.</string>
     <string name="sendsms">/sendsms - Send SMS</string>
     <string name="sending">Sending</string>
     <string name="command_error_tip">To send a SMS text message, use:\n/sendsms\n{Receiver phone number}\n{SMS content}</string>

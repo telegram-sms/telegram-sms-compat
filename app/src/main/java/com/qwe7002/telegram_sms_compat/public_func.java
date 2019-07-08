@@ -7,12 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -186,12 +183,7 @@ class public_func {
         request_body.chat_id = chat_id;
         android.telephony.SmsManager sms_manager;
         sms_manager = android.telephony.SmsManager.getDefault();
-        String display_to_address = send_to;
-        String display_to_name = public_func.get_contact_name(context, display_to_address);
-        if (display_to_name != null) {
-            display_to_address = display_to_name + "(" + send_to + ")";
-        }
-        String send_content = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + context.getString(R.string.to) + display_to_address + "\n" + context.getString(R.string.content) + content;
+        String send_content = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + context.getString(R.string.to) + send_to + "\n" + context.getString(R.string.content) + content;
         String message_id = "-1";
         request_body.text = send_content + "\n" + context.getString(R.string.status) + context.getString(R.string.sending);
         Gson gson = new Gson();
@@ -278,26 +270,6 @@ class public_func {
     }
 
 
-    static String get_contact_name(Context context, String phone_number) {
-        String contact_name = null;
-        try {
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phone_number));
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
-            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    String cursor_name = cursor.getString(0);
-                    if (!cursor_name.isEmpty())
-                        contact_name = cursor_name;
-                }
-                cursor.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return contact_name;
-    }
 
     static void write_log(Context context, String log) {
         Log.i(public_func.log_tag, log);

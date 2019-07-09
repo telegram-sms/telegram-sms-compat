@@ -40,7 +40,7 @@ import okhttp3.Response;
 
 
 public class main_activity extends AppCompatActivity {
-    Context context = null;
+    private Context context = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

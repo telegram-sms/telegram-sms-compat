@@ -123,6 +123,7 @@ public class chat_long_polling_service extends Service {
             response = call.execute();
             error_magnification = 1;
         } catch (IOException e) {
+            e.printStackTrace();
             int sleep_time = 5 * error_magnification;
             public_func.write_log(context, "No network service,try again after " + sleep_time + " seconds.");
             magnification = 1;

@@ -1,5 +1,7 @@
 package com.qwe7002.telegram_sms_compat;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -7,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -139,12 +142,19 @@ class public_func {
                 net_type = "WIFI";
                 break;
             case ConnectivityManager.TYPE_MOBILE:
+                boolean is_att = get_imsi(context).startsWith("3104101");
                 switch (network_info.getSubtype()) {
                     case TelephonyManager.NETWORK_TYPE_NR:
                         net_type = "5G";
+                        if (is_att) {
+                            net_type = "5G+";
+                        }
                         break;
                     case TelephonyManager.NETWORK_TYPE_LTE:
                         net_type = "LTE/4G";
+                        if (is_att) {
+                            net_type = "5G E";
+                        }
                         break;
                     case TelephonyManager.NETWORK_TYPE_EVDO_0:
                     case TelephonyManager.NETWORK_TYPE_EVDO_A:
@@ -154,9 +164,12 @@ class public_func {
                     case TelephonyManager.NETWORK_TYPE_HSPAP:
                     case TelephonyManager.NETWORK_TYPE_HSUPA:
                     case TelephonyManager.NETWORK_TYPE_HSPA:
-                    case TelephonyManager.NETWORK_TYPE_UMTS:
                     case TelephonyManager.NETWORK_TYPE_TD_SCDMA:
+                    case TelephonyManager.NETWORK_TYPE_UMTS:
                         net_type = "3G";
+                        if (is_att) {
+                            net_type = "4G";
+                        }
                         break;
                     case TelephonyManager.NETWORK_TYPE_GPRS:
                     case TelephonyManager.NETWORK_TYPE_EDGE:
@@ -166,8 +179,21 @@ class public_func {
                         net_type = "2G";
                         break;
                 }
+                break;
         }
         return net_type;
+    }
+
+    @SuppressLint("HardwareIds")
+    private static String get_imsi(Context context) {
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        assert telephonyManager != null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                return "";
+            }
+        }
+        return telephonyManager.getSubscriberId();
     }
 
     static void send_sms(Context context, String send_to, String content) {

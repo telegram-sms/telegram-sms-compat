@@ -61,7 +61,6 @@ public class main_activity extends AppCompatActivity {
         final Switch wakelock_switch = findViewById(R.id.wakelock_switch);
         final Button save_button = findViewById(R.id.save);
         final Button get_id = findViewById(R.id.get_id);
-        final Button logcat = findViewById(R.id.logcat_button);
 
         String bot_token_save = sharedPreferences.getString("bot_token", "");
         String chat_id_save = sharedPreferences.getString("chat_id", "");
@@ -115,10 +114,6 @@ public class main_activity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
 
             }
-        });
-        logcat.setOnClickListener(v -> {
-            Intent logcat_intent = new Intent(main_activity.this, logcat_activity.class);
-            startActivity(logcat_intent);
         });
 
         get_id.setOnClickListener(v -> {
@@ -310,6 +305,11 @@ public class main_activity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.logcat) {
+            Intent logcat_intent = new Intent(main_activity.this, logcat_activity.class);
+            startActivity(logcat_intent);
+            return true;
+        }
         String file_name = "";
         switch (item.getItemId()) {
             case R.id.user_manual:

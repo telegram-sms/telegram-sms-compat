@@ -144,7 +144,7 @@ class public_func {
                         net_type = "5G";
                         break;
                     case TelephonyManager.NETWORK_TYPE_LTE:
-                        net_type = "LTE";
+                        net_type = "LTE/4G";
                         break;
                     case TelephonyManager.NETWORK_TYPE_HSPAP:
                     case TelephonyManager.NETWORK_TYPE_EVDO_0:

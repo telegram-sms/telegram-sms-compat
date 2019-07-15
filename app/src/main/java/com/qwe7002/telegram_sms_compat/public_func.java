@@ -59,7 +59,6 @@ class public_func {
     }
 
     static boolean check_network_status(Context context) {
-
         ConnectivityManager manager = (ConnectivityManager) context
                 .getApplicationContext().getSystemService(
                         Context.CONNECTIVITY_SERVICE);

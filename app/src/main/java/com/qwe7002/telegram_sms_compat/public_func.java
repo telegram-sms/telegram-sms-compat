@@ -234,7 +234,7 @@ class public_func {
     static Notification get_notification_obj(Context context, String notification_name) {
         Notification.Builder result_builder = new Notification.Builder(context)
                 .setAutoCancel(false)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat)
                 .setOngoing(true)
                 .setTicker(context.getString(R.string.app_name))
                 .setWhen(System.currentTimeMillis())

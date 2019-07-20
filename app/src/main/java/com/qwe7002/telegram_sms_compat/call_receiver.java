@@ -47,7 +47,7 @@ public class call_receiver extends BroadcastReceiver {
 class call_state_listener extends PhoneStateListener {
     private static int lastState = TelephonyManager.CALL_STATE_IDLE;
     private static String incoming_number;
-    private Context context;
+    private final Context context;
 
     call_state_listener(Context context, String incoming_number) {
         super();
@@ -68,15 +68,7 @@ class call_state_listener extends PhoneStateListener {
             String request_uri = public_func.get_url(bot_token, "sendMessage");
             final message_json request_body = new message_json();
             request_body.chat_id = chat_id;
-            String display_address = incoming_number;
-            if (display_address != null) {
-                String display_name = public_func.get_contact_name(context, incoming_number);
-                if (display_name != null) {
-                    display_address = display_name + "(" + incoming_number + ")";
-                }
-            }
-
-            request_body.text = "[" + context.getString(R.string.missed_call_head) + "]" + "\n" + context.getString(R.string.Incoming_number) + display_address;
+            request_body.text = "[" + context.getString(R.string.missed_call_head) + "]" + "\n" + context.getString(R.string.Incoming_number) + incoming_number;
 
             if (public_func.check_network_status(context)) {
                 public_func.write_log(context, public_func.network_error);

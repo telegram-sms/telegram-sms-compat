@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".main_activity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="0.15"
+        android:scaleType="fitEnd"
+        android:src="@mipmap/character_set"
+        tools:ignore="ContentDescription" />
 
 
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         tools:ignore="UselessParent">
 
         <LinearLayout
-            android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -33,36 +38,39 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/bot_token"
-                    android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    tools:ignore="TextFields" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/chat_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/chat_id"
+                    android:inputType="text"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:inputType="text" />
+                    tools:ignore="TextFields" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/trusted_phone_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/trusted_phone_number"
+                    android:inputType="text"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:inputType="text"
                     tools:ignore="TextFields" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -71,8 +79,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="3dp"
-                android:text="@string/network_error_falls_back_to_sms"
                 android:paddingLeft="3dp"
+                android:text="@string/network_error_falls_back_to_sms"
                 tools:ignore="RtlSymmetry" />
 
             <Switch
@@ -80,8 +88,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="3dp"
-                android:text="@string/battery_monitoring"
                 android:paddingLeft="3dp"
+                android:text="@string/battery_monitoring"
                 tools:ignore="RtlSymmetry" />
 
             <Switch
@@ -89,24 +97,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="3dp"
-                android:text="@string/charger_status"
                 android:paddingLeft="3dp"
+                android:text="@string/charger_status"
                 tools:ignore="RtlSymmetry" />
+
             <Switch
                 android:id="@+id/chat_command"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="3dp"
-                android:text="@string/chat_command"
                 android:paddingLeft="3dp"
+                android:text="@string/chat_command"
                 tools:ignore="RtlSymmetry" />
+
             <Switch
                 android:id="@+id/verification_code_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="3dp"
-                android:text="@string/using_verification_code_identification" tools:ignore="RtlSymmetry"
-                android:paddingLeft="3dp" />
+                android:paddingLeft="3dp"
+                android:text="@string/using_verification_code_identification"
+                tools:ignore="RtlSymmetry" />
 
             <Switch
                 android:id="@+id/wakelock_switch"
@@ -116,6 +127,7 @@
                 android:paddingLeft="3dp"
                 android:text="@string/wakelock"
                 tools:ignore="RtlSymmetry" />
+
             <Switch
                 android:id="@+id/doh_switch"
                 android:layout_width="match_parent"
@@ -129,19 +141,16 @@
                 android:id="@+id/get_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:alpha="0.8"
                 android:text="@string/get_recent_chat_id" />
 
             <Button
                 android:id="@+id/save"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:alpha="0.8"
                 android:text="@string/test_and_save" />
-            <Button
-                android:id="@+id/logcat_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/logcat" />
 
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+</FrameLayout>

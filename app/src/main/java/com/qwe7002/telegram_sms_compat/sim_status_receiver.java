@@ -25,7 +25,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 
 public class sim_status_receiver extends BroadcastReceiver {
-    static int last_status;
+    private static int last_status;
     @Override
     public void onReceive(Context context, Intent intent) {
         String message = context.getString(R.string.system_message_head) + "\n";

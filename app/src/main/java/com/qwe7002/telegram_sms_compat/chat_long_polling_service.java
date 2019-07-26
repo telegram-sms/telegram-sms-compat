@@ -22,7 +22,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -263,12 +262,8 @@ public class chat_long_polling_service extends Service {
                     if (!builder.toString().isEmpty()) {
                         result = builder.toString();
                     }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    return;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    return;
                 }
                 request_body.text = getString(R.string.system_message_head) + result;
                 break;

@@ -325,6 +325,7 @@ public class chat_long_polling_service extends Service {
     class stop_broadcast_receiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.i(public_func.log_tag, "Chat command:Received stop signal, quitting now...");
             stopSelf();
             android.os.Process.killProcess(android.os.Process.myPid());
         }

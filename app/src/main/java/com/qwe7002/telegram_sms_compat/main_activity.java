@@ -321,7 +321,7 @@ public class main_activity extends AppCompatActivity {
                 file_name = context.getString(R.string.privacy_policy_url);
                 break;
         }
-        Uri uri = Uri.parse("https://get-tg-sms.reall.uk/get/wiki/" + file_name);
+        Uri uri = Uri.parse("https://get-telegram-sms.reall.uk/get/wiki/" + file_name);
 
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         builder.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary));

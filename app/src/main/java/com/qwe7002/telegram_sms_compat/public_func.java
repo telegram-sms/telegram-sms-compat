@@ -271,12 +271,6 @@ class public_func {
 
 
 
-    static void write_log(Context context, String log) {
-        Log.i(public_func.log_tag, log);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
-        Date ts = new Date(System.currentTimeMillis());
-        append_file(context, "error.log", "\n" + simpleDateFormat.format(ts) + " " + log);
-    }
 
     static String read_log(Context context) {
         return read_file(context, "error.log");
@@ -294,8 +288,23 @@ class public_func {
         public_func.write_file(context, "message.json", new Gson().toJson(message_list_obj));
     }
 
-    private static void append_file(Context context, String file_name, String write_string) {
-        private_write_file(context, file_name, write_string, Context.MODE_APPEND);
+    static void write_log(Context context, String log) {
+        Log.i(public_func.log_tag, log);
+        int new_file_mode = Context.MODE_PRIVATE;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
+        Date ts = new Date(System.currentTimeMillis());
+        String write_string = "\n" + simpleDateFormat.format(ts) + " " + log;
+        try {
+            FileInputStream file_stream = context.openFileInput("error.log");
+            if (file_stream.available() <= 1048576) {
+                new_file_mode = Context.MODE_APPEND;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            write_string = "\n" + simpleDateFormat.format(ts) + " Create a new log file." + write_string;
+        }
+
+        private_write_file(context, "error.log", write_string, new_file_mode);
     }
 
     static void write_file(Context context, String file_name, String write_string) {

@@ -5,6 +5,6 @@ class message_json {
     final boolean disable_web_page_preview = true;
     String parse_mode;
     String chat_id;
-    int message_id = -1;
+    long message_id;
     String text;
 }

@@ -44,7 +44,7 @@ public class sms_send_receiver extends BroadcastReceiver {
         request_body.chat_id = chat_id;
         String request_uri = public_func.get_url(bot_token, "sendMessage");
 
-        int message_id = Integer.parseInt(Objects.requireNonNull(extras.getString("message_id")));
+        long message_id = Long.parseLong(Objects.requireNonNull(extras.getString("message_id")));
         if (message_id != -1) {
             request_uri = public_func.get_url(bot_token, "editMessageText");
             request_body.message_id = message_id;

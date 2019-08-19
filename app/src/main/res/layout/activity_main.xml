@@ -120,15 +120,6 @@
                 tools:ignore="RtlSymmetry" />
 
             <Switch
-                android:id="@+id/wakelock_switch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="3dp"
-                android:paddingLeft="3dp"
-                android:text="@string/wakelock"
-                tools:ignore="RtlSymmetry" />
-
-            <Switch
                 android:id="@+id/doh_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

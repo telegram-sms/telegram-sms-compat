@@ -60,7 +60,6 @@ public class main_activity extends AppCompatActivity {
         final Switch doh_switch = findViewById(R.id.doh_switch);
         final Switch charger_status = findViewById(R.id.charger_status);
         final Switch verification_code = findViewById(R.id.verification_code_switch);
-        final Switch wakelock_switch = findViewById(R.id.wakelock_switch);
         final Button save_button = findViewById(R.id.save);
         final Button get_id = findViewById(R.id.get_id);
 
@@ -87,13 +86,7 @@ public class main_activity extends AppCompatActivity {
         verification_code.setChecked(sharedPreferences.getBoolean("verification_code", false));
         verification_code.setEnabled(chat_command.isChecked());
         doh_switch.setChecked(sharedPreferences.getBoolean("doh_switch", true));
-        wakelock_switch.setChecked(sharedPreferences.getBoolean("wakelock", false));
-        wakelock_switch.setEnabled(chat_command.isChecked());
-
-        chat_command.setOnClickListener(v -> {
-            wakelock_switch.setEnabled(chat_command.isChecked());
-            verification_code.setEnabled(chat_command.isChecked());
-        });
+        chat_command.setOnClickListener(v -> verification_code.setEnabled(chat_command.isChecked()));
 
         trusted_phone_number.addTextChangedListener(new TextWatcher() {
             @Override
@@ -286,7 +279,6 @@ public class main_activity extends AppCompatActivity {
                     editor.putBoolean("battery_monitoring_switch", battery_monitoring_switch.isChecked());
                     editor.putBoolean("verification_code", verification_code.isChecked());
                     editor.putBoolean("doh_switch", doh_switch.isChecked());
-                    editor.putBoolean("wakelock", wakelock_switch.isChecked());
                     editor.putBoolean("initialized", true);
                     editor.apply();
                     public_func.stop_all_service(context);

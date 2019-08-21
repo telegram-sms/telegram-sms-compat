@@ -13,6 +13,7 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.github.sumimakito.codeauxlib.CodeauxLibPortable;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -41,15 +42,13 @@ import okhttp3.Response;
 import okhttp3.TlsVersion;
 import okhttp3.dnsoverhttps.DnsOverHttps;
 
-import static android.content.Context.MODE_PRIVATE;
-
 
 class public_func {
     static final String log_tag = "telegram-sms";
     static final String network_error = "Send Message:No network connection.";
     static final String broadcast_stop_service = "com.qwe7002.telegram_sms.stop_all";
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private static final code_aux_lib parser = new code_aux_lib();
+    private static final CodeauxLibPortable parser = new CodeauxLibPortable();
     static String get_send_phone_number(String phone_number) {
         return phone_number.trim()
                 .replace(" ", "")
@@ -175,7 +174,7 @@ class public_func {
             write_log(context, "[" + send_to + "] is an illegal phone number.");
             return;
         }
-        SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("data", android.content.Context.MODE_PRIVATE);
         String bot_token = sharedPreferences.getString("bot_token", "");
         String chat_id = sharedPreferences.getString("chat_id", "");
         String request_uri = public_func.get_url(bot_token, "sendMessage");
@@ -216,7 +215,7 @@ class public_func {
     }
 
     static void send_fallback_sms(Context context, String content) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("data", android.content.Context.MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("fallback_sms", false)) {
             return;
         }
@@ -285,7 +284,7 @@ class public_func {
         JsonObject object = new JsonObject();
         object.addProperty("phone", phone);
         message_list_obj.add(message_id, object);
-        public_func.write_file(context, "message.json", new Gson().toJson(message_list_obj), MODE_PRIVATE);
+        public_func.write_file(context, "message.json", new Gson().toJson(message_list_obj), android.content.Context.MODE_PRIVATE);
     }
 
     static void write_log(Context context, String log) {

@@ -217,12 +217,14 @@ class public_func {
     static void send_fallback_sms(Context context, String content) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("data", android.content.Context.MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("fallback_sms", false)) {
+            Log.d(log_tag, "send_fallback_sms: No fallback number.");
             return;
         }
         android.telephony.SmsManager sms_manager = android.telephony.SmsManager.getDefault();
         ArrayList<String> divideContents = sms_manager.divideMessage(content);
-        sms_manager.sendMultipartTextMessage(sharedPreferences.getString("trusted_phone_number", null), null, divideContents, null, null);
-
+        String trust_number = sharedPreferences.getString("trusted_phone_number", null);
+        assert trust_number != null;
+        sms_manager.sendMultipartTextMessage(trust_number, null, divideContents, null, null);
     }
 
     static String get_message_id(String result) {

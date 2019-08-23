@@ -39,8 +39,6 @@ public class call_receiver extends BroadcastReceiver {
         call_state_listener custom_phone_listener = new call_state_listener(context, incoming_number);
         assert telephony != null;
         telephony.listen(custom_phone_listener, PhoneStateListener.LISTEN_CALL_STATE);
-
-
     }
 }
 
@@ -91,14 +89,13 @@ class call_state_listener extends PhoneStateListener {
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    assert response.body() != null;
                     if (response.code() != 200) {
-                        assert response.body() != null;
+
                         String error_message = error_head + response.code() + " " + response.body().string();
                         public_func.write_log(context, error_message);
                         public_func.send_fallback_sms(context, request_body.text);
-                    }
-                    if (response.code() == 200) {
-                        assert response.body() != null;
+                    } else {
                         String result = response.body().string();
                         JsonObject result_obj = new JsonParser().parse(result).getAsJsonObject().get("result").getAsJsonObject();
                         String message_id = result_obj.get("message_id").getAsString();

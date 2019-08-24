@@ -80,7 +80,7 @@ public class sms_receiver extends BroadcastReceiver {
                 public_func.start_service(context.getApplicationContext(), sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
                 request_body.text = context.getString(R.string.system_message_head) + "\n" + context.getString(R.string.restart_service);
             }
-            if (public_func.is_numeric(msg_send_to) && msg_send_list.length != 1) {
+            if (public_func.is_phone_number(msg_send_to) && msg_send_list.length != 1) {
                 StringBuilder msg_send_content = new StringBuilder();
                 for (int i = 1; i < msg_send_list.length; i++) {
                     if (msg_send_list.length != 2 && i != 1) {
@@ -128,7 +128,7 @@ public class sms_receiver extends BroadcastReceiver {
                     public_func.write_log(context, error_message);
                     public_func.send_fallback_sms(context, raw_request_body_text);
                 } else {
-                    if (public_func.is_numeric(msg_address)) {
+                    if (public_func.is_phone_number(msg_address)) {
                         public_func.add_message_list(context, public_func.get_message_id(response.body().string()), msg_address);
                     }
                 }

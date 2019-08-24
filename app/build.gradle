@@ -10,8 +10,8 @@ android {
         minSdkVersion 16
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 21
-        versionCode appVersionCode
-        versionName appVersionName
+        versionCode System.getenv("VERSION_CODE") == null ? 1 : System.getenv("VERSION_CODE").toInteger()
+        versionName System.getenv("VERSION_NAME") == null ? "debug-Do_not_leak" : System.getenv("VERSION_NAME")
     }
 
     compileOptions {

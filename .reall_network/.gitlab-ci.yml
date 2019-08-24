@@ -19,7 +19,7 @@ release_github:
 
 
 build:
-    image: preventis/docker-android-alpine:latest
+    image: jangrewe/gitlab-ci-android:latest
     stage: build
     script:
         - export VERSION_CODE=${CI_PIPELINE_ID}

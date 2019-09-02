@@ -58,7 +58,6 @@ public class main_activity extends AppCompatActivity {
         final Switch fallback_sms = findViewById(R.id.fallback_sms);
         final Switch battery_monitoring_switch = findViewById(R.id.battery_monitoring);
         final Switch doh_switch = findViewById(R.id.doh_switch);
-        final Switch charger_status = findViewById(R.id.charger_status);
         final Switch verification_code = findViewById(R.id.verification_code_switch);
         final Button save_button = findViewById(R.id.save);
         final Button get_id = findViewById(R.id.get_id);
@@ -76,8 +75,6 @@ public class main_activity extends AppCompatActivity {
         trusted_phone_number.setText(sharedPreferences.getString("trusted_phone_number", ""));
         battery_monitoring_switch.setChecked(sharedPreferences.getBoolean("battery_monitoring_switch", false));
 
-        charger_status.setEnabled(battery_monitoring_switch.isChecked());
-        charger_status.setChecked(sharedPreferences.getBoolean("charger_status", false));
         fallback_sms.setChecked(sharedPreferences.getBoolean("fallback_sms", false));
         if (trusted_phone_number.length() == 0) {
             fallback_sms.setEnabled(false);
@@ -88,7 +85,6 @@ public class main_activity extends AppCompatActivity {
         verification_code.setEnabled(chat_command.isChecked());
         doh_switch.setChecked(sharedPreferences.getBoolean("doh_switch", true));
         chat_command.setOnClickListener(v -> verification_code.setEnabled(chat_command.isChecked()));
-        battery_monitoring_switch.setOnClickListener(v -> charger_status.setEnabled(battery_monitoring_switch.isChecked()));
         trusted_phone_number.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

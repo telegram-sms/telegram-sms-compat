@@ -47,7 +47,6 @@ public class battery_monitoring_service extends Service {
         chat_id = sharedPreferences.getString("chat_id", "");
         bot_token = sharedPreferences.getString("bot_token", "");
         doh_switch = sharedPreferences.getBoolean("doh_switch", true);
-        boolean charger_status = sharedPreferences.getBoolean("charger_status", false);
         IntentFilter intentFilter = new IntentFilter(public_func.broadcast_stop_service);
         stop_broadcast_receiver = new stop_broadcast_receiver();
 
@@ -55,10 +54,8 @@ public class battery_monitoring_service extends Service {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_BATTERY_OKAY);
         filter.addAction(Intent.ACTION_BATTERY_LOW);
-        if (charger_status) {
-            filter.addAction(Intent.ACTION_POWER_CONNECTED);
-            filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
-        }
+        filter.addAction(Intent.ACTION_POWER_CONNECTED);
+        filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
         registerReceiver(battery_receiver, filter);
         registerReceiver(stop_broadcast_receiver, intentFilter);
 

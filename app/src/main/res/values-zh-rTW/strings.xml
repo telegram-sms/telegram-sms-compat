@@ -51,7 +51,6 @@
     <string name="sim_card_remove">SIM卡被移除。</string>
     <string name="sim_card_lock">SIM卡被锁定。</string>
     <string name="no_logs">無日誌。</string>
-    <string name="charger_status">監控充電器狀態</string>
     <string name="using_verification_code_identification">驗證碼自動提取(Alpha)</string>
     <string name="user_manual">用戶手冊</string>
     <string name="privacy_policy">隱私條款</string>

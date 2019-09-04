@@ -252,14 +252,11 @@ public class chat_long_polling_service extends Service {
                         public_func.send_sms(context, msg_send_to, msg_send_content.toString());
                         return;
                     }
-                }
-                has_command = true;
-                if (msg_send_list.length == 1) {
+                    has_command = true;
+                } else {
                     send_sms_status = 0;
-                    request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.enter_number);
                     has_command = false;
                 }
-
                 break;
             default:
                 if (!message_obj.get("chat").getAsJsonObject().get("type").getAsString().equals("private")) {
@@ -273,6 +270,8 @@ public class chat_long_polling_service extends Service {
             switch (send_sms_status) {
                 case 0:
                     send_sms_status = 1;
+                    request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.enter_number);
+                    Log.i(public_func.log_tag, "receive_handle: Enter the interactive SMS sending mode.");
                     break;
                 case 1:
                     String temp_to = public_func.get_send_phone_number(request_msg);

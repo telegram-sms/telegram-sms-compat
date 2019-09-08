@@ -69,10 +69,11 @@ public class chat_long_polling_service extends Service {
         okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));
 
         wifiLock = ((WifiManager) Objects.requireNonNull(context.getApplicationContext().getSystemService(Context.WIFI_SERVICE))).createWifiLock(WifiManager.WIFI_MODE_FULL, "bot_command_polling_wifi");
-        wifiLock.acquire();
-
         wakelock = ((PowerManager) Objects.requireNonNull(context.getSystemService(Context.POWER_SERVICE))).newWakeLock(android.os.PowerManager.PARTIAL_WAKE_LOCK, "bot_command_polling");
         wakelock.setReferenceCounted(false);
+        if(!wifiLock.isHeld()){
+            wifiLock.acquire();
+        }
         if (!wakelock.isHeld()) {
             wakelock.acquire();
         }

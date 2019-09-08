@@ -243,8 +243,10 @@ class public_func {
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(notification_name + context.getString(R.string.service_is_running));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            //noinspection deprecation
             return result_builder.setPriority(Notification.PRIORITY_MIN).build();
         }
+        //noinspection deprecation
         return result_builder.getNotification();
     }
 
@@ -291,7 +293,7 @@ class public_func {
     }
 
     @SuppressWarnings("WeakerAccess")
-    static String read_file_last_line(Context context, String file, int line) {
+    static String read_file_last_line(Context context, @SuppressWarnings("SameParameterValue") String file, int line) {
         StringBuilder builder = new StringBuilder();
         try {
             FileInputStream file_stream = context.openFileInput(file);
@@ -330,12 +332,13 @@ class public_func {
         }
     }
 
-    static String read_file(Context context, String file_name) {
+    static String read_file(Context context, @SuppressWarnings("SameParameterValue") String file_name) {
         String result = "";
         try {
             FileInputStream file_stream = context.openFileInput(file_name);
             int length = file_stream.available();
             byte[] buffer = new byte[length];
+            //noinspection ResultOfMethodCallIgnored
             file_stream.read(buffer);
             result = new String(buffer);
             file_stream.close();

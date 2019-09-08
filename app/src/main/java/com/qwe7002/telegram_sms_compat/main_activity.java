@@ -322,7 +322,7 @@ public class main_activity extends AppCompatActivity {
                 file_name = "/donate";
         }
         assert file_name != null;
-        Uri uri = Uri.parse("https://get-telegram-sms.reall.uk/get" + file_name);
+        Uri uri = Uri.parse("https://get-telegram-sms.reall.uk" + file_name);
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         builder.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary));
         CustomTabsIntent customTabsIntent = builder.build();

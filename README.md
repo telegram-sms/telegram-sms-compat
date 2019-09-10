@@ -1,7 +1,7 @@
 # Telegram SMS compat
 
 ![pipeline status](https://badges.git.reallct.com/qwe7002/telegram-sms_outdated_android/badges/master/pipeline.svg)
-![Min Android Version](https://img.shields.io/badge/Min%20Android%20Version-4.1+-red.svg)
+![Min Android Version](https://img.shields.io/badge/Min%20Android%20Version-4.1-red.svg)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/telegram-sms/telegram-sms-compat/blob/master/LICENSE)
 
 A robot running on your outdated Android device. 
@@ -10,7 +10,7 @@ You can come [https://reall.uk](https://reall.uk) to submit an issue or discuss 
 
 [Download](https://github.com/telegram-sms/telegram-sms-compat/releases)
 
-[Android 5.1 or higher? Click here to download bthe latest and greatest.](https://github.com/telegram-sms/telegram-sms)
+[Android 5.1 or higher? Click here to download the latest and greatest.](https://github.com/telegram-sms/telegram-sms)
 
 **This is a compatible version of Telegram SMS, designed for outdated phones. Some features are missing. If your phone system version is greater than or equal to 5.1, please use the version linked above.**
 
@@ -91,8 +91,8 @@ And finally, [sm.ms](https://sm.ms) for hosting images used in this page.
 
 ## Buy me a cup of coffee to help maintain this project further?
 
-- [via Patreon](https://www.patreon.com/user?u=16899295)
-- [via Paypal](https://paypal.me/nicoranshi)
+- [via Patreon](https://get-telegram-sms.reall.uk/donate/patreon)
+- [via Paypal](https://get-telegram-sms.reall.uk/donate/paypal)
 - [via Bitcoin](bitcoin:17wmCCzy7hSSENnRBfUBMUSi7kdHYePrae) (**17wmCCzy7hSSENnRBfUBMUSi7kdHYePrae**)
 - [via UnionPay(中国银联云闪付)](https://get-telegram-sms.reall.uk/donate/unionpay)
 - [via Alipay(支付宝)](https://get-telegram-sms.reall.uk/donate/alipay)

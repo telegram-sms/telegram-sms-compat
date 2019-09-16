@@ -14,16 +14,20 @@ release_github:
         - master
     stage: deploy
     script:
-        - git push --set-upstream https://${github_key}@github.com/telegram-sms/telegram-sms-compat.git HEAD:refs/heads/$CI_COMMIT_REF_NAME
-        - /opt/github-release-upload.sh github_api_token=${github_key} owner=telegram-sms repo=telegram-sms-compat tag=${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-$(date "+%Y%m%d%H%M") filename="./app/build/outputs/apk/release/app-release.apk" pre_release="false"
+        - eval $(ssh-agent -s)
+        - curl https://keystore.reallserver.cn/gitlab-sshkey/id_ecdsa -o deploy.key -u gitlab:${key_store_passwd}
+        - chmod 0600 deploy.key
+        - ssh-add deploy.key
+        - git push --set-upstream git@github.com:telegram-sms/telegram-sms-compat.git HEAD:refs/heads/$CI_COMMIT_REF_NAME
+        - /opt/github-release-upload.sh github_api_token="${github_key}" owner=telegram-sms repo=telegram-sms-compat tag=${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-$(date "+%Y%m%d%H%M") filename="./app/build/outputs/apk/release/app-release.apk" pre_release="false"
 
 
 build:
     image: jangrewe/gitlab-ci-android:latest
     stage: build
     script:
-        - export VERSION_CODE=${CI_PIPELINE_ID}
-        - export VERSION_NAME=${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}
+        - export VERSION_CODE="${CI_PIPELINE_ID}"
+        - export VERSION_NAME="${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}"
         - curl https://keystore.reallserver.cn/android/telegram-sms/keys.jks  -o app/keys.jks -u gitlab:${key_store_passwd}
         - export GRADLE_USER_HOME=$(pwd)/.gradle
         - touch $(pwd)/.gradle/gradle.properties && echo "org.gradle.daemon=true" >> $(pwd)/.gradle/gradle.properties

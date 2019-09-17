@@ -70,6 +70,7 @@ public class chat_long_polling_service extends Service {
 
         wifiLock = ((WifiManager) Objects.requireNonNull(context.getApplicationContext().getSystemService(Context.WIFI_SERVICE))).createWifiLock(WifiManager.WIFI_MODE_FULL, "bot_command_polling_wifi");
         wakelock = ((PowerManager) Objects.requireNonNull(context.getSystemService(Context.POWER_SERVICE))).newWakeLock(android.os.PowerManager.PARTIAL_WAKE_LOCK, "bot_command_polling");
+        wifiLock.setReferenceCounted(false);
         wakelock.setReferenceCounted(false);
         if(!wifiLock.isHeld()){
             wifiLock.acquire();
@@ -77,7 +78,6 @@ public class chat_long_polling_service extends Service {
         if (!wakelock.isHeld()) {
             wakelock.acquire();
         }
-
 
         new Thread(() -> {
             while (true) {

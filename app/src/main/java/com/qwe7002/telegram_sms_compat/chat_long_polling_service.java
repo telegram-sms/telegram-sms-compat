@@ -93,7 +93,6 @@ public class chat_long_polling_service extends Service {
         wakelock.release();
         unregisterReceiver(stop_broadcast_receiver);
         stopForeground(true);
-        wifiLock.release();
         super.onDestroy();
     }
 

@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -66,14 +65,13 @@ public class sms_receiver extends BroadcastReceiver {
         for (SmsMessage item : messages) {
             message_body.append(item.getMessageBody());
         }
-        String message_address = messages[0].getOriginatingAddress();
-
+        final String message_address = messages[0].getOriginatingAddress();
+        assert message_address != null;
+        final boolean trust_phone = message_address.contains(sharedPreferences.getString("trusted_phone_number", "trusted_phone_is_none"));
         final message_json request_body = new message_json();
         request_body.chat_id = chat_id;
-        assert message_address != null;
-
         String message_body_html = message_body.toString();
-        if (sharedPreferences.getBoolean("verification_code", false) && !message_address.contains(Objects.requireNonNull(sharedPreferences.getString("trusted_phone_number", "")))) {
+        if (sharedPreferences.getBoolean("verification_code", false) && !trust_phone) {
             String verification = public_func.get_verification_code(message_body.toString());
             if (verification != null) {
                 request_body.parse_mode = "html";
@@ -88,7 +86,7 @@ public class sms_receiver extends BroadcastReceiver {
         String raw_request_body_text = message_head + message_body;
         request_body.text = message_head + message_body_html;
 
-        if (message_address.contains(Objects.requireNonNull(sharedPreferences.getString("trusted_phone_number", "")))) {
+        if (trust_phone) {
             String[] msg_send_list = message_body.toString().split("\n");
             String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
             if (message_body.toString().equals("restart-service")) {

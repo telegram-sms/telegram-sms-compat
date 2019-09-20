@@ -29,7 +29,7 @@
     <string name="chat_command">Get chat command</string>
     <string name="unknown_command">Unknown command,type /help to get a list of available commands.</string>
     <string name="current_network_connection_status">Network status:</string>
-    <string name="battery_monitoring">Monitor battery level change</string>
+    <string name="battery_monitoring">Monitor battery change</string>
     <string name="trusted_phone_number_empty">Trusted phone number cannot be empty.</string>
     <string name="service_is_running" tools:ignore="TypographyEllipsis">Service is running...</string>
     <string name="battery_monitoring_notify">"Battery monitor "</string>

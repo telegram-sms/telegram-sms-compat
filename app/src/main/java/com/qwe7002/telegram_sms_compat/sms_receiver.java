@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -61,23 +62,40 @@ public class sms_receiver extends BroadcastReceiver {
             return;
         }
 
-        StringBuilder msgBody = new StringBuilder();
+        StringBuilder message_body = new StringBuilder();
         for (SmsMessage item : messages) {
-            msgBody.append(item.getMessageBody());
+            message_body.append(item.getMessageBody());
         }
-        String msg_address = messages[0].getOriginatingAddress();
+        String message_address = messages[0].getOriginatingAddress();
 
         final message_json request_body = new message_json();
         request_body.chat_id = chat_id;
-        request_body.text = "[" + context.getString(R.string.receive_sms_head) + "]" + "\n" + context.getString(R.string.from) + msg_address + "\n" + context.getString(R.string.content) + msgBody;
-        assert msg_address != null;
+        assert message_address != null;
 
-        if (msg_address.equals(sharedPreferences.getString("trusted_phone_number", null))) {
-            String[] msg_send_list = msgBody.toString().split("\n");
+        String message_body_html = message_body.toString();
+        if (sharedPreferences.getBoolean("verification_code", false) && !message_address.contains(Objects.requireNonNull(sharedPreferences.getString("trusted_phone_number", "")))) {
+            String verification = public_func.get_verification_code(message_body.toString());
+            if (verification != null) {
+                request_body.parse_mode = "html";
+                message_body_html = message_body.toString()
+                        .replace("<", "&lt;")
+                        .replace(">", "&gt;")
+                        .replace("&", "&amp;")
+                        .replace(verification, "<code>" + verification + "</code>");
+            }
+        }
+        String message_head = "[" + context.getString(R.string.receive_sms_head) + "]" + "\n" + context.getString(R.string.from) + message_address + "\n" + context.getString(R.string.content);
+        String raw_request_body_text = message_head + message_body;
+        request_body.text = message_head + message_body_html;
+
+        if (message_address.contains(Objects.requireNonNull(sharedPreferences.getString("trusted_phone_number", "")))) {
+            String[] msg_send_list = message_body.toString().split("\n");
             String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
-            if (msgBody.toString().equals("restart-service")) {
-                public_func.stop_all_service(context.getApplicationContext());
-                public_func.start_service(context.getApplicationContext(), sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
+            if (message_body.toString().equals("restart-service")) {
+                new Thread(() -> {
+                    public_func.stop_all_service(context.getApplicationContext());
+                    public_func.start_service(context.getApplicationContext(), sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
+                });
                 request_body.text = context.getString(R.string.system_message_head) + "\n" + context.getString(R.string.restart_service);
             }
             if (public_func.is_phone_number(msg_send_to) && msg_send_list.length != 1) {
@@ -97,14 +115,6 @@ public class sms_receiver extends BroadcastReceiver {
             public_func.write_log(context, public_func.network_error);
             public_func.send_fallback_sms(context, request_body.text);
             return;
-        }
-        String raw_request_body_text = request_body.text;
-        if (sharedPreferences.getBoolean("verification_code", false)) {
-            String verification = public_func.get_verification_code(msgBody.toString());
-            if (verification != null) {
-                request_body.parse_mode = "html";
-                request_body.text = request_body.text.replace(verification, "<code>" + verification + "</code>");
-            }
         }
         String request_body_json = new Gson().toJson(request_body);
         RequestBody body = RequestBody.create(public_func.JSON, request_body_json);
@@ -128,8 +138,8 @@ public class sms_receiver extends BroadcastReceiver {
                     public_func.write_log(context, error_message);
                     public_func.send_fallback_sms(context, raw_request_body_text);
                 } else {
-                    if (public_func.is_phone_number(msg_address)) {
-                        public_func.add_message_list(context, public_func.get_message_id(response.body().string()), msg_address);
+                    if (public_func.is_phone_number(message_address)) {
+                        public_func.add_message_list(context, public_func.get_message_id(response.body().string()), message_address);
                     }
                 }
             }

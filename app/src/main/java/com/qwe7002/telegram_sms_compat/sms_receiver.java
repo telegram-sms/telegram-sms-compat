@@ -67,7 +67,11 @@ public class sms_receiver extends BroadcastReceiver {
         }
         final String message_address = messages[0].getOriginatingAddress();
         assert message_address != null;
-        final boolean trust_phone = message_address.contains(sharedPreferences.getString("trusted_phone_number", "trusted_phone_is_none"));
+        String trusted_phone_number = sharedPreferences.getString("trusted_phone_number", null);
+        boolean trust_phone = false;
+        if (trusted_phone_number != null && trusted_phone_number.length() != 0) {
+            trust_phone = message_address.contains(trusted_phone_number);
+        }
         final message_json request_body = new message_json();
         request_body.chat_id = chat_id;
         String message_body_html = message_body.toString();

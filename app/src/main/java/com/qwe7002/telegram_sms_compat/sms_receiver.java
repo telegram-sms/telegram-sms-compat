@@ -27,11 +27,8 @@ import static android.content.Context.MODE_PRIVATE;
 public class sms_receiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         Log.d(public_func.log_tag, "onReceive: " + intent.getAction());
-        Bundle bundle = intent.getExtras();
-        if (bundle == null) {
-            Log.d(public_func.log_tag, "reject: Error Extras.");
-            return;
-        }
+        Bundle extras = intent.getExtras();
+        assert extras != null;
         boolean is_default = false;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             is_default = Telephony.Sms.getDefaultSmsPackage(context).equals(context.getPackageName());
@@ -49,7 +46,7 @@ public class sms_receiver extends BroadcastReceiver {
         String bot_token = sharedPreferences.getString("bot_token", "");
         String chat_id = sharedPreferences.getString("chat_id", "");
         String request_uri = public_func.get_url(bot_token, "sendMessage");
-        Object[] pdus = (Object[]) bundle.get("pdus");
+        Object[] pdus = (Object[]) extras.get("pdus");
         assert pdus != null;
         final SmsMessage[] messages = new SmsMessage[pdus.length];
         for (int i = 0; i < pdus.length; i++) {
@@ -68,14 +65,14 @@ public class sms_receiver extends BroadcastReceiver {
         final String message_address = messages[0].getOriginatingAddress();
         assert message_address != null;
         String trusted_phone_number = sharedPreferences.getString("trusted_phone_number", null);
-        boolean trust_phone = false;
+        boolean trusted_phone = false;
         if (trusted_phone_number != null && trusted_phone_number.length() != 0) {
-            trust_phone = message_address.contains(trusted_phone_number);
+            trusted_phone = message_address.contains(trusted_phone_number);
         }
         final message_json request_body = new message_json();
         request_body.chat_id = chat_id;
         String message_body_html = message_body.toString();
-        if (sharedPreferences.getBoolean("verification_code", false) && !trust_phone) {
+        if (sharedPreferences.getBoolean("verification_code", false) && !trusted_phone) {
             String verification = public_func.get_verification_code(message_body.toString());
             if (verification != null) {
                 request_body.parse_mode = "html";
@@ -90,7 +87,7 @@ public class sms_receiver extends BroadcastReceiver {
         String raw_request_body_text = message_head + message_body;
         request_body.text = message_head + message_body_html;
 
-        if (trust_phone) {
+        if (trusted_phone) {
             String[] msg_send_list = message_body.toString().split("\n");
             String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
             if (message_body.toString().equals("restart-service")) {

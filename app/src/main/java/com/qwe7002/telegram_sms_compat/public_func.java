@@ -363,4 +363,5 @@ class public_func {
         message_list_obj.add(message_id, object);
         public_func.write_file(context, "message.json", new Gson().toJson(message_list_obj), android.content.Context.MODE_PRIVATE);
     }
+
 }

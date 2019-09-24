@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.Editable;
@@ -49,6 +50,16 @@ public class main_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Unsupported API version");
+            builder.setMessage("Current phone version is larger than API 21, please use Telegram sms.");
+            builder.setCancelable(false);
+            builder.setPositiveButton("ok", (dialog, which) -> finish());
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
         final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
 
         final EditText chat_id = findViewById(R.id.chat_id);

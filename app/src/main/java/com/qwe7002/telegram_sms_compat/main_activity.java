@@ -50,6 +50,7 @@ public class main_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("Unsupported API version");

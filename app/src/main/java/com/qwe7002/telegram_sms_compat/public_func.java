@@ -17,6 +17,7 @@ import com.github.sumimakito.codeauxlib.CodeauxLibPortable;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.squareup.okhttp3.extend.Tls12SocketFactory;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,12 +26,17 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
 
 import okhttp3.Call;
 import okhttp3.CipherSuite;
@@ -75,17 +81,19 @@ class public_func {
 
     static OkHttpClient get_okhttp_obj(boolean doh_switch) {
         ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.TLS_1_3)
                 .cipherSuites(
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
                         CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-                        CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
-                        CipherSuite.TLS_AES_256_GCM_SHA384,
-                        CipherSuite.TLS_AES_128_GCM_SHA256
+                        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
+                        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
                 )
+                .tlsVersions(TlsVersion.TLS_1_2)
                 .build();
         OkHttpClient.Builder okhttp = new OkHttpClient.Builder()
                 .connectTimeout(15, TimeUnit.SECONDS)
@@ -93,8 +101,25 @@ class public_func {
                 .writeTimeout(15, TimeUnit.SECONDS)
                 .connectionSpecs(Collections.singletonList(spec))
                 .retryOnConnectionFailure(true);
+        SSLContext sc = null;
+        try {
+            sc = SSLContext.getInstance("TLSv1.2");
+            sc.init(null, null, null);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
+        assert sc != null;
+        //noinspection deprecation
+        okhttp.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
+        List<ConnectionSpec> specs = new ArrayList<>();
+        specs.add(spec);
+        specs.add(ConnectionSpec.COMPATIBLE_TLS);
+        specs.add(ConnectionSpec.CLEARTEXT);
+        okhttp.connectionSpecs(specs);
         if (doh_switch) {
-            okhttp.dns(new DnsOverHttps.Builder().client(new OkHttpClient.Builder().retryOnConnectionFailure(true).connectionSpecs(Collections.singletonList(spec)).build())
+            okhttp.dns(new DnsOverHttps.Builder().client(okhttp.build())
                     .url(HttpUrl.get("https://cloudflare-dns.com/dns-query"))
                     .bootstrapDnsHosts(getByIp("1.0.0.1"), getByIp("9.9.9.9"), getByIp("185.222.222.222"), getByIp("2606:4700:4700::1001"), getByIp("2620:fe::fe"), getByIp("2a09::"))
                     .includeIPv6(true)

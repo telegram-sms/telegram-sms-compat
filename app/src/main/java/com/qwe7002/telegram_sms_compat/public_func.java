@@ -30,7 +30,6 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -80,39 +79,52 @@ class public_func {
     }
 
     static OkHttpClient get_okhttp_obj(boolean doh_switch) {
-        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                .cipherSuites(
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-                        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
-                        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
-                )
-                .tlsVersions(TlsVersion.TLS_1_2)
-                .build();
+        ConnectionSpec spec;
         OkHttpClient.Builder okhttp = new OkHttpClient.Builder()
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .readTimeout(15, TimeUnit.SECONDS)
                 .writeTimeout(15, TimeUnit.SECONDS)
-                .connectionSpecs(Collections.singletonList(spec))
                 .retryOnConnectionFailure(true);
-        SSLContext sc = null;
-        try {
-            sc = SSLContext.getInstance("TLSv1.2");
-            sc.init(null, null, null);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                    .cipherSuites(
+                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
+                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+                            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
+                            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+                    )
+                    .tlsVersions(TlsVersion.TLS_1_2)
+                    .build();
+            SSLContext sc = null;
+            try {
+                sc = SSLContext.getInstance("TLSv1.2");
+                sc.init(null, null, null);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (KeyManagementException e) {
+                e.printStackTrace();
+            }
+            assert sc != null;
+            //noinspection deprecation
+            okhttp.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
+        } else {
+            spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                    .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1)
+                    .cipherSuites(
+                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+                            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+                    ).build();
+
         }
-        assert sc != null;
-        //noinspection deprecation
-        okhttp.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
         List<ConnectionSpec> specs = new ArrayList<>();
         specs.add(spec);
         specs.add(ConnectionSpec.COMPATIBLE_TLS);

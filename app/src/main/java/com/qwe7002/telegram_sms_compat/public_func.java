@@ -87,11 +87,7 @@ class public_func {
                         CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
                         CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
                         CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
-                        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+                        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA
                 )
                 .tlsVersions(TlsVersion.TLS_1_2)
                 .build();
@@ -119,7 +115,20 @@ class public_func {
         specs.add(ConnectionSpec.CLEARTEXT);
         okhttp.connectionSpecs(specs);
         if (doh_switch) {
-            okhttp.dns(new DnsOverHttps.Builder().client(okhttp.build())
+            ConnectionSpec spec_doh = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                    .cipherSuites(
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+                    )
+                    .tlsVersions(TlsVersion.TLS_1_2)
+                    .build();
+            List<ConnectionSpec> specs_doh = new ArrayList<>();
+            specs_doh.add(spec_doh);
+            specs_doh.add(ConnectionSpec.COMPATIBLE_TLS);
+            specs_doh.add(ConnectionSpec.CLEARTEXT);
+            okhttp.dns(new DnsOverHttps.Builder().client(okhttp.connectionSpecs(specs_doh).build())
                     .url(HttpUrl.get("https://cloudflare-dns.com/dns-query"))
                     .bootstrapDnsHosts(getByIp("1.0.0.1"), getByIp("9.9.9.9"), getByIp("185.222.222.222"), getByIp("2606:4700:4700::1001"), getByIp("2620:fe::fe"), getByIp("2a09::"))
                     .includeIPv6(true)

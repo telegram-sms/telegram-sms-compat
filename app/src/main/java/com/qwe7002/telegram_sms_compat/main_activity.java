@@ -44,15 +44,12 @@ import okhttp3.Response;
 
 public class main_activity extends AppCompatActivity {
     private Context context = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        context = getApplicationContext();
-
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Unsupported API version");
             builder.setMessage("Current phone version is larger than API 21, please use Telegram sms.");
             builder.setCancelable(false);
@@ -60,18 +57,17 @@ public class main_activity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Current program has security risks");
-            builder.setMessage("Your current system does not support the TLS1.2 protocol and TLS1.1/TLS1.0 will be used instead. This may cause security or compatibility issues. Please update the system version to Android 4.1 or above.");
+            builder.setMessage("Your current system does not support TLS1.2 protocol and TLS1.1/TLS1.0 will be used instead. This may cause security or compatibility issues. Please update the system version to Android 4.1 or above.");
             builder.setCancelable(false);
             builder.setPositiveButton("ok", null);
             AlertDialog dialog = builder.create();
             dialog.show();
         }
-
+        context = getApplicationContext();
         final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-
         final EditText chat_id = findViewById(R.id.chat_id);
         final EditText bot_token = findViewById(R.id.bot_token);
         final EditText trusted_phone_number = findViewById(R.id.trusted_phone_number);

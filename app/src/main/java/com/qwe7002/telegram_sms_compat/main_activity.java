@@ -60,6 +60,15 @@ public class main_activity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Current program has security risks");
+            builder.setMessage("Your current system does not support the TLS1.2 protocol and TLS1.1/TLS1.0 will be used instead. This may cause security or compatibility issues. Please update the system version to Android 4.1 or above.");
+            builder.setCancelable(false);
+            builder.setPositiveButton("ok", null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
 
         final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
 

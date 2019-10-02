@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
+import android.os.BatteryManager;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
@@ -229,10 +230,13 @@ public class chat_long_polling_service extends Service {
         boolean has_command = false;
         switch (command) {
             case "/help":
+            case "/start":
+                request_body.text = getString(R.string.system_message_head) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms);
+                has_command = true;
+                break;
             case "/ping":
             case "/getinfo":
-            case "/start":
-                request_body.text = getString(R.string.system_message_head) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms);
+                request_body.text = getString(R.string.system_message_head) + "\n" + context.getString(R.string.current_battery_level) + get_battery_info(context) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context);
                 has_command = true;
                 break;
             case "/log":
@@ -321,6 +325,36 @@ public class chat_long_polling_service extends Service {
         });
     }
 
+    String get_battery_info(Context context) {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, filter);
+        assert batteryStatus != null;
+        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        int battery_level = (int) ((level / (float) scale) * 100);
+        if (battery_level > 100) {
+            battery_level = 100;
+        }
+
+        String battery_level_string = battery_level + "%";
+        int charge_status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        switch (charge_status) {
+            case BatteryManager.BATTERY_STATUS_CHARGING:
+            case BatteryManager.BATTERY_STATUS_FULL:
+                battery_level_string += " (" + context.getString(R.string.charging) + ")";
+                break;
+            case BatteryManager.BATTERY_STATUS_DISCHARGING:
+            case BatteryManager.BATTERY_STATUS_NOT_CHARGING:
+                int plug_status = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+                if (plug_status == BatteryManager.BATTERY_PLUGGED_AC || plug_status == BatteryManager.BATTERY_PLUGGED_USB || plug_status == BatteryManager.BATTERY_PLUGGED_WIRELESS) {
+                    battery_level_string += " (" + getString(R.string.not_charging) + ")";
+                }
+                break;
+        }
+
+        return battery_level_string;
+
+    }
     class stop_broadcast_receiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

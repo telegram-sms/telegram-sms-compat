@@ -67,7 +67,6 @@ public class logcat_activity extends AppCompatActivity {
         public void onEvent(int event, String path) {
             if (event == FileObserver.MODIFY && path.contains("error.log")) {
                 runOnUiThread(() -> logcat.setText(public_func.read_log(context, line)));
-
             }
         }
     }

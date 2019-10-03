@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -47,6 +48,7 @@ public class battery_monitoring_service extends Service {
         chat_id = sharedPreferences.getString("chat_id", "");
         bot_token = sharedPreferences.getString("bot_token", "");
         doh_switch = sharedPreferences.getBoolean("doh_switch", true);
+        final boolean charger_status = sharedPreferences.getBoolean("charger_status", false);
         IntentFilter intentFilter = new IntentFilter(public_func.broadcast_stop_service);
         stop_broadcast_receiver = new stop_broadcast_receiver();
 
@@ -54,8 +56,10 @@ public class battery_monitoring_service extends Service {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_BATTERY_OKAY);
         filter.addAction(Intent.ACTION_BATTERY_LOW);
-        filter.addAction(Intent.ACTION_POWER_CONNECTED);
-        filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+        if (charger_status) {
+            filter.addAction(Intent.ACTION_POWER_CONNECTED);
+            filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+        }
         registerReceiver(battery_receiver, filter);
         registerReceiver(stop_broadcast_receiver, intentFilter);
 
@@ -108,7 +112,16 @@ class battery_receiver extends BroadcastReceiver {
                 prebody.append(context.getString(R.string.charger_disconnect));
                 break;
         }
-        request_body.text = prebody.toString();
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, filter);
+        assert batteryStatus != null;
+        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        int battery_level = (int) ((level / (float) scale) * 100);
+        if (battery_level > 100) {
+            battery_level = 100;
+        }
+        request_body.text = prebody.append("\n").append(context.getString(R.string.current_battery_level)).append(battery_level).append("%").toString();
 
         if (public_func.check_network_status(context)) {
             public_func.write_log(context, public_func.network_error);

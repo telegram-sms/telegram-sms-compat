@@ -74,6 +74,7 @@ public class main_activity extends AppCompatActivity {
         final Switch chat_command = findViewById(R.id.chat_command);
         final Switch fallback_sms = findViewById(R.id.fallback_sms);
         final Switch battery_monitoring_switch = findViewById(R.id.battery_monitoring);
+        final Switch charger_status = findViewById(R.id.charger_status);
         final Switch doh_switch = findViewById(R.id.doh_switch);
         final Switch verification_code = findViewById(R.id.verification_code_switch);
         final Button save_button = findViewById(R.id.save);
@@ -91,6 +92,10 @@ public class main_activity extends AppCompatActivity {
 
         trusted_phone_number.setText(sharedPreferences.getString("trusted_phone_number", ""));
         battery_monitoring_switch.setChecked(sharedPreferences.getBoolean("battery_monitoring_switch", false));
+        battery_monitoring_switch.setChecked(sharedPreferences.getBoolean("battery_monitoring_switch", false));
+        battery_monitoring_switch.setOnClickListener(v -> charger_status.setEnabled(battery_monitoring_switch.isChecked()));
+        charger_status.setEnabled(battery_monitoring_switch.isChecked());
+        charger_status.setChecked(sharedPreferences.getBoolean("charger_status", false));
 
         fallback_sms.setChecked(sharedPreferences.getBoolean("fallback_sms", false));
         if (trusted_phone_number.length() == 0) {
@@ -300,6 +305,7 @@ public class main_activity extends AppCompatActivity {
                     editor.putBoolean("fallback_sms", fallback_sms.isChecked());
                     editor.putBoolean("chat_command", chat_command.isChecked());
                     editor.putBoolean("battery_monitoring_switch", battery_monitoring_switch.isChecked());
+                    editor.putBoolean("charger_status", charger_status.isChecked());
                     editor.putBoolean("verification_code", verification_code.isChecked());
                     editor.putBoolean("doh_switch", doh_switch.isChecked());
                     editor.putBoolean("initialized", true);

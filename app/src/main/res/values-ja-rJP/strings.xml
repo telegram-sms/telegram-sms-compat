@@ -60,4 +60,5 @@
     <string name="current_battery_level">バッテリー残量:</string>
     <string name="charging">充電中</string>
     <string name="not_charging">充電していません</string>
+    <string name="charger_status">充電器の状態を監視する</string>
 </resources>

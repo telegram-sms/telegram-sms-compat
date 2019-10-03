@@ -60,4 +60,5 @@
     <string name="current_battery_level">電池電量:</string>
     <string name="charging">正在充電</string>
     <string name="not_charging">不在充電</string>
+    <string name="charger_status">監控充電器狀態</string>
 </resources>

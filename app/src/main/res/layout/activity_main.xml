@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:alpha="0.15"
         android:scaleType="fitEnd"
+        android:id="@+id/background"
         app:srcCompat="@mipmap/character_set"
         tools:ignore="ContentDescription" />
 

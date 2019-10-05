@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,8 +61,7 @@ public class main_activity extends AppCompatActivity {
             dialog.show();
         }
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            ImageView background = findViewById(R.id.background);
-            background.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Current program has security risks");
             builder.setMessage("Your current system does not support TLS1.2 protocol and TLS1.1/TLS1.0 will be used instead. This may cause security or compatibility issues. Please update the system version to Android 4.1 or above.");
@@ -70,6 +70,12 @@ public class main_activity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
+
+        if (getResources().getDisplayMetrics().densityDpi < DisplayMetrics.DENSITY_XHIGH) {
+            ImageView background = findViewById(R.id.background);
+            background.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
+
         context = getApplicationContext();
 
         final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);

@@ -175,6 +175,7 @@ public class main_activity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
                     progress_dialog.cancel();
                     String error_message = error_head + e.getMessage();
                     Looper.prepare();
@@ -279,6 +280,7 @@ public class main_activity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    e.printStackTrace();
                     progress_dialog.cancel();
                     String error_message = error_head + e.getMessage();
                     public_func.write_log(context, error_message);

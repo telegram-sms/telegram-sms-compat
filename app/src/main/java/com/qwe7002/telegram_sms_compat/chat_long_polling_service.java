@@ -22,6 +22,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -47,6 +49,9 @@ public class chat_long_polling_service extends Service {
     private WifiManager.WifiLock wifiLock;
     private int send_sms_status = -1;
     private String send_to_temp;
+    private String message_type = "";
+    private String bot_username = "";
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Notification notification = public_func.get_notification_obj(getApplicationContext(), getString(R.string.chat_command_service_name));
@@ -79,7 +84,35 @@ public class chat_long_polling_service extends Service {
         if (!wakelock.isHeld()) {
             wakelock.acquire();
         }
+        int chat_int_id = 0;
+        try {
+            chat_int_id = Integer.parseInt(chat_id);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            //Avoid errors caused by unconvertible inputs.
+        }
+        if (chat_int_id < 0) {
+            OkHttpClient okhttp_client_new = okhttp_client;
+            String request_uri = public_func.get_url(bot_token, "getMe");
+            Request request = new Request.Builder().url(request_uri).build();
+            Call call = okhttp_client_new.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    e.printStackTrace();
+                    public_func.write_log(context, "Get username failed:" + e.getMessage());
+                }
 
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    JsonObject result_obj = new JsonParser().parse(Objects.requireNonNull(response.body()).string()).getAsJsonObject();
+                    if (result_obj.get("ok").getAsBoolean()) {
+                        bot_username = result_obj.get("result").getAsJsonObject().get("username").getAsString();
+                        Log.d(public_func.log_tag, "bot_username: " + bot_username);
+                    }
+                }
+            });
+        }
         new Thread(() -> {
             while (true) {
                 start_long_polling();
@@ -171,8 +204,10 @@ public class chat_long_polling_service extends Service {
         JsonObject message_obj = null;
         if (result_obj.has("message")) {
             message_obj = result_obj.get("message").getAsJsonObject();
+            message_type = message_obj.get("chat").getAsJsonObject().get("type").getAsString();
         }
         if (result_obj.has("channel_post")) {
+            message_type = "channel";
             message_obj = result_obj.get("channel_post").getAsJsonObject();
         }
         if (message_obj == null) {
@@ -183,6 +218,10 @@ public class chat_long_polling_service extends Service {
         JsonObject from_obj = null;
         if (message_obj.has("from")) {
             from_obj = message_obj.get("from").getAsJsonObject();
+            if (message_type.contains("group") && from_obj.get("is_bot").getAsBoolean()) {
+                Log.d(public_func.log_tag, "receive from bot.");
+                return;
+            }
         }
         if (message_obj.has("chat")) {
             from_obj = message_obj.get("chat").getAsJsonObject();
@@ -196,6 +235,7 @@ public class chat_long_polling_service extends Service {
         }
 
         String command = "";
+        String command_bot_username = "";
         String request_msg = "";
         if (message_obj.has("text")) {
             request_msg = message_obj.get("text").getAsString();
@@ -210,23 +250,33 @@ public class chat_long_polling_service extends Service {
                 String phone_number = message_item_obj.get("phone").getAsString();
                 public_func.send_sms(context, phone_number, request_msg);
                 return;
-
+            }
+            if (message_type.contains("group")) {
+                Log.d(public_func.log_tag, "receive_handle: The message id could not be found, ignored.");
+                return;
             }
         }
         if (message_obj.has("entities")) {
+            String temp_command;
             JsonArray entities_arr = message_obj.get("entities").getAsJsonArray();
             JsonObject entities_obj_command = entities_arr.get(0).getAsJsonObject();
             if (entities_obj_command.get("type").getAsString().equals("bot_command")) {
                 int command_offset = entities_obj_command.get("offset").getAsInt();
                 int command_end_offset = command_offset + entities_obj_command.get("length").getAsInt();
-                command = request_msg.substring(command_offset, command_end_offset).trim().toLowerCase();
-                if (command.contains("@")) {
-                    int command_at_location = command.indexOf("@");
-                    command = command.substring(0, command_at_location);
+                temp_command = request_msg.substring(command_offset, command_end_offset).trim().toLowerCase();
+                command = temp_command;
+                if (temp_command.contains("@")) {
+                    int command_at_location = temp_command.indexOf("@");
+                    command = temp_command.substring(0, command_at_location);
+                    command_bot_username = temp_command.substring(command_at_location + 1);
                 }
             }
         }
-        Log.d(public_func.log_tag, "receive_handle: " + command);
+        if (message_type.contains("group") && !command_bot_username.equals(bot_username)) {
+            Log.i(public_func.log_tag, "This is a Group conversation, but no conversation object was found.");
+            return;
+
+        }
         boolean has_command = false;
         switch (command) {
             case "/help":
@@ -310,6 +360,7 @@ public class chat_long_polling_service extends Service {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
                 String error_message = error_head + e.getMessage();
                 public_func.write_log(context, error_message);
             }

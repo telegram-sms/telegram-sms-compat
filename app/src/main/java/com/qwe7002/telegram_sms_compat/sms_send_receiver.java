@@ -79,6 +79,7 @@ public class sms_send_receiver extends BroadcastReceiver {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
                 String error_message = error_head + e.getMessage();
                 public_func.write_log(context, error_message);
                 public_func.send_fallback_sms(context, request_body.text);

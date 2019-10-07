@@ -62,5 +62,6 @@
     <string name="charging">Charging</string>
     <string name="not_charging">Not charging</string>
     <string name="charger_status">Monitor charger status</string>
+    <string name="failed_to_get_information">Failed to get information.</string>
 
 </resources>

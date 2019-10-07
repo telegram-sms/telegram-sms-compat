@@ -61,4 +61,5 @@
     <string name="charging">正在充电</string>
     <string name="not_charging">不在充电</string>
     <string name="charger_status">监控充电器状态</string>
+    <string name="failed_to_get_information">无法获取信息。</string>
 </resources>

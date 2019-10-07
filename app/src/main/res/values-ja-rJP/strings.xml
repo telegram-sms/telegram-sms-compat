@@ -61,4 +61,5 @@
     <string name="charging">充電中</string>
     <string name="not_charging">充電していません</string>
     <string name="charger_status">充電器の状態を監視する</string>
+    <string name="failed_to_get_information">情報を取得できません。</string>
 </resources>

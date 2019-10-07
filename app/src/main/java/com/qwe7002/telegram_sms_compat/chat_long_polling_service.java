@@ -49,7 +49,6 @@ public class chat_long_polling_service extends Service {
     private WifiManager.WifiLock wifiLock;
     private int send_sms_status = -1;
     private String send_to_temp;
-    private String message_type = "";
     private String bot_username = "";
 
     @Override
@@ -197,6 +196,7 @@ public class chat_long_polling_service extends Service {
     }
 
     private void receive_handle(JsonObject result_obj) {
+        String message_type = "";
         long update_id = result_obj.get("update_id").getAsLong();
         offset = update_id + 1;
         final message_json request_body = new message_json();
@@ -216,9 +216,10 @@ public class chat_long_polling_service extends Service {
             return;
         }
         JsonObject from_obj = null;
+        boolean message_type_is_group = message_type.contains("group");
         if (message_obj.has("from")) {
             from_obj = message_obj.get("from").getAsJsonObject();
-            if (message_type.contains("group") && from_obj.get("is_bot").getAsBoolean()) {
+            if (message_type_is_group && from_obj.get("is_bot").getAsBoolean()) {
                 Log.d(public_func.log_tag, "receive from bot.");
                 return;
             }
@@ -251,7 +252,7 @@ public class chat_long_polling_service extends Service {
                 public_func.send_sms(context, phone_number, request_msg);
                 return;
             }
-            if (message_type.contains("group")) {
+            if (message_type_is_group) {
                 Log.d(public_func.log_tag, "receive_handle: The message id could not be found, ignored.");
                 return;
             }
@@ -272,7 +273,7 @@ public class chat_long_polling_service extends Service {
                 }
             }
         }
-        if (message_type.contains("group") && !command_bot_username.equals(bot_username)) {
+        if (message_type_is_group && !command_bot_username.equals(bot_username)) {
             Log.i(public_func.log_tag, "This is a Group conversation, but no conversation object was found.");
             return;
 
@@ -282,6 +283,9 @@ public class chat_long_polling_service extends Service {
             case "/help":
             case "/start":
                 request_body.text = getString(R.string.system_message_head) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms);
+                if (message_type_is_group && !bot_username.equals("")) {
+                    request_body.text = request_body.text.replace(" -", "@" + bot_username + " -");
+                }
                 has_command = true;
                 break;
             case "/ping":
@@ -310,9 +314,12 @@ public class chat_long_polling_service extends Service {
                     }
                     has_command = true;
                 } else {
-                    send_sms_status = 0;
-                    has_command = false;
+                    if (!message_type_is_group) {
+                        send_sms_status = 0;
+                        has_command = false;
+                    }
                 }
+                request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.failed_to_get_information);
                 break;
             default:
                 if (!message_obj.get("chat").getAsJsonObject().get("type").getAsString().equals("private")) {
@@ -376,7 +383,7 @@ public class chat_long_polling_service extends Service {
         });
     }
 
-    String get_battery_info(Context context) {
+    private String get_battery_info(Context context) {
         IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = context.registerReceiver(null, filter);
         assert batteryStatus != null;

@@ -290,7 +290,7 @@ public class chat_long_polling_service extends Service {
                 break;
             case "/ping":
             case "/getinfo":
-                request_body.text = getString(R.string.system_message_head) + "\n" + context.getString(R.string.current_battery_level) + get_battery_info(context) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context);
+                request_body.text = getString(R.string.system_message_head) + "\n" + context.getString(R.string.current_battery_level) + get_battery_info(context) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + "\nSIM:" + public_func.get_sim_display_name(context);
                 has_command = true;
                 break;
             case "/log":
@@ -407,8 +407,12 @@ public class chat_long_polling_service extends Service {
             case BatteryManager.BATTERY_STATUS_DISCHARGING:
             case BatteryManager.BATTERY_STATUS_NOT_CHARGING:
                 int plug_status = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-                if (plug_status == BatteryManager.BATTERY_PLUGGED_AC || plug_status == BatteryManager.BATTERY_PLUGGED_USB || plug_status == BatteryManager.BATTERY_PLUGGED_WIRELESS) {
-                    battery_level_string += " (" + getString(R.string.not_charging) + ")";
+                switch (plug_status) {
+                    case BatteryManager.BATTERY_PLUGGED_AC:
+                    case BatteryManager.BATTERY_PLUGGED_USB:
+                    case BatteryManager.BATTERY_PLUGGED_WIRELESS:
+                        battery_level_string += " (" + getString(R.string.not_charging) + ")";
+                        break;
                 }
                 break;
         }

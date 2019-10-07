@@ -1,5 +1,6 @@
 package com.qwe7002.telegram_sms_compat;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -7,11 +8,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
 
 import com.github.sumimakito.codeauxlib.CodeauxLibPortable;
 import com.google.gson.Gson;
@@ -308,6 +314,17 @@ class public_func {
             context.startService(chat_long_polling_service);
         }
 
+    }
+
+    static String get_sim_display_name(Context context) {
+        String result = "Unknown";
+        TelephonyManager telephonyManager = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE));
+        assert telephonyManager != null;
+        String get_result = telephonyManager.getSimOperatorName();
+        if (!get_result.equals("")) {
+            result = get_result;
+        }
+        return result;
     }
 
 

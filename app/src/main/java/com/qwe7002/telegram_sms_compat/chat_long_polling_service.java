@@ -389,7 +389,10 @@ public class chat_long_polling_service extends Service {
         assert batteryStatus != null;
         int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        int battery_level = (int) ((level / (float) scale) * 100);
+        int battery_level = -1;
+        if (level != -1 && scale != -1) {
+            battery_level = (int) ((level / (float) scale) * 100);
+        }
         if (battery_level > 100) {
             battery_level = 100;
         }

@@ -36,7 +36,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class chat_long_polling_service extends Service {
+public class chat_command_service extends Service {
     private static long offset = 0;
     private static int magnification = 1;
     private static int error_magnification = 1;
@@ -50,7 +50,7 @@ public class chat_long_polling_service extends Service {
     private int send_sms_status = -1;
     private String send_to_temp;
     private String bot_username = "";
-
+    final String log_tag = "chat_command_service";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Notification notification = public_func.get_notification_obj(getApplicationContext(), getString(R.string.chat_command_service_name));
@@ -107,7 +107,7 @@ public class chat_long_polling_service extends Service {
                     JsonObject result_obj = new JsonParser().parse(Objects.requireNonNull(response.body()).string()).getAsJsonObject();
                     if (result_obj.get("ok").getAsBoolean()) {
                         bot_username = result_obj.get("result").getAsJsonObject().get("username").getAsString();
-                        Log.d(public_func.log_tag, "bot_username: " + bot_username);
+                        Log.d(log_tag, "bot_username: " + bot_username);
                     }
                 }
             });
@@ -220,7 +220,7 @@ public class chat_long_polling_service extends Service {
         if (message_obj.has("from")) {
             from_obj = message_obj.get("from").getAsJsonObject();
             if (message_type_is_group && from_obj.get("is_bot").getAsBoolean()) {
-                Log.d(public_func.log_tag, "receive from bot.");
+                Log.d(log_tag, "receive_handle: receive from bot.");
                 return;
             }
         }
@@ -253,7 +253,7 @@ public class chat_long_polling_service extends Service {
                 return;
             }
             if (message_type_is_group) {
-                Log.d(public_func.log_tag, "receive_handle: The message id could not be found, ignored.");
+                Log.d(log_tag, "receive_handle: The message id could not be found, ignored.");
                 return;
             }
         }
@@ -274,7 +274,7 @@ public class chat_long_polling_service extends Service {
             }
         }
         if (message_type_is_group && !command_bot_username.equals(bot_username)) {
-            Log.i(public_func.log_tag, "This is a Group conversation, but no conversation object was found.");
+            Log.i(log_tag, "receive_handle: This is a Group conversation, but no conversation object was found.");
             return;
 
         }
@@ -323,7 +323,7 @@ public class chat_long_polling_service extends Service {
                 break;
             default:
                 if (!message_obj.get("chat").getAsJsonObject().get("type").getAsString().equals("private")) {
-                    Log.d(public_func.log_tag, "receive_handle: The conversation is not Private and does not prompt an error.");
+                    Log.d(log_tag, "receive_handle: The conversation is not Private and does not prompt an error.");
                     return;
                 }
                 request_body.text = context.getString(R.string.system_message_head) + "\n" + getString(R.string.unknown_command);
@@ -334,11 +334,11 @@ public class chat_long_polling_service extends Service {
                 case 0:
                     send_sms_status = 1;
                     request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.enter_number);
-                    Log.i(public_func.log_tag, "receive_handle: Enter the interactive SMS sending mode.");
+                    Log.i(log_tag, "receive_handle: Enter the interactive SMS sending mode.");
                     break;
                 case 1:
                     String temp_to = public_func.get_send_phone_number(request_msg);
-                    Log.d(public_func.log_tag, "receive_handle: " + temp_to);
+                    Log.d(log_tag, "receive_handle: " + temp_to);
                     if (public_func.is_phone_number(temp_to)) {
                         send_to_temp = temp_to;
                         request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.enter_content);
@@ -423,7 +423,7 @@ public class chat_long_polling_service extends Service {
     class stop_broadcast_receiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i(public_func.log_tag, "Chat command:Received stop signal, quitting now...");
+            Log.i(log_tag, "Received stop signal, quitting now...");
             stopSelf();
             android.os.Process.killProcess(android.os.Process.myPid());
         }

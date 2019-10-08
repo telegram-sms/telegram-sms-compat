@@ -26,21 +26,23 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class sms_receiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
-        Log.d(public_func.log_tag, "onReceive: " + intent.getAction());
+        final String log_tag = "sms_receiver";
+        Log.d(log_tag, "Receive action: " + intent.getAction());
         Bundle extras = intent.getExtras();
         assert extras != null;
         boolean is_default = false;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             is_default = Telephony.Sms.getDefaultSmsPackage(context).equals(context.getPackageName());
         }
-        if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction()) && is_default) {
+        assert intent.getAction() != null;
+        if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED") && is_default) {
             //When it is the default application, it will receive two broadcasts.
-            Log.i(public_func.log_tag, "reject: android.provider.Telephony.SMS_RECEIVE.");
+            Log.i(log_tag, "reject: android.provider.Telephony.SMS_RECEIVE.");
             return;
         }
         final SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("initialized", false)) {
-            Log.i(public_func.log_tag, "Uninitialized, SMS receiver is deactivated.");
+            Log.i(log_tag, "Uninitialized, SMS receiver is deactivated.");
             return;
         }
         String bot_token = sharedPreferences.getString("bot_token", "");

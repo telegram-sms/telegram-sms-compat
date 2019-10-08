@@ -25,7 +25,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class battery_monitoring_service extends Service {
+public class battery_service extends Service {
     static String bot_token;
     static String chat_id;
     static boolean doh_switch;
@@ -81,7 +81,7 @@ public class battery_monitoring_service extends Service {
     class stop_broadcast_receiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i(public_func.log_tag, "Battery monitoring:Received stop signal, quitting now...");
+            Log.i("battery_service", "Received stop signal, quitting now...");
             stopSelf();
             android.os.Process.killProcess(android.os.Process.myPid());
         }
@@ -92,24 +92,24 @@ public class battery_monitoring_service extends Service {
 class battery_receiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        Log.d(public_func.log_tag, "onReceive: " + intent.getAction());
-        String request_uri = public_func.get_url(battery_monitoring_service.bot_token, "sendMessage");
+        Log.d("battery_receiver", "Receive action: " + intent.getAction());
+        String request_uri = public_func.get_url(battery_service.bot_token, "sendMessage");
         final message_json request_body = new message_json();
-        request_body.chat_id = battery_monitoring_service.chat_id;
-        StringBuilder prebody = new StringBuilder(context.getString(R.string.system_message_head) + "\n");
+        request_body.chat_id = battery_service.chat_id;
+        StringBuilder message_body = new StringBuilder(context.getString(R.string.system_message_head) + "\n");
         final String action = intent.getAction();
         switch (Objects.requireNonNull(action)) {
             case Intent.ACTION_BATTERY_OKAY:
-                prebody.append(context.getString(R.string.low_battery_status_end));
+                message_body.append(context.getString(R.string.low_battery_status_end));
                 break;
             case Intent.ACTION_BATTERY_LOW:
-                prebody.append(context.getString(R.string.battery_low));
+                message_body.append(context.getString(R.string.battery_low));
                 break;
             case Intent.ACTION_POWER_CONNECTED:
-                prebody.append(context.getString(R.string.charger_connect));
+                message_body.append(context.getString(R.string.charger_connect));
                 break;
             case Intent.ACTION_POWER_DISCONNECTED:
-                prebody.append(context.getString(R.string.charger_disconnect));
+                message_body.append(context.getString(R.string.charger_disconnect));
                 break;
         }
         IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -121,7 +121,7 @@ class battery_receiver extends BroadcastReceiver {
         if (battery_level > 100) {
             battery_level = 100;
         }
-        request_body.text = prebody.append("\n").append(context.getString(R.string.current_battery_level)).append(battery_level).append("%").toString();
+        request_body.text = message_body.append("\n").append(context.getString(R.string.current_battery_level)).append(battery_level).append("%").toString();
 
         if (public_func.check_network_status(context)) {
             public_func.write_log(context, public_func.network_error);
@@ -131,7 +131,7 @@ class battery_receiver extends BroadcastReceiver {
             return;
         }
 
-        OkHttpClient okhttp_client = public_func.get_okhttp_obj(battery_monitoring_service.doh_switch);
+        OkHttpClient okhttp_client = public_func.get_okhttp_obj(battery_service.doh_switch);
         String request_body_raw = new Gson().toJson(request_body);
         RequestBody body = RequestBody.create(public_func.JSON, request_body_raw);
         Request request = new Request.Builder().url(request_uri).method("POST", body).build();

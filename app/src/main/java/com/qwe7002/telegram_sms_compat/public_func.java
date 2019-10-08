@@ -1,6 +1,5 @@
 package com.qwe7002.telegram_sms_compat;
 
-import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -8,16 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.telephony.SubscriptionInfo;
-import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
-import androidx.core.app.ActivityCompat;
 
 import com.github.sumimakito.codeauxlib.CodeauxLibPortable;
 import com.google.gson.Gson;
@@ -57,7 +51,6 @@ import okhttp3.dnsoverhttps.DnsOverHttps;
 
 
 class public_func {
-    static final String log_tag = "telegram-sms";
     static final String network_error = "Send Message:No network connection.";
     static final String broadcast_stop_service = "com.qwe7002.telegram_sms.stop_all";
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -261,7 +254,7 @@ class public_func {
     static void send_fallback_sms(Context context, String content) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("data", android.content.Context.MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("fallback_sms", false)) {
-            Log.d(log_tag, "send_fallback_sms: No fallback number.");
+            Log.d("send_fallback_sms", "send_fallback_sms: No fallback number.");
             return;
         }
         android.telephony.SmsManager sms_manager = android.telephony.SmsManager.getDefault();
@@ -304,8 +297,8 @@ class public_func {
     }
 
     static void start_service(Context context, Boolean battery_switch, Boolean chat_command_switch) {
-        Intent battery_service = new Intent(context, battery_monitoring_service.class);
-        Intent chat_long_polling_service = new Intent(context, chat_long_polling_service.class);
+        Intent battery_service = new Intent(context, com.qwe7002.telegram_sms_compat.battery_service.class);
+        Intent chat_long_polling_service = new Intent(context, chat_command_service.class);
 
         if (battery_switch) {
             context.startService(battery_service);
@@ -331,7 +324,7 @@ class public_func {
 
 
     static void write_log(Context context, String log) {
-        Log.i(public_func.log_tag, log);
+        Log.i("write_log", log);
         int new_file_mode = Context.MODE_APPEND;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.UK);
         Date ts = new Date(System.currentTimeMillis());

@@ -26,16 +26,14 @@ import static android.content.Context.MODE_PRIVATE;
 public class sms_send_receiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
-        Log.d(public_func.log_tag, "onReceive: " + intent.getAction());
+        final String log_tag = "sms_receiver";
+        Log.d(log_tag, "Receive action: " + intent.getAction());
         Bundle extras = intent.getExtras();
-        if (extras == null) {
-            Log.d(public_func.log_tag, "reject: Error Extras");
-            return;
-        }
+        assert extras != null;
         context.getApplicationContext().unregisterReceiver(this);
         SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("initialized", false)) {
-            Log.i(public_func.log_tag, "Uninitialized, SMS send receiver is deactivated.");
+            Log.i(log_tag, "Uninitialized, SMS send receiver is deactivated.");
             return;
         }
         String bot_token = sharedPreferences.getString("bot_token", "");

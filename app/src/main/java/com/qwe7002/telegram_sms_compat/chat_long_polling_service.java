@@ -290,7 +290,7 @@ public class chat_long_polling_service extends Service {
                 break;
             case "/ping":
             case "/getinfo":
-                request_body.text = getString(R.string.system_message_head) + "\n" + context.getString(R.string.current_battery_level) + get_battery_info(context) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + "\nSIM:" + public_func.get_sim_display_name(context);
+                request_body.text = getString(R.string.system_message_head) + "\n" + context.getString(R.string.current_battery_level) + get_battery_info(context) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + "\nSIM:" + public_func.get_sim_name(context);
                 has_command = true;
                 break;
             case "/log":

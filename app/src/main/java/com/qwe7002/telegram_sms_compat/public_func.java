@@ -316,13 +316,15 @@ class public_func {
 
     }
 
-    static String get_sim_display_name(Context context) {
+    static String get_sim_name(Context context) {
         String result = "Unknown";
         TelephonyManager telephonyManager = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE));
         assert telephonyManager != null;
-        String get_result = telephonyManager.getSimOperatorName();
-        if (!get_result.equals("")) {
-            result = get_result;
+        if (!telephonyManager.getSimOperatorName().equals("")) {
+            result = telephonyManager.getSimOperatorName();
+        }
+        if (!telephonyManager.getNetworkOperatorName().equals("")) {
+            result = telephonyManager.getNetworkOperatorName();
         }
         return result;
     }
@@ -373,7 +375,6 @@ class public_func {
         }
 
     }
-
 
     static void write_file(Context context, String file_name, String write_string, int mode) {
         try {

@@ -50,7 +50,7 @@ public class chat_command_service extends Service {
     private int send_sms_status = -1;
     private String send_to_temp;
     private String bot_username = "";
-    final String log_tag = "chat_command_service";
+    private final String log_tag = "chat_command_service";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Notification notification = public_func.get_notification_obj(getApplicationContext(), getString(R.string.chat_command_service_name));

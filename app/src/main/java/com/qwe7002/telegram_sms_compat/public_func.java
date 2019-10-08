@@ -67,10 +67,9 @@ class public_func {
         ConnectivityManager manager = (ConnectivityManager) context
                 .getApplicationContext().getSystemService(
                         Context.CONNECTIVITY_SERVICE);
-
         assert manager != null;
         NetworkInfo networkinfo = manager.getActiveNetworkInfo();
-        return networkinfo == null || !networkinfo.isConnected();
+        return networkinfo != null && networkinfo.isConnected();
     }
 
     static String get_url(String token, String func) {

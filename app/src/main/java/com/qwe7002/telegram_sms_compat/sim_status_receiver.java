@@ -66,7 +66,7 @@ public class sim_status_receiver extends BroadcastReceiver {
         message_json request_body = new message_json();
         request_body.chat_id = chat_id;
         request_body.text = message;
-        if (public_func.check_network_status(context)) {
+        if (!public_func.check_network_status(context)) {
             public_func.write_log(context, public_func.network_error);
             return;
         }

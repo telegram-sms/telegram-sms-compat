@@ -123,7 +123,7 @@ class battery_receiver extends BroadcastReceiver {
         }
         request_body.text = message_body.append("\n").append(context.getString(R.string.current_battery_level)).append(battery_level).append("%").toString();
 
-        if (public_func.check_network_status(context)) {
+        if (!public_func.check_network_status(context)) {
             public_func.write_log(context, public_func.network_error);
             if (action.equals(Intent.ACTION_BATTERY_LOW)) {
                 public_func.send_fallback_sms(context, request_body.text);

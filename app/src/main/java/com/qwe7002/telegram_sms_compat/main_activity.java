@@ -71,11 +71,6 @@ public class main_activity extends AppCompatActivity {
             dialog.show();
         }
 
-        if (getResources().getDisplayMetrics().densityDpi < DisplayMetrics.DENSITY_XHIGH) {
-            ImageView background = findViewById(R.id.background);
-            background.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        }
-
         context = getApplicationContext();
 
         final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);

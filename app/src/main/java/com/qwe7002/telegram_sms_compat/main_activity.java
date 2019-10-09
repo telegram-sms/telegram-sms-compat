@@ -11,13 +11,10 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Switch;
 
 import androidx.annotation.NonNull;
@@ -51,6 +48,8 @@ public class main_activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = getApplicationContext();
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Unsupported API version");
@@ -71,7 +70,6 @@ public class main_activity extends AppCompatActivity {
             dialog.show();
         }
 
-        context = getApplicationContext();
 
         final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         final EditText chat_id = findViewById(R.id.chat_id);
@@ -185,7 +183,7 @@ public class main_activity extends AppCompatActivity {
                     if (response.code() != 200) {
                         assert response.body() != null;
                         String result = response.body().string();
-                        JsonObject result_obj = new JsonParser().parse(result).getAsJsonObject();
+                        JsonObject result_obj = JsonParser.parseString(result).getAsJsonObject();
                         String error_message = error_head + result_obj.get("description").getAsString();
                         public_func.write_log(context, error_message);
                         Looper.prepare();
@@ -195,7 +193,7 @@ public class main_activity extends AppCompatActivity {
                     }
                     assert response.body() != null;
                     String result = response.body().string();
-                    JsonObject result_obj = new JsonParser().parse(result).getAsJsonObject();
+                    JsonObject result_obj = JsonParser.parseString(result).getAsJsonObject();
                     JsonArray chat_list = result_obj.getAsJsonArray("result");
                     if (chat_list.size() == 0) {
                         Looper.prepare();
@@ -293,7 +291,7 @@ public class main_activity extends AppCompatActivity {
                     if (response.code() != 200) {
                         assert response.body() != null;
                         String result = response.body().string();
-                        JsonObject result_obj = new JsonParser().parse(result).getAsJsonObject();
+                        JsonObject result_obj = JsonParser.parseString(result).getAsJsonObject();
                         String error_message = error_head + result_obj.get("description");
                         public_func.write_log(context, error_message);
                         Looper.prepare();

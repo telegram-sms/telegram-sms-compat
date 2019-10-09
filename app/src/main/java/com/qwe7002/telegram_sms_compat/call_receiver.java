@@ -98,7 +98,7 @@ class call_status_listener extends PhoneStateListener {
                         public_func.send_fallback_sms(context, request_body.text);
                     } else {
                         String result = response.body().string();
-                        JsonObject result_obj = new JsonParser().parse(result).getAsJsonObject().get("result").getAsJsonObject();
+                        JsonObject result_obj = JsonParser.parseString(result).getAsJsonObject().get("result").getAsJsonObject();
                         String message_id = result_obj.get("message_id").getAsString();
                         public_func.add_message_list(context, message_id, incoming_number);
                     }

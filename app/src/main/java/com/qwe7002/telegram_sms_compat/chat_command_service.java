@@ -82,7 +82,7 @@ public class chat_command_service extends Service {
         if (!wakelock.isHeld()) {
             wakelock.acquire();
         }
-        thread_main = new Thread(new thread_handle());
+        thread_main = new Thread(new thread_main_runnable());
         thread_main.start();
         IntentFilter intentFilter = new IntentFilter(public_func.broadcast_stop_service);
         stop_broadcast_receiver = new stop_broadcast_receiver();
@@ -333,10 +333,10 @@ public class chat_command_service extends Service {
 
     }
 
-    class thread_handle implements Runnable {
+    class thread_main_runnable implements Runnable {
         @Override
         public void run() {
-            Log.d(log_tag, "run: thread handle start");
+            Log.d(log_tag, "run: thread main start");
             int chat_int_id = 0;
             try {
                 chat_int_id = Integer.parseInt(chat_id);
@@ -371,7 +371,7 @@ public class chat_command_service extends Service {
                         break;
                     }
                     int sleep_time = 5 * error_magnification;
-                    public_func.write_log(context, "No network service,try again after " + sleep_time + " seconds.");
+                    public_func.write_log(context, "Connection to the Telegram API service failed,try again after " + sleep_time + " seconds.");
                     magnification = 1;
                     if (error_magnification <= 59) {
                         error_magnification++;
@@ -459,7 +459,7 @@ public class chat_command_service extends Service {
             if (public_func.check_network_status(context)) {
                 if (!thread_main.isAlive()) {
                     public_func.write_log(context, "Network connections has been restored.");
-                    thread_main = new Thread(new thread_handle());
+                    thread_main = new Thread(new thread_main_runnable());
                     thread_main.start();
                 }
             }

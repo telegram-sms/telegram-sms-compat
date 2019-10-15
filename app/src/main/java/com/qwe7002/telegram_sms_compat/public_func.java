@@ -116,6 +116,7 @@ class public_func {
             //noinspection deprecation
             okhttp.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
         } else {
+            Log.i("get_okhttp_obj", "An outdated encryption method is being used, and this method may be deprecated in 2020.");
             spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                     .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1)
                     .cipherSuites(

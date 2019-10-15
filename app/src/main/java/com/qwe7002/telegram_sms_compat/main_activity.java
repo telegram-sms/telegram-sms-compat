@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import io.paperdb.Paper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -70,6 +71,7 @@ public class main_activity extends AppCompatActivity {
             dialog.show();
         }
 
+        Paper.init(context);
 
         final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         final EditText chat_id = findViewById(R.id.chat_id);

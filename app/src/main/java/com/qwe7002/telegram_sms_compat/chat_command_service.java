@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import io.paperdb.Paper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -66,7 +67,7 @@ public class chat_command_service extends Service {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-
+        Paper.init(context);
         SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
         chat_id = sharedPreferences.getString("chat_id", "");
         bot_token = sharedPreferences.getString("bot_token", "");
@@ -155,13 +156,8 @@ public class chat_command_service extends Service {
             request_msg = message_obj.get("text").getAsString();
         }
         if (message_obj.has("reply_to_message")) {
-            JsonObject reply_obj = message_obj.get("reply_to_message").getAsJsonObject();
-            String reply_id = reply_obj.get("message_id").getAsString();
-            String message_list_raw = public_func.read_file(context, "message.json");
-            JsonObject message_list = JsonParser.parseString(message_list_raw).getAsJsonObject();
-            if (message_list.has(reply_id)) {
-                JsonObject message_item_obj = message_list.get(reply_id).getAsJsonObject();
-                String phone_number = message_item_obj.get("phone").getAsString();
+            String phone_number = Paper.book().read(message_obj.get("reply_to_message").getAsJsonObject().get("message_id").getAsString(), null);
+            if (phone_number != null) {
                 public_func.send_sms(context, phone_number, request_msg);
                 return;
             }

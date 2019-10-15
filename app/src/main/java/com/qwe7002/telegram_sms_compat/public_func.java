@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
+import io.paperdb.Paper;
 import okhttp3.Call;
 import okhttp3.CipherSuite;
 import okhttp3.ConnectionSpec;
@@ -431,16 +432,9 @@ class public_func {
         return parser.find(body);
     }
 
-    static void add_message_list(Context context, String message_id, String phone) {
-        String message_list_raw = public_func.read_file(context, "message.json");
-        if (message_list_raw.length() == 0) {
-            message_list_raw = "{}";
-        }
-        JsonObject message_list_obj = JsonParser.parseString(message_list_raw).getAsJsonObject();
-        JsonObject object = new JsonObject();
-        object.addProperty("phone", phone);
-        message_list_obj.add(message_id, object);
-        public_func.write_file(context, "message.json", new Gson().toJson(message_list_obj), android.content.Context.MODE_PRIVATE);
+    static void add_message_list(String message_id, String phone) {
+        Paper.book().write(message_id, phone);
+        Log.d("add_message_list", "add_message_list: " + message_id);
     }
 
 }

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -32,6 +33,7 @@ import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.paperdb.Paper;
@@ -45,6 +47,7 @@ import okhttp3.Response;
 
 public class main_activity extends AppCompatActivity {
     private Context context = null;
+    private final String log_tag = "main_activity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +94,22 @@ public class main_activity extends AppCompatActivity {
 
         if (sharedPreferences.getBoolean("initialized", false)) {
             public_func.start_service(context, sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
+            if (!sharedPreferences.getBoolean("conversion_data_structure", false)) {
+                new Thread(() -> {
+                    String message_list_raw = public_func.read_file(context, "message.json");
+                    if (message_list_raw.length() == 0) {
+                        message_list_raw = "{}";
+                    }
+                    JsonObject message_list = JsonParser.parseString(message_list_raw).getAsJsonObject();
+                    for (Map.Entry<String, JsonElement> entry_set : message_list.entrySet()) {
+                        Paper.book().write(entry_set.getKey(), entry_set.getValue());
+                        Log.d(log_tag, "add_message_list: " + entry_set.getKey());
+                    }
+                    Log.d(log_tag, "The conversion is complete.");
+                    public_func.write_file(context, "message.json", "", Context.MODE_PRIVATE);
+                    sharedPreferences.edit().putBoolean("conversion_data_structure", true).apply();
+                }).start();
+            }
         }
 
         bot_token.setText(bot_token_save);
@@ -317,6 +336,7 @@ public class main_activity extends AppCompatActivity {
                     editor.putBoolean("verification_code", verification_code.isChecked());
                     editor.putBoolean("doh_switch", doh_switch.isChecked());
                     editor.putBoolean("initialized", true);
+                    editor.putBoolean("conversion_data_structure", true);
                     editor.apply();
                     new Thread(() -> {
                         public_func.stop_all_service(context);

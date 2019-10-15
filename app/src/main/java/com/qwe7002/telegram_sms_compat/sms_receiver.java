@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 
+import io.paperdb.Paper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -26,6 +27,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class sms_receiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
+        Paper.init(context);
         final String log_tag = "sms_receiver";
         Log.d(log_tag, "Receive action: " + intent.getAction());
         Bundle extras = intent.getExtras();
@@ -135,14 +137,17 @@ public class sms_receiver extends BroadcastReceiver {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 assert response.body() != null;
+                String result = response.body().string();
                 if (response.code() != 200) {
                     String error_message = error_head + response.code() + " " + response.body().string();
                     public_func.write_log(context, error_message);
                     public_func.send_fallback_sms(context, raw_request_body_text);
                 } else {
-                    if (public_func.is_phone_number(message_address)) {
-                        public_func.add_message_list(context, public_func.get_message_id(response.body().string()), message_address);
+                    if (!public_func.is_phone_number(message_address)) {
+                        public_func.write_log(context, "[" + message_address + "] Not a regular phone number.");
+                        return;
                     }
+                    public_func.add_message_list(public_func.get_message_id(result), message_address);
                 }
             }
         });

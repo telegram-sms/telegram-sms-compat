@@ -16,6 +16,7 @@ import com.google.gson.JsonParser;
 
 import java.io.IOException;
 
+import io.paperdb.Paper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -30,6 +31,7 @@ public class call_receiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Paper.init(context);
         Log.d("call_receiver", "onReceive: " + intent.getAction());
         if (intent.getStringExtra("incoming_number") != null) {
             incoming_number = intent.getStringExtra("incoming_number");
@@ -100,7 +102,7 @@ class call_status_listener extends PhoneStateListener {
                         String result = response.body().string();
                         JsonObject result_obj = JsonParser.parseString(result).getAsJsonObject().get("result").getAsJsonObject();
                         String message_id = result_obj.get("message_id").getAsString();
-                        public_func.add_message_list(context, message_id, incoming_number);
+                        public_func.add_message_list(message_id, incoming_number);
                     }
                 }
             });

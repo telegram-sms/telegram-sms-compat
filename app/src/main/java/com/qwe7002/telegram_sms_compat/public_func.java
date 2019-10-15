@@ -56,11 +56,15 @@ class public_func {
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final CodeauxLibPortable parser = new CodeauxLibPortable();
     static String get_send_phone_number(String phone_number) {
-        return phone_number.trim()
-                .replace(" ", "")
-                .replace("-", "")
-                .replace("(", "")
-                .replace(")", "");
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < phone_number.length(); i++) {
+            char c = phone_number.charAt(i);
+            if (c == '+' || Character.isDigit(c)) {
+                result.append(c);
+            }
+            Log.d("get_send_phone_number", "get_send_phone_number: " + c);
+        }
+        return result.toString();
     }
 
     static boolean check_network_status(Context context) {

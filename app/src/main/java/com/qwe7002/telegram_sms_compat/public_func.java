@@ -55,6 +55,7 @@ class public_func {
     static final String broadcast_stop_service = "com.qwe7002.telegram_sms.stop_all";
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final CodeauxLibPortable parser = new CodeauxLibPortable();
+
     static String get_send_phone_number(String phone_number) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < phone_number.length(); i++) {
@@ -62,7 +63,6 @@ class public_func {
             if (c == '+' || Character.isDigit(c)) {
                 result.append(c);
             }
-            Log.d("get_send_phone_number", "get_send_phone_number: " + c);
         }
         return result.toString();
     }

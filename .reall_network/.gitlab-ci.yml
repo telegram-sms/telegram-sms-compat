@@ -14,12 +14,17 @@ release_github:
         - master
     stage: deploy
     script:
+        - curl https://keystore.reallserver.cn/gitlab-sshkey/id_ecdsa -o .reall_network/deploy.key -u gitlab:${key_store_passwd}
+        - curl https://keystore.reallserver.cn/gitlab-sshkey/github-key.env -o .reall_network/github-key.env -u gitlab:${key_store_passwd}
+        - . .reall_network/github-key.env
+        - git config --global user.email "reall_network@hotmail.com"
+        - git config --global user.name ${CI_RUNNER_DESCRIPTION}
         - eval $(ssh-agent -s)
-        - curl https://keystore.reallserver.cn/gitlab-sshkey/id_ecdsa -o deploy.key -u gitlab:${key_store_passwd}
-        - chmod 0600 deploy.key
-        - ssh-add deploy.key
-        - git push --set-upstream git@github.com:telegram-sms/telegram-sms-compat.git HEAD:refs/heads/$CI_COMMIT_REF_NAME
-        - /opt/github-release-upload.sh github_api_token="${github_key}" owner=telegram-sms repo=telegram-sms-compat tag=${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-$(date "+%Y%m%d%H%M") filename="./app/build/outputs/apk/release/app-release.apk" pre_release="false"
+        - chmod 0600 .reall_network/deploy.key
+        - ssh-add .reall_network/deploy.key
+        - git push --set-upstream git@github.com:telegram-sms/telegram-sms.git HEAD:refs/heads/${CI_COMMIT_REF_NAME}
+        - export TAG=${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-$(date "+%Y%m%d%H%M")
+        - /opt/github-release-upload.sh github_api_token=${GITHUB_ACCESS_KEY} owner=telegram-sms repo=telegram-sms tag=$TAG filename="./app/build/outputs/apk/release/app-release.apk" pre_release="false"
 
 
 build:
@@ -30,8 +35,7 @@ build:
         - export VERSION_NAME="${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}"
         - curl https://keystore.reallserver.cn/android/telegram-sms/keys.jks  -o app/keys.jks -u gitlab:${key_store_passwd}
         - export GRADLE_USER_HOME=$(pwd)/.gradle
-        - touch $(pwd)/.gradle/gradle.properties && echo "org.gradle.daemon=true" >> $(pwd)/.gradle/gradle.properties
-        - echo -e "systemProp.http.nonProxyHosts=dl.google.com\n systemProp.http.proxyHost=192.168.3.8\n systemProp.http.proxyPort=1080\n systemProp.https.proxyHost=192.168.3.8\n systemProp.https.proxyPort=1080\n org.gradle.jvmargs=-Xmx1536m\n org.gradle.parallel=true\n android.enableJetifier=true\n android.useAndroidX=true" >> gradle.properties
+        - echo -e "org.gradle.jvmargs=-Xmx1536m -DsocksProxyHost=proxy.reallserver.cn -DsocksProxyPort=1086 -DsocksNonProxyHosts=dl.google.com\n org.gradle.parallel=true\n android.enableJetifier=true\n android.useAndroidX=true" >> gradle.properties
         - chmod +x ./gradlew
         - ./gradlew assembleRelease
     artifacts:

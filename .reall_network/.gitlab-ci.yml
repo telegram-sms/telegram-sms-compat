@@ -22,9 +22,9 @@ release_github:
         - eval $(ssh-agent -s)
         - chmod 0600 .reall_network/deploy.key
         - ssh-add .reall_network/deploy.key
-        - git push --set-upstream git@github.com:telegram-sms/telegram-sms.git HEAD:refs/heads/${CI_COMMIT_REF_NAME}
+        - git push --set-upstream git@github.com:telegram-sms/telegram-sms-compat.git HEAD:refs/heads/${CI_COMMIT_REF_NAME}
         - export TAG=${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-$(date "+%Y%m%d%H%M")
-        - /opt/github-release-upload.sh github_api_token=${GITHUB_ACCESS_KEY} owner=telegram-sms repo=telegram-sms tag=$TAG filename="./app/build/outputs/apk/release/app-release.apk" pre_release="false"
+        - /opt/github-release-upload.sh github_api_token=${GITHUB_ACCESS_KEY} owner=telegram-sms repo=telegram-sms-compat tag=$TAG filename="./app/build/outputs/apk/release/app-release.apk" pre_release="false"
 
 
 build:

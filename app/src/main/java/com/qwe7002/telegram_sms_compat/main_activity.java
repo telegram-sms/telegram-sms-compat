@@ -49,6 +49,20 @@ public class main_activity extends AppCompatActivity {
     private Context context = null;
     private final String log_tag = "main_activity";
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Current program has security risks");
+            builder.setMessage("Your current system does not support TLS1.2 protocol and TLS1.1/TLS1.0 will be used instead. This may cause security or compatibility issues. Please update the system version to Android 4.1 or above.");
+            builder.setCancelable(false);
+            builder.setPositiveButton("ok", null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -63,17 +77,6 @@ public class main_activity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Current program has security risks");
-            builder.setMessage("Your current system does not support TLS1.2 protocol and TLS1.1/TLS1.0 will be used instead. This may cause security or compatibility issues. Please update the system version to Android 4.1 or above.");
-            builder.setCancelable(false);
-            builder.setPositiveButton("ok", null);
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
-
         Paper.init(context);
 
         final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);

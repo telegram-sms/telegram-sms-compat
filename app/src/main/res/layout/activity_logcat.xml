@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:alpha="0.15"
         android:scaleType="fitEnd"
-        app:srcCompat="@mipmap/character_set"
+        app:srcCompat="@drawable/character_set"
         tools:ignore="ContentDescription" />
 
     <ScrollView

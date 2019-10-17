@@ -71,16 +71,16 @@ public class sms_receiver extends BroadcastReceiver {
         final String message_address = messages[0].getOriginatingAddress();
         assert message_address != null;
         String trusted_phone_number = sharedPreferences.getString("trusted_phone_number", null);
-        boolean trusted_phone = false;
+        boolean is_trusted_phone = false;
         if (trusted_phone_number != null && trusted_phone_number.length() != 0) {
-            trusted_phone = message_address.contains(trusted_phone_number);
+            is_trusted_phone = message_address.contains(trusted_phone_number);
         }
         final message_json request_body = new message_json();
         request_body.chat_id = chat_id;
         String message_body_html = message_body;
         final String message_head = "[" + context.getString(R.string.receive_sms_head) + "]" + "\n" + context.getString(R.string.from) + message_address + "\n" + context.getString(R.string.content);
         final String raw_request_body_text = message_head + message_body;
-        if (sharedPreferences.getBoolean("verification_code", false) && !trusted_phone) {
+        if (sharedPreferences.getBoolean("verification_code", false) && !is_trusted_phone) {
             String verification = public_func.get_verification_code(message_body);
             if (verification != null) {
                 request_body.parse_mode = "html";
@@ -93,9 +93,7 @@ public class sms_receiver extends BroadcastReceiver {
         }
         request_body.text = message_head + message_body_html;
 
-        if (trusted_phone) {
-            String[] msg_send_list = message_body.split("\n");
-            String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
+        if (is_trusted_phone) {
             if (message_body.equals("restart-service")) {
                 new Thread(() -> {
                     public_func.stop_all_service(context.getApplicationContext());
@@ -103,6 +101,8 @@ public class sms_receiver extends BroadcastReceiver {
                 }).start();
                 request_body.text = context.getString(R.string.system_message_head) + "\n" + context.getString(R.string.restart_service);
             }
+            String[] msg_send_list = message_body.split("\n");
+            String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
             if (public_func.is_phone_number(msg_send_to) && msg_send_list.length != 1) {
                 StringBuilder msg_send_content = new StringBuilder();
                 for (int i = 1; i < msg_send_list.length; i++) {

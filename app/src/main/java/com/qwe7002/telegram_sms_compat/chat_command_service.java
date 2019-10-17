@@ -94,6 +94,112 @@ public class chat_command_service extends Service {
 
     }
 
+    class thread_main_runnable implements Runnable {
+        @Override
+        public void run() {
+            Log.d(log_tag, "run: thread main start");
+            int chat_int_id = 0;
+            try {
+                chat_int_id = Integer.parseInt(chat_id);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                //Avoid errors caused by unconvertible inputs.
+            }
+            if (chat_int_id < 0 && !have_bot_username) {
+                new Thread(chat_command_service.this::get_me).start();
+            }
+            while (true) {
+                int read_timeout = 5 * magnification;
+                OkHttpClient okhttp_client_new = okhttp_client.newBuilder()
+                        .readTimeout((read_timeout + 5), TimeUnit.SECONDS)
+                        .writeTimeout((read_timeout + 5), TimeUnit.SECONDS)
+                        .build();
+                String request_uri = public_func.get_url(bot_token, "getUpdates");
+                polling_json request_body = new polling_json();
+                request_body.offset = offset;
+                request_body.timeout = read_timeout;
+                RequestBody body = RequestBody.create(public_func.JSON, new Gson().toJson(request_body));
+                Request request = new Request.Builder().url(request_uri).method("POST", body).build();
+                Call call = okhttp_client_new.newCall(request);
+                Response response;
+                try {
+                    response = call.execute();
+                    error_magnification = 1;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    if (!public_func.check_network_status(context)) {
+                        public_func.write_log(context, "No network connections available. ");
+                        break;
+                    }
+                    int sleep_time = 5 * error_magnification;
+                    public_func.write_log(context, "Connection to the Telegram API service failed,try again after " + sleep_time + " seconds.");
+                    magnification = 1;
+                    if (error_magnification <= 59) {
+                        error_magnification++;
+                    }
+                    try {
+                        Thread.sleep(sleep_time * 1000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    continue;
+
+                }
+                if (response.code() == 200) {
+                    assert response.body() != null;
+                    String result;
+                    try {
+                        result = Objects.requireNonNull(response.body()).string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+                    JsonObject result_obj = JsonParser.parseString(result).getAsJsonObject();
+                    if (result_obj.get("ok").getAsBoolean()) {
+                        JsonArray result_array = result_obj.get("result").getAsJsonArray();
+                        for (JsonElement item : result_array) {
+                            receive_handle(item.getAsJsonObject());
+                        }
+                    }
+                    if (magnification <= 11) {
+                        magnification++;
+                    }
+                } else {
+                    switch (response.code()) {
+                        case 401:
+                        case 409:
+                            String result;
+                            try {
+                                result = Objects.requireNonNull(response.body()).string();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                result = "{\"description\":\"Unknown\"}";
+                            }
+                            JsonObject result_obj = JsonParser.parseString(result).getAsJsonObject();
+                            message_json error_request_body = new message_json();
+                            error_request_body.chat_id = chat_id;
+                            error_request_body.text = "[ERROR MESSAGE]\nA serious problem has occurred and the program has stopped running.\nError code: " + response.code() + "\nError message: " + result_obj.get("description").getAsString();
+
+                            RequestBody error_request = RequestBody.create(public_func.JSON, new Gson().toJson(error_request_body));
+                            Request send_request = new Request.Builder().url(public_func.get_url(bot_token, "sendMessage")).method("POST", error_request).build();
+                            Call error_call = okhttp_client.newCall(send_request);
+                            try {
+                                error_call.execute();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            Log.d(log_tag, "run: Serious failure, Stop self");
+                            stopSelf();
+                            android.os.Process.killProcess(android.os.Process.myPid());
+                            return;//break while
+                        default:
+                            public_func.write_log(context, "response code:" + response.code());
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void onDestroy() {
         wifiLock.release();
@@ -327,81 +433,6 @@ public class chat_command_service extends Service {
             }
         }
 
-    }
-
-    class thread_main_runnable implements Runnable {
-        @Override
-        public void run() {
-            Log.d(log_tag, "run: thread main start");
-            int chat_int_id = 0;
-            try {
-                chat_int_id = Integer.parseInt(chat_id);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                //Avoid errors caused by unconvertible inputs.
-            }
-            if (chat_int_id < 0 && !have_bot_username) {
-                new Thread(chat_command_service.this::get_me).start();
-            }
-            while (true) {
-                int read_timeout = 5 * magnification;
-                OkHttpClient okhttp_client_new = okhttp_client.newBuilder()
-                        .readTimeout((read_timeout + 5), TimeUnit.SECONDS)
-                        .writeTimeout((read_timeout + 5), TimeUnit.SECONDS)
-                        .build();
-                String request_uri = public_func.get_url(bot_token, "getUpdates");
-                polling_json request_body = new polling_json();
-                request_body.offset = offset;
-                request_body.timeout = read_timeout;
-                RequestBody body = RequestBody.create(public_func.JSON, new Gson().toJson(request_body));
-                Request request = new Request.Builder().url(request_uri).method("POST", body).build();
-                Call call = okhttp_client_new.newCall(request);
-                Response response;
-                try {
-                    response = call.execute();
-                    error_magnification = 1;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    if (!public_func.check_network_status(context)) {
-                        public_func.write_log(context, "No network connections available. ");
-                        break;
-                    }
-                    int sleep_time = 5 * error_magnification;
-                    public_func.write_log(context, "Connection to the Telegram API service failed,try again after " + sleep_time + " seconds.");
-                    magnification = 1;
-                    if (error_magnification <= 59) {
-                        error_magnification++;
-                    }
-                    try {
-                        Thread.sleep(sleep_time * 1000);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                    continue;
-
-                }
-                if (response.code() == 200) {
-                    assert response.body() != null;
-                    String result;
-                    try {
-                        result = Objects.requireNonNull(response.body()).string();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        continue;
-                    }
-                    JsonObject result_obj = JsonParser.parseString(result).getAsJsonObject();
-                    if (result_obj.get("ok").getAsBoolean()) {
-                        JsonArray result_array = result_obj.get("result").getAsJsonArray();
-                        for (JsonElement item : result_array) {
-                            receive_handle(item.getAsJsonObject());
-                        }
-                    }
-                    if (magnification <= 11) {
-                        magnification++;
-                    }
-                }
-            }
-        }
     }
     private String get_battery_info(Context context) {
         IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);

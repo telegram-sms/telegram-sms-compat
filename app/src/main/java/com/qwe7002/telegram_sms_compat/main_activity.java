@@ -49,8 +49,10 @@ public class main_activity extends AppCompatActivity {
     private Context context = null;
     private final String log_tag = "main_activity";
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        context = getApplicationContext();
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Current program has security risks");
@@ -60,14 +62,6 @@ public class main_activity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        context = getApplicationContext();
-
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Unsupported API version");

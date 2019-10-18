@@ -118,7 +118,7 @@ public class sms_receiver extends BroadcastReceiver {
 
         if (!public_func.check_network_status(context)) {
             public_func.write_log(context, public_func.network_error);
-            public_func.send_fallback_sms(context, request_body.text);
+            public_func.send_fallback_sms(context, raw_request_body_text);
             return;
         }
         String request_body_json = new Gson().toJson(request_body);

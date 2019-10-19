@@ -28,12 +28,12 @@ public class sim_status_receiver extends BroadcastReceiver {
     private static int last_status;
     @Override
     public void onReceive(Context context, Intent intent) {
-        final String log_tag = "sim_status_receiver";
-        Log.d(log_tag, "Receive action: " + intent.getAction());
+        final String TAG = "sim_status_receiver";
+        Log.d(TAG, "Receive action: " + intent.getAction());
         String message = context.getString(R.string.system_message_head) + "\n";
         final SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("initialized", false)) {
-            Log.i(log_tag, "Uninitialized, SIM status receiver is deactivated.");
+            Log.i(TAG, "Uninitialized, SIM status receiver is deactivated.");
             return;
         }
         String bot_token = sharedPreferences.getString("bot_token", "");

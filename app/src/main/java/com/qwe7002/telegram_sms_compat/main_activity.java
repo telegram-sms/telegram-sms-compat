@@ -47,7 +47,7 @@ import okhttp3.Response;
 
 public class main_activity extends AppCompatActivity {
     private Context context = null;
-    private final String log_tag = "main_activity";
+    private final String TAG = "main_activity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,9 +100,9 @@ public class main_activity extends AppCompatActivity {
                     JsonObject message_list = JsonParser.parseString(message_list_raw).getAsJsonObject();
                     for (Map.Entry<String, JsonElement> entry_set : message_list.entrySet()) {
                         Paper.book().write(entry_set.getKey(), entry_set.getValue());
-                        Log.d(log_tag, "add_message_list: " + entry_set.getKey());
+                        Log.d(TAG, "add_message_list: " + entry_set.getKey());
                     }
-                    Log.d(log_tag, "The conversion is complete.");
+                    Log.d(TAG, "The conversion is complete.");
                     public_func.write_file(context, "message.json", "", Context.MODE_PRIVATE);
                     sharedPreferences.edit().putBoolean("conversion_data_structure", true).apply();
                 }).start();

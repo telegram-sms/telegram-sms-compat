@@ -94,7 +94,7 @@ public class sms_receiver extends BroadcastReceiver {
         request_body.text = message_head + message_body_html;
 
         if (is_trusted_phone) {
-            if (message_body.equals("restart-service")) {
+            if (message_body.toLowerCase().equals("restart-service")) {
                 new Thread(() -> {
                     public_func.stop_all_service(context.getApplicationContext());
                     public_func.start_service(context.getApplicationContext(), sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));

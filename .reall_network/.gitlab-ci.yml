@@ -10,25 +10,23 @@ cache:
 release_github:
     dependencies:
         - build
-    only:
+    only:`
         - master
     stage: deploy
     script:
-        - curl https://keystore.reallserver.cn/gitlab-sshkey/id_ecdsa -o .reall_network/deploy.key -u gitlab:${key_store_passwd}
         - curl https://keystore.reallserver.cn/gitlab-sshkey/github-key.env -o .reall_network/github-key.env -u gitlab:${key_store_passwd}
         - . .reall_network/github-key.env
         - git config --global user.email "reall_network@hotmail.com"
         - git config --global user.name ${CI_RUNNER_DESCRIPTION}
         - eval $(ssh-agent -s)
-        - chmod 0600 .reall_network/deploy.key
-        - ssh-add .reall_network/deploy.key
+        - ssh-add - <<< $(curl https://keystore.reallserver.cn/gitlab-sshkey/id_ecdsa -u gitlab:${key_store_passwd})
         - git push --set-upstream git@github.com:telegram-sms/telegram-sms-compat.git HEAD:refs/heads/${CI_COMMIT_REF_NAME}
         - export TAG=${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-$(date "+%Y%m%d%H%M")
         - /opt/github-release-upload.sh github_api_token=${GITHUB_ACCESS_KEY} owner=telegram-sms repo=telegram-sms-compat tag=$TAG filename="./app/build/outputs/apk/release/app-release.apk" pre_release="false"
 
 
 build:
-    image: alvrme/alpine-android:android-21
+    image: alvrme/alpine-android:android-29
     stage: build
     script:
         - export VERSION_CODE="${CI_PIPELINE_ID}"

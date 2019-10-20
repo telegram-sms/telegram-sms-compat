@@ -28,7 +28,7 @@ release_github:
 
 
 build:
-    image: jangrewe/gitlab-ci-android:latest
+    image: alvrme/alpine-android:android-21
     stage: build
     script:
         - export VERSION_CODE="${CI_PIPELINE_ID}"

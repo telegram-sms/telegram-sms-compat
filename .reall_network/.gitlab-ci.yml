@@ -10,7 +10,7 @@ cache:
 release_github:
     dependencies:
         - build
-    only:`
+    only:
         - master
     stage: deploy
     script:

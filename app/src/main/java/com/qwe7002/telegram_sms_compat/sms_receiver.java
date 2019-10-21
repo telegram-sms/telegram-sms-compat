@@ -79,7 +79,7 @@ public class sms_receiver extends BroadcastReceiver {
         request_body.chat_id = chat_id;
         String message_body_html = message_body;
         final String message_head = "[" + context.getString(R.string.receive_sms_head) + "]" + "\n" + context.getString(R.string.from) + message_address + "\n" + context.getString(R.string.content);
-        final String raw_request_body_text = message_head + message_body;
+        String raw_request_body_text = message_head + message_body;
         if (sharedPreferences.getBoolean("verification_code", false) && !is_trusted_phone) {
             String verification = public_func.get_verification_code(message_body);
             if (verification != null) {
@@ -99,7 +99,8 @@ public class sms_receiver extends BroadcastReceiver {
                     public_func.stop_all_service(context.getApplicationContext());
                     public_func.start_service(context.getApplicationContext(), sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
                 }).start();
-                request_body.text = context.getString(R.string.system_message_head) + "\n" + context.getString(R.string.restart_service);
+                raw_request_body_text = context.getString(R.string.system_message_head) + "\n" + context.getString(R.string.restart_service);
+                request_body.text = raw_request_body_text;
             }
             String[] msg_send_list = message_body.split("\n");
             String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
@@ -127,13 +128,14 @@ public class sms_receiver extends BroadcastReceiver {
         Request request = new Request.Builder().url(request_uri).method("POST", body).build();
         Call call = okhttp_client.newCall(request);
         final String error_head = "Send SMS forward failed:";
+        final String final_raw_request_body_text = raw_request_body_text;
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
                 String error_message = error_head + e.getMessage();
                 public_func.write_log(context, error_message);
-                public_func.send_fallback_sms(context, raw_request_body_text);
+                public_func.send_fallback_sms(context, final_raw_request_body_text);
             }
 
             @Override
@@ -143,7 +145,7 @@ public class sms_receiver extends BroadcastReceiver {
                 if (response.code() != 200) {
                     String error_message = error_head + response.code() + " " + result;
                     public_func.write_log(context, error_message);
-                    public_func.send_fallback_sms(context, raw_request_body_text);
+                    public_func.send_fallback_sms(context, final_raw_request_body_text);
                 } else {
                     if (!public_func.is_phone_number(message_address)) {
                         public_func.write_log(context, "[" + message_address + "] Not a regular phone number.");

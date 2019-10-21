@@ -344,15 +344,15 @@ public class chat_command_service extends Service {
                 new Thread(chat_command_service.this::get_me).start();
             }
             while (true) {
-                int read_timeout = 5 * magnification;
+                int timeout = 5 * magnification;
                 OkHttpClient okhttp_client_new = okhttp_client.newBuilder()
-                        .readTimeout((read_timeout + 5), TimeUnit.SECONDS)
-                        .writeTimeout((read_timeout + 5), TimeUnit.SECONDS)
+                        .readTimeout((timeout), TimeUnit.SECONDS)
+                        .writeTimeout((timeout), TimeUnit.SECONDS)
                         .build();
                 String request_uri = public_func.get_url(bot_token, "getUpdates");
                 polling_json request_body = new polling_json();
                 request_body.offset = offset;
-                request_body.timeout = read_timeout;
+                request_body.timeout = timeout;
                 RequestBody body = RequestBody.create(public_func.JSON, new Gson().toJson(request_body));
                 Request request = new Request.Builder().url(request_uri).method("POST", body).build();
                 Call call = okhttp_client_new.newCall(request);

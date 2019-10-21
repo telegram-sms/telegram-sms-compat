@@ -32,8 +32,6 @@ build:
         - export VERSION_CODE="${CI_PIPELINE_ID}"
         - export VERSION_NAME="${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}"
         - curl https://keystore.reallserver.cn/android/telegram-sms/keys.jks  -o app/keys.jks -u gitlab:${key_store_passwd}
-        - export GRADLE_USER_HOME=$(pwd)/.gradle
-        - echo -e "org.gradle.jvmargs=-Xmx1536m -DsocksProxyHost=proxy.reallserver.cn -DsocksProxyPort=1086 -DsocksNonProxyHosts=dl.google.com\n org.gradle.parallel=true\n android.enableJetifier=true\n android.useAndroidX=true" >> gradle.properties
         - chmod +x ./gradlew
         - ./gradlew assembleRelease
     artifacts:

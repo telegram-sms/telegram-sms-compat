@@ -62,5 +62,6 @@
     <string name="not_charging">不在充電</string>
     <string name="charger_status">監控充電器狀態</string>
     <string name="failed_to_get_information">無法獲取信息。</string>
+    <string name="scan_title">掃描QR碼</string>
     <string name="no_camera_permission">請允許相機訪問以進行QR碼掃描。</string>
 </resources>

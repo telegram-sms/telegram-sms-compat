@@ -367,6 +367,9 @@ public class main_activity extends AppCompatActivity {
             case R.id.donate:
                 file_name = "/donate";
                 break;
+            case R.id.scan:
+                Intent intent = new Intent(context, scanner_activity.class);
+                startActivityForResult(intent, 1);
             case R.id.logcat:
                 Intent logcat_intent = new Intent(main_activity.this, logcat_activity.class);
                 startActivity(logcat_intent);

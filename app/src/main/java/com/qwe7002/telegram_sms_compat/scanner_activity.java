@@ -3,9 +3,12 @@ package com.qwe7002.telegram_sms_compat;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.zxing.Result;
 
@@ -18,6 +21,9 @@ public class scanner_activity extends Activity implements ZXingScannerView.Resul
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.scanner_activity);
+        Toolbar toolbar = findViewById(R.id.scan_toolbar);
+        toolbar.setTitle(R.string.scan_title);
+        toolbar.setTitleTextColor(Color.WHITE);
         ViewGroup contentFrame = findViewById(R.id.content_frame);
         scanner_view = new ZXingScannerView(this);
         contentFrame.addView(scanner_view);

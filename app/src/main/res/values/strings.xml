@@ -63,5 +63,6 @@
     <string name="not_charging">Not charging</string>
     <string name="charger_status">Monitor charger status</string>
     <string name="failed_to_get_information">Failed to get information.</string>
+    <string name="no_camera_permission">Please allow camera access for QR code scanning.</string>
 
 </resources>

@@ -14,6 +14,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -31,6 +32,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -83,6 +85,7 @@ public class main_activity extends AppCompatActivity {
         final Switch charger_status = findViewById(R.id.charger_status);
         final Switch doh_switch = findViewById(R.id.doh_switch);
         final Switch verification_code = findViewById(R.id.verification_code_switch);
+        final Switch privacy_mode_switch = findViewById(R.id.privacy_switch);
         final Button save_button = findViewById(R.id.save);
         final Button get_id = findViewById(R.id.get_id);
 
@@ -93,17 +96,35 @@ public class main_activity extends AppCompatActivity {
             public_func.start_service(context, sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
             if (!sharedPreferences.getBoolean("conversion_data_structure", false)) {
                 new Thread(() -> {
-                    String message_list_raw = public_func.read_file(context, "message.json");
-                    if (message_list_raw.length() == 0) {
-                        message_list_raw = "{}";
+                    String message_list_raw = null;
+                    FileInputStream file_stream = null;
+                    try {
+                        file_stream = context.openFileInput("message.json");
+                        int length = file_stream.available();
+                        byte[] buffer = new byte[length];
+                        //noinspection ResultOfMethodCallIgnored
+                        file_stream.read(buffer);
+                        message_list_raw = new String(buffer);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (file_stream != null) {
+                            try {
+                                file_stream.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                    JsonObject message_list = JsonParser.parseString(message_list_raw).getAsJsonObject();
-                    for (Map.Entry<String, JsonElement> entry_set : message_list.entrySet()) {
-                        Paper.book().write(entry_set.getKey(), entry_set.getValue());
-                        Log.d(TAG, "add_message_list: " + entry_set.getKey());
+                    if (message_list_raw != null) {
+                        JsonObject message_list = JsonParser.parseString(message_list_raw).getAsJsonObject();
+                        for (Map.Entry<String, JsonElement> entry_set : message_list.entrySet()) {
+                            Paper.book().write(entry_set.getKey(), entry_set.getValue());
+                            Log.d(TAG, "add_message_list: " + entry_set.getKey());
+                        }
+                        Log.d(TAG, "The conversion is complete.");
+                        public_func.write_file(context, "message.json", "", Context.MODE_PRIVATE);
                     }
-                    Log.d(TAG, "The conversion is complete.");
-                    public_func.write_file(context, "message.json", "", Context.MODE_PRIVATE);
                     sharedPreferences.edit().putBoolean("conversion_data_structure", true).apply();
                 }).start();
             }
@@ -151,7 +172,25 @@ public class main_activity extends AppCompatActivity {
 
             }
         });
+        chat_id.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (public_func.parse_int(chat_id.getText().toString()) < 0) {
+                    privacy_mode_switch.setVisibility(View.VISIBLE);
+                } else {
+                    privacy_mode_switch.setVisibility(View.GONE);
+                }
+            }
+        });
         get_id.setOnClickListener(v -> {
             if (bot_token.getText().toString().isEmpty()) {
                 Snackbar.make(v, R.string.token_not_configure, Snackbar.LENGTH_LONG).show();
@@ -334,6 +373,7 @@ public class main_activity extends AppCompatActivity {
                     editor.putBoolean("doh_switch", doh_switch.isChecked());
                     editor.putBoolean("initialized", true);
                     editor.putBoolean("conversion_data_structure", true);
+                    editor.putBoolean("privacy_mode", privacy_mode_switch.isChecked());
                     editor.apply();
                     new Thread(() -> {
                         public_func.stop_all_service(context);
@@ -370,6 +410,7 @@ public class main_activity extends AppCompatActivity {
             case R.id.scan:
                 Intent intent = new Intent(context, scanner_activity.class);
                 startActivityForResult(intent, 1);
+                return true;
             case R.id.logcat:
                 Intent logcat_intent = new Intent(main_activity.this, logcat_activity.class);
                 startActivity(logcat_intent);

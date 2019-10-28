@@ -54,6 +54,7 @@ public class chat_command_service extends Service {
     static Thread thread_main;
     private network_changed_receiver network_changed_receiver;
     private boolean have_bot_username = false;
+    private boolean privacy_mode;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Notification notification = public_func.get_notification_obj(getApplicationContext(), getString(R.string.chat_command_service_name));
@@ -72,7 +73,7 @@ public class chat_command_service extends Service {
         chat_id = sharedPreferences.getString("chat_id", "");
         bot_token = sharedPreferences.getString("bot_token", "");
         okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));
-
+        privacy_mode = sharedPreferences.getBoolean("privacy_mode", false);
         wifiLock = ((WifiManager) Objects.requireNonNull(context.getApplicationContext().getSystemService(Context.WIFI_SERVICE))).createWifiLock(WifiManager.WIFI_MODE_FULL, "bot_command_polling_wifi");
         wakelock = ((PowerManager) Objects.requireNonNull(context.getSystemService(Context.POWER_SERVICE))).newWakeLock(android.os.PowerManager.PARTIAL_WAKE_LOCK, "bot_command_polling");
         wifiLock.setReferenceCounted(false);
@@ -115,15 +116,14 @@ public class chat_command_service extends Service {
             return;
         }
         JsonObject from_obj = null;
-        final boolean message_type_is_group = message_type.contains("group");
         final boolean message_type_is_private = message_type.equals("private");
-        if (message_type_is_group && !have_bot_username) {
+        if (!message_type_is_private && !have_bot_username) {
             Log.i(TAG, "receive_handle: Did not successfully get bot_username.");
             get_me();
         }
         if (message_obj.has("from")) {
             from_obj = message_obj.get("from").getAsJsonObject();
-            if (message_type_is_group && from_obj.get("is_bot").getAsBoolean()) {
+            if (!message_type_is_private && from_obj.get("is_bot").getAsBoolean()) {
                 Log.i(TAG, "receive_handle: receive from bot.");
                 return;
             }
@@ -151,7 +151,7 @@ public class chat_command_service extends Service {
                 public_func.send_sms(context, phone_number, request_msg);
                 return;
             }
-            if (message_type_is_group) {
+            if (!message_type_is_private) {
                 Log.i(TAG, "receive_handle: The message id could not be found, ignored.");
                 return;
             }
@@ -172,17 +172,17 @@ public class chat_command_service extends Service {
                 }
             }
         }
-        if (message_type_is_group && !command_bot_username.equals(bot_username)) {
-            Log.i(TAG, "receive_handle: This is a Group conversation, but no conversation object was found.");
+        if (!message_type_is_private && privacy_mode && !command_bot_username.equals(bot_username)) {
+            Log.i(TAG, "receive_handle: Privacy mode, no username found.");
             return;
-
         }
+
         boolean has_command = false;
         switch (command) {
             case "/help":
             case "/start":
                 request_body.text = getString(R.string.system_message_head) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms);
-                if (message_type_is_group && !bot_username.equals("")) {
+                if (!message_type_is_private && privacy_mode && !bot_username.equals("")) {
                     request_body.text = request_body.text.replace(" -", "@" + bot_username + " -");
                 }
                 has_command = true;
@@ -333,14 +333,7 @@ public class chat_command_service extends Service {
         @Override
         public void run() {
             Log.d(TAG, "run: thread main start");
-            int chat_int_id = 0;
-            try {
-                chat_int_id = Integer.parseInt(chat_id);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                //Avoid errors caused by unconvertible inputs.
-            }
-            if (chat_int_id < 0 && !have_bot_username) {
+            if (public_func.parse_int(chat_id) < 0 && !have_bot_username) {
                 new Thread(chat_command_service.this::get_me).start();
             }
             while (true) {

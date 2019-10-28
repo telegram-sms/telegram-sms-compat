@@ -57,6 +57,17 @@ class public_func {
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final CodeauxLibPortable parser = new CodeauxLibPortable();
 
+    static int parse_int(String int_str) {
+        int result = 0;
+        try {
+            result = Integer.parseInt(int_str);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            //Avoid errors caused by unconvertible inputs.
+        }
+        return result;
+    }
+
     static String get_send_phone_number(String phone_number) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < phone_number.length(); i++) {
@@ -403,30 +414,6 @@ class public_func {
         }
     }
 
-
-    static String read_file(Context context, @SuppressWarnings("SameParameterValue") String file_name) {
-        String result = "";
-        FileInputStream file_stream = null;
-        try {
-            file_stream = context.openFileInput(file_name);
-            int length = file_stream.available();
-            byte[] buffer = new byte[length];
-            //noinspection ResultOfMethodCallIgnored
-            file_stream.read(buffer);
-            result = new String(buffer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (file_stream != null) {
-                try {
-                    file_stream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return result;
-    }
 
     static String get_verification_code(String body){
         return parser.find(body);

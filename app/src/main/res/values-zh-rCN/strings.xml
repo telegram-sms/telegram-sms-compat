@@ -63,6 +63,5 @@
     <string name="charger_status">监控充电器状态</string>
     <string name="failed_to_get_information">无法获取信息。</string>
     <string name="scan_title">扫描二维码</string>
-    <string name="no_camera_permission">请允许相机访问以进行二维码扫描。</string>
     <string name="using_privacy_mode">仅响应包含机器人用户名的命令</string>
 </resources>

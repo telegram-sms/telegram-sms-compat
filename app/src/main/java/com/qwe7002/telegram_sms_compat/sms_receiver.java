@@ -53,7 +53,7 @@ public class sms_receiver extends BroadcastReceiver {
         Object[] pdus = (Object[]) extras.get("pdus");
         assert pdus != null;
         final SmsMessage[] messages = new SmsMessage[pdus.length];
-        for (int i = 0; i < pdus.length; i++) {
+        for (int i = 0; i < pdus.length; ++i) {
             messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
         }
 
@@ -106,7 +106,7 @@ public class sms_receiver extends BroadcastReceiver {
             String msg_send_to = public_func.get_send_phone_number(msg_send_list[0]);
             if (public_func.is_phone_number(msg_send_to) && msg_send_list.length != 1) {
                 StringBuilder msg_send_content = new StringBuilder();
-                for (int i = 1; i < msg_send_list.length; i++) {
+                for (int i = 1; i < msg_send_list.length; ++i) {
                     if (msg_send_list.length != 2 && i != 1) {
                         msg_send_content.append("\n");
                     }

@@ -69,12 +69,6 @@ class call_status_listener extends PhoneStateListener {
             final message_json request_body = new message_json();
             request_body.chat_id = chat_id;
             request_body.text = "[" + context.getString(R.string.missed_call_head) + "]" + "\n" + context.getString(R.string.Incoming_number) + incoming_number;
-
-            if (!public_func.check_network_status(context)) {
-                public_func.write_log(context, public_func.network_error);
-                public_func.send_fallback_sms(context, request_body.text);
-                return;
-            }
             String request_body_raw = new Gson().toJson(request_body);
             RequestBody body = RequestBody.create(public_func.JSON, request_body_raw);
             OkHttpClient okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));

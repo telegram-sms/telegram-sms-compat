@@ -116,12 +116,6 @@ public class sms_receiver extends BroadcastReceiver {
                 return;
             }
         }
-
-        if (!public_func.check_network_status(context)) {
-            public_func.write_log(context, public_func.network_error);
-            public_func.send_fallback_sms(context, raw_request_body_text);
-            return;
-        }
         String request_body_json = new Gson().toJson(request_body);
         RequestBody body = RequestBody.create(public_func.JSON, request_body_json);
         OkHttpClient okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));

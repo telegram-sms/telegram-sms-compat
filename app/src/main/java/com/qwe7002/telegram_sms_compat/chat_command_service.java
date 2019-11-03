@@ -394,6 +394,19 @@ public class chat_command_service extends Service {
                         ++magnification;
                     }
                 } else {
+                    if (response.code() == 409) {
+                        message_json error_request_body = new message_json();
+                        error_request_body.chat_id = chat_id;
+                        error_request_body.text = getString(R.string.system_message_head) + "\nError message: " + getString(R.string.conflict_error);
+                        RequestBody error_request = RequestBody.create(public_func.JSON, new Gson().toJson(error_request_body));
+                        Request send_request = new Request.Builder().url(public_func.get_url(bot_token, "sendMessage")).method("POST", error_request).build();
+                        Call error_call = okhttp_client.newCall(send_request);
+                        try {
+                            error_call.execute();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     public_func.write_log(context, "response code:" + response.code());
                 }
             }

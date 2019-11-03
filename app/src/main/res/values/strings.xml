@@ -65,5 +65,6 @@
     <string name="failed_to_get_information">Failed to get information.</string>
     <string name="scan_title">Scan QR code</string>
     <string name="using_privacy_mode">Respond only to commands containing the Bot username</string>
+    <string name="conflict_error">terminated by other request; make sure that only one bot instance is running.</string>
 
 </resources>

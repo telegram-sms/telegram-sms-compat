@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="receive_sms_head">新着メール</string>
-    <string name="content">本文: </string>
-    <string name="from">送信元: </string>
-    <string name="to">宛先: </string>
+    <string name="content">"本文: "</string>
+    <string name="from">"送信元: "</string>
+    <string name="to">"宛先: "</string>
     <string name="send_sms_head">送信</string>
     <string name="system_message_head">[システム情報]</string>
     <string name="success_connect">テレグラムボットサーバーに正常に接続しました。</string>
     <string name="connect_wait_title">サーバーに接続しています…</string>
-    <string name="connect_wait_message">しばらくお待ちください… </string>
+    <string name="connect_wait_message">しばらくお待ちください…</string>
     <string name="select_chat">トーク</string>
     <string name="missed_call_head">不在着信</string>
-    <string name="Incoming_number">発信者番号:</string>
+    <string name="Incoming_number">"発信者番号: "</string>
     <string name="battery_low">低電力。</string>
     <string name="charger_connect">"AC充電器が接続されています。"</string>
     <string name="charger_disconnect">"AC充電器が接続されていません。"</string>
@@ -28,7 +28,7 @@
     <string name="unable_get_recent">最近のトーク履歴はありません</string>
     <string name="chat_command">チャットコマンドを取得する</string>
     <string name="unknown_command">不明なコマンド、/ helpと入力して使用可能なコマンドの一覧を表示します。</string>
-    <string name="current_network_connection_status">ネットワーク状況:</string>
+    <string name="current_network_connection_status">"ネットワーク状況: "</string>
     <string name="battery_monitoring">バッテリー状態の変化を監視する</string>
     <string name="trusted_phone_number_empty">信頼できる電話番号は空にできません。</string>
     <string name="service_is_running">サービスが実行されています…</string>
@@ -37,7 +37,7 @@
     <string name="success">完了</string>
     <string name="available_command">利用可能なコマンド:\n/getinfo – システム情報の取得\n/log - 最後の10件のログレコードを出力します</string>
     <string name="restart_service">バックグラウンドサービスは正常に再起動しました。</string>
-    <string name="status">状態:</string>
+    <string name="status">"状態: "</string>
     <string name="send_failed">失敗</string>
     <string name="airplane_mode">現在のデバイスは機内モードです</string>
     <string name="no_network">サービスなし</string>
@@ -57,7 +57,7 @@
     <string name="enter_content">送信するメッセージの内容を入力してください。</string>
     <string name="unable_get_phone_number">電話番号を取得できません。</string>
     <string name="donate">寄付する</string>
-    <string name="current_battery_level">バッテリー残量:</string>
+    <string name="current_battery_level">"バッテリー残量: "</string>
     <string name="charging">充電中</string>
     <string name="not_charging">充電していません</string>
     <string name="charger_status">充電器の状態を監視する</string>

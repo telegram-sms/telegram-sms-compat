@@ -65,4 +65,5 @@
     <string name="scan_title">扫描二维码</string>
     <string name="using_privacy_mode">仅响应包含机器人用户名的命令</string>
     <string name="conflict_error">当前请求因其他请求而终止；请确保只有一个机器人实例正在运行。</string>
+
 </resources>

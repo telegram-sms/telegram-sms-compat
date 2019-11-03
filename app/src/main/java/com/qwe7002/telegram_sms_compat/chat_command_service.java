@@ -394,6 +394,7 @@ public class chat_command_service extends Service {
                         ++magnification;
                     }
                 } else {
+                    public_func.write_log(context, "response code:" + response.code());
                     if (response.code() == 409) {
                         message_json error_request_body = new message_json();
                         error_request_body.chat_id = chat_id;
@@ -407,7 +408,7 @@ public class chat_command_service extends Service {
                             e.printStackTrace();
                         }
                     }
-                    public_func.write_log(context, "response code:" + response.code());
+
                 }
             }
         }

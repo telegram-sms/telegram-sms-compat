@@ -30,7 +30,7 @@
     <string name="current_network_connection_status">"网络状态: "</string>
     <string name="battery_monitoring">监控电池状态变动</string>
     <string name="trusted_phone_number_empty">可信电话号码不能为空。</string>
-    <string name="service_is_running">服务正在运行......</string>
+    <string name="service_is_running">服务正在运行…</string>
     <string name="battery_monitoring_notify">电池监控</string>
     <string name="chat_command_service_name">聊天命令</string>
     <string name="success">成功</string>
@@ -57,7 +57,7 @@
     <string name="enter_content">请输入要发送的消息的内容。</string>
     <string name="unable_get_phone_number">无法获取电话号码。</string>
     <string name="donate">捐助</string>
-    <string name="current_battery_level">电池电量：</string>
+    <string name="current_battery_level">"电池电量: "</string>
     <string name="charging">正在充电</string>
     <string name="not_charging">不在充电</string>
     <string name="charger_status">监控充电器状态</string>
@@ -65,5 +65,5 @@
     <string name="scan_title">扫描二维码</string>
     <string name="using_privacy_mode">仅响应包含机器人用户名的命令</string>
     <string name="conflict_error">当前请求因其他请求而终止；请确保只有一个机器人实例正在运行。</string>
-
+    <string name="error_message_head">"错误信息: "</string>
 </resources>

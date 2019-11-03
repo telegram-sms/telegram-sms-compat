@@ -76,10 +76,11 @@ public class battery_service extends Service {
     class battery_receiver extends BroadcastReceiver {
         @Override
         public void onReceive(final Context context, final Intent intent) {
-            Log.d("battery_receiver", "Receive action: " + intent.getAction());
+            String TAG = "battery_receiver";
+            Log.d(TAG, "Receive action: " + intent.getAction());
             assert intent.getAction() != null;
             if (intent.getAction().equals(public_func.broadcast_stop_service)) {
-                Log.i("battery_service", "Received stop signal, quitting now...");
+                Log.i(TAG, "Received stop signal, quitting now...");
                 stopSelf();
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
@@ -109,6 +110,7 @@ public class battery_service extends Service {
             int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
             int battery_level = (int) ((level / (float) scale) * 100);
             if (battery_level > 100) {
+                Log.d(TAG, "The previous battery is over 100%, and the correction is 100%.");
                 battery_level = 100;
             }
             request_body.text = message_body.append("\n").append(context.getString(R.string.current_battery_level)).append(battery_level).append("%").toString();

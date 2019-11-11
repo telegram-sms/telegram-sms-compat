@@ -13,7 +13,6 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import com.github.sumimakito.codeauxlib.CodeauxLibStatic;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -416,11 +415,6 @@ class public_func {
         }
     }
 
-
-    static String get_verification_code(String body){
-        return CodeauxLibStatic.parsecode(body);
-
-    }
 
     static void add_message_list(String message_id, String phone) {
         Paper.book().write(message_id, phone);

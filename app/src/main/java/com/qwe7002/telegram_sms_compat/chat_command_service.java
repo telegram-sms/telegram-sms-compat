@@ -229,7 +229,7 @@ public class chat_command_service extends Service {
             send_sms_status = -1;
             send_to_temp = null;
         }
-        if (!has_command) {
+        if (!has_command && send_sms_status != -1) {
             Log.i(TAG, "receive_handle: Enter the interactive SMS sending mode.");
             String result_send = getString(R.string.failed_to_get_information);
             Log.d(TAG, "Sending mode status: " + send_sms_status);

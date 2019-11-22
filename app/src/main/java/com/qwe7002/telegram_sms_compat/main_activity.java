@@ -48,6 +48,7 @@ import okhttp3.Response;
 
 
 public class main_activity extends AppCompatActivity {
+    private static boolean set_permission_back = false;
     private Context context = null;
     private final String TAG = "main_activity";
     @Override
@@ -88,6 +89,7 @@ public class main_activity extends AppCompatActivity {
         final Switch privacy_mode_switch = findViewById(R.id.privacy_switch);
         final Button save_button = findViewById(R.id.save);
         final Button get_id = findViewById(R.id.get_id);
+        final Button notify_app_set = findViewById(R.id.notify_app_set);
 
         String bot_token_save = sharedPreferences.getString("bot_token", "");
         String chat_id_save = sharedPreferences.getString("chat_id", "");
@@ -144,6 +146,11 @@ public class main_activity extends AppCompatActivity {
         if (trusted_phone_number.length() == 0) {
             fallback_sms.setEnabled(false);
             fallback_sms.setChecked(false);
+        }
+        if (public_func.parse_int(chat_id.getText().toString()) < 0) {
+            privacy_mode_switch.setVisibility(View.VISIBLE);
+        } else {
+            privacy_mode_switch.setVisibility(View.GONE);
         }
         chat_command.setChecked(sharedPreferences.getBoolean("chat_command", false));
         verification_code.setChecked(sharedPreferences.getBoolean("verification_code", false));
@@ -387,8 +394,32 @@ public class main_activity extends AppCompatActivity {
                 }
             });
         });
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            notify_app_set.setVisibility(View.VISIBLE);
+        }
+        notify_app_set.setOnClickListener(v -> {
+            if (!public_func.is_notify_listener(context)) {
+                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                set_permission_back = true;
+                return;
+            }
+            startActivity(new Intent(main_activity.this, notify_apps_list_activity.class));
+        });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boolean back_status = set_permission_back;
+        set_permission_back = false;
+        if (back_status) {
+            if (public_func.is_notify_listener(context)) {
+                startActivity(new Intent(main_activity.this, notify_apps_list_activity.class));
+            }
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);

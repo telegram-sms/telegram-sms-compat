@@ -9,21 +9,19 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:alpha="0.15"
+        android:alpha="@dimen/alpha"
         android:scaleType="fitEnd"
         app:srcCompat="@drawable/character_set"
         tools:ignore="ContentDescription" />
 
 
     <ScrollView
-        android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        tools:ignore="UselessParent">
+        android:paddingBottom="@dimen/activity_vertical_margin">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -141,14 +139,22 @@
                 android:id="@+id/get_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:alpha="0.8"
+                android:alpha="@dimen/button_alpha"
                 android:text="@string/get_recent_chat_id" />
+
+            <Button
+                android:id="@+id/notify_app_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="@dimen/button_alpha"
+                android:text="@string/set_up_apps_that_need_to_listen_for_notifications"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/save"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:alpha="0.8"
+                android:alpha="@dimen/button_alpha"
                 android:text="@string/test_and_save" />
 
         </LinearLayout>

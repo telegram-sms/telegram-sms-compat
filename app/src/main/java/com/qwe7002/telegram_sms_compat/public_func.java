@@ -13,6 +13,8 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import androidx.core.app.NotificationManagerCompat;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -316,7 +319,12 @@ class public_func {
     static void start_service(Context context, Boolean battery_switch, Boolean chat_command_switch) {
         Intent battery_service = new Intent(context, com.qwe7002.telegram_sms_compat.battery_service.class);
         Intent chat_long_polling_service = new Intent(context, chat_command_service.class);
-
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            if (is_notify_listener(context)) {
+                Intent notification_listener_monitor_service = new Intent(context, notification_listener_monitor_service.class);
+                context.startService(notification_listener_monitor_service);
+            }
+        }
         if (battery_switch) {
             context.startService(battery_service);
         }
@@ -419,6 +427,11 @@ class public_func {
     static void add_message_list(String message_id, String phone) {
         Paper.book().write(message_id, phone);
         Log.d("add_message_list", "add_message_list: " + message_id);
+    }
+
+    static boolean is_notify_listener(Context context) {
+        Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(context);
+        return packageNames.contains(context.getPackageName());
     }
 
 }

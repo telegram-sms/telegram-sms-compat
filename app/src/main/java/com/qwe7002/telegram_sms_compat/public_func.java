@@ -3,10 +3,12 @@ package com.qwe7002.telegram_sms_compat;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -321,8 +323,12 @@ class public_func {
         Intent chat_long_polling_service = new Intent(context, chat_command_service.class);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             if (is_notify_listener(context)) {
-                Intent notification_listener_monitor_service = new Intent(context, notification_listener_monitor_service.class);
-                context.startService(notification_listener_monitor_service);
+                if (is_notify_listener(context)) {
+                    ComponentName thisComponent = new ComponentName(context, notification_listener_service.class);
+                    PackageManager pm = context.getPackageManager();
+                    pm.setComponentEnabledSetting(thisComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                    pm.setComponentEnabledSetting(thisComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+                }
             }
         }
         if (battery_switch) {

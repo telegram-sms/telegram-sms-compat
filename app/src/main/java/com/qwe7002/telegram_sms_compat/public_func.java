@@ -55,6 +55,7 @@ import okhttp3.TlsVersion;
 import okhttp3.dnsoverhttps.DnsOverHttps;
 
 
+
 class public_func {
     static final String broadcast_stop_service = "com.qwe7002.telegram_sms.stop_all";
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -81,6 +82,7 @@ class public_func {
         return result.toString();
     }
 
+    @SuppressWarnings("deprecation")
     static boolean check_network_status(Context context) {
         ConnectivityManager manager = (ConnectivityManager) context
                 .getApplicationContext().getSystemService(
@@ -179,6 +181,7 @@ class public_func {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     static String get_network_type(Context context) {
         String net_type = "Unknown";
         ConnectivityManager connect_manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -193,9 +196,6 @@ class public_func {
                 break;
             case ConnectivityManager.TYPE_MOBILE:
                 switch (network_info.getSubtype()) {
-                    case TelephonyManager.NETWORK_TYPE_NR:
-                        net_type = "5G";
-                        break;
                     case TelephonyManager.NETWORK_TYPE_LTE:
                         net_type = "LTE/4G";
                         break;

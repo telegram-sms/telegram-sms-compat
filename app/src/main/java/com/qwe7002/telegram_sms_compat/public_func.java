@@ -1,5 +1,6 @@
 package com.qwe7002.telegram_sms_compat;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -82,7 +83,6 @@ class public_func {
         return result.toString();
     }
 
-    @SuppressWarnings("deprecation")
     static boolean check_network_status(Context context) {
         ConnectivityManager manager = (ConnectivityManager) context
                 .getApplicationContext().getSystemService(
@@ -181,7 +181,7 @@ class public_func {
         return true;
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressLint("HardwareIds")
     static String get_network_type(Context context) {
         String net_type = "Unknown";
         ConnectivityManager connect_manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -195,11 +195,25 @@ class public_func {
                 net_type = "WIFI";
                 break;
             case ConnectivityManager.TYPE_MOBILE:
+                boolean is_att = false;
+                TelephonyManager telephonyManager = (TelephonyManager) context
+                        .getSystemService(Context.TELEPHONY_SERVICE);
+                assert telephonyManager != null;
+                if (telephonyManager.getSubscriberId().startsWith("3104101")) {
+                    is_att = true;
+                }
                 switch (network_info.getSubtype()) {
                     case TelephonyManager.NETWORK_TYPE_LTE:
-                        net_type = "LTE/4G";
+                        net_type = "LTE";
+                        if (is_att) {
+                            net_type = "5G E";
+                        }
                         break;
                     case TelephonyManager.NETWORK_TYPE_HSPAP:
+                        if (is_att) {
+                            net_type = "4G";
+                            break;
+                        }
                     case TelephonyManager.NETWORK_TYPE_EVDO_0:
                     case TelephonyManager.NETWORK_TYPE_EVDO_A:
                     case TelephonyManager.NETWORK_TYPE_EVDO_B:

@@ -329,7 +329,7 @@ public class chat_command_service extends Service {
         @Override
         public void run() {
             Log.d(TAG, "run: thread main start");
-            if (public_func.parse_int(chat_id) < 0 && !have_bot_username) {
+            if (public_func.parse_long(chat_id) < 0 && !have_bot_username) {
                 new Thread(chat_command_service.this::get_me).start();
             }
             while (true) {

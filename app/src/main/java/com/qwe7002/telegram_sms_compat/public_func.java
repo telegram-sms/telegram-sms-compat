@@ -61,13 +61,12 @@ class public_func {
     static final String broadcast_stop_service = "com.qwe7002.telegram_sms.stop_all";
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    static int parse_int(String int_str) {
-        int result = 0;
+    static long parse_long(String long_str) {
+        long result = 0;
         try {
-            result = Integer.parseInt(int_str);
+            result = Long.parseLong(long_str);
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            //Avoid errors caused by unconvertible inputs.
         }
         return result;
     }

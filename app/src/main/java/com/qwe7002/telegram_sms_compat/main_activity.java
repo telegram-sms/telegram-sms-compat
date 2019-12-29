@@ -55,9 +55,10 @@ public class main_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
+        Log.i(TAG, "Current API address: " + public_func.get_url("", ""));
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Current program has security risks");
+            builder.setTitle("Current program has stecurity risks");
             builder.setMessage("Your current system does not support TLS1.2 protocol and TLS1.1/TLS1.0 will be used instead. This may cause security or compatibility issues. Please update the system version to Android 4.1 or above.");
             builder.setCancelable(false);
             builder.setPositiveButton("ok", null);
@@ -115,7 +116,7 @@ public class main_activity extends AppCompatActivity {
             fallback_sms.setEnabled(false);
             fallback_sms.setChecked(false);
         }
-        if (public_func.parse_int(chat_id.getText().toString()) < 0) {
+        if (public_func.parse_long(chat_id.getText().toString()) < 0) {
             privacy_mode_switch.setVisibility(View.VISIBLE);
         } else {
             privacy_mode_switch.setVisibility(View.GONE);
@@ -160,7 +161,7 @@ public class main_activity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (public_func.parse_int(chat_id.getText().toString()) < 0) {
+                if (public_func.parse_long(chat_id.getText().toString()) < 0) {
                     privacy_mode_switch.setVisibility(View.VISIBLE);
                 } else {
                     privacy_mode_switch.setVisibility(View.GONE);
@@ -367,17 +368,18 @@ public class main_activity extends AppCompatActivity {
         });
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             notify_app_set.setVisibility(View.VISIBLE);
+            notify_app_set.setOnClickListener(v -> {
+                if (!public_func.is_notify_listener(context)) {
+                    Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    set_permission_back = true;
+                    return;
+                }
+                startActivity(new Intent(main_activity.this, notify_apps_list_activity.class));
+            });
         }
-        notify_app_set.setOnClickListener(v -> {
-            if (!public_func.is_notify_listener(context)) {
-                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                set_permission_back = true;
-                return;
-            }
-            startActivity(new Intent(main_activity.this, notify_apps_list_activity.class));
-        });
+
     }
 
     @Override

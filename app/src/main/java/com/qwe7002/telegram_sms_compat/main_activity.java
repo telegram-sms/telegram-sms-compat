@@ -22,8 +22,6 @@ import android.widget.Switch;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -454,11 +452,11 @@ public class main_activity extends AppCompatActivity {
         }
         assert file_name != null;
         Uri uri = Uri.parse("https://get.telegram-sms.com" + file_name);
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        builder.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        CustomTabsIntent customTabsIntent = builder.build();
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        intent.setData(uri);
         try {
-            customTabsIntent.launchUrl(this, uri);
+            startActivity(intent);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
             Snackbar.make(findViewById(R.id.bot_token), "Browser not found.", Snackbar.LENGTH_LONG).show();

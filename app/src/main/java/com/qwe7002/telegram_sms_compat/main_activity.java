@@ -74,9 +74,7 @@ public class main_activity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
-        Paper.init(context);
 
-        final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         final EditText chat_id = findViewById(R.id.chat_id);
         final EditText bot_token = findViewById(R.id.bot_token);
         final EditText trusted_phone_number = findViewById(R.id.trusted_phone_number);
@@ -90,6 +88,9 @@ public class main_activity extends AppCompatActivity {
         final Button save_button = findViewById(R.id.save);
         final Button get_id = findViewById(R.id.get_id);
         final Button notify_app_set = findViewById(R.id.notify_app_set);
+
+        Paper.init(context);
+        final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
 
         String bot_token_save = sharedPreferences.getString("bot_token", "");
         String chat_id_save = sharedPreferences.getString("chat_id", "");

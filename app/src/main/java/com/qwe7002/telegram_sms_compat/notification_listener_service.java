@@ -66,11 +66,9 @@ public class notification_listener_service extends NotificationListenerService {
         super.onDestroy();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.KITKAT) {
-            return;
-        }
         final String package_name = sbn.getPackageName();
         Log.d(TAG, "onNotificationPosted: " + package_name);
 
@@ -128,6 +126,7 @@ public class notification_listener_service extends NotificationListenerService {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
         Log.d(TAG, "onNotificationRemoved: " + sbn.getPackageName());

@@ -55,8 +55,8 @@ public class notify_apps_list_activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Paper.init(getApplicationContext());
-        context = getBaseContext();
+        context = getApplicationContext();
+        Paper.init(context);
         this.setTitle(getString(R.string.app_list));
         setContentView(R.layout.notify_apps_list_activity);
         final ListView app_list = findViewById(R.id.app_list_view);

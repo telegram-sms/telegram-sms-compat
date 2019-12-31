@@ -28,7 +28,6 @@ import java.util.List;
 import io.paperdb.Paper;
 
 public class notify_apps_list_activity extends AppCompatActivity {
-    Context context;
     private app_adapter app_adapter;
 
     static List<app_info> scan_app_list(PackageManager packageManager) {
@@ -55,7 +54,7 @@ public class notify_apps_list_activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = getApplicationContext();
+        Context context = getApplicationContext();
         Paper.init(context);
         this.setTitle(getString(R.string.app_list));
         setContentView(R.layout.notify_apps_list_activity);

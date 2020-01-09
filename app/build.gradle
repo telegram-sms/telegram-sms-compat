@@ -39,7 +39,7 @@ android {
 
 
 dependencies {
-    //Okhttp compatible stop at 3.12 .
+    //Okhttp compatible stop at 3.12.x
     ext.okhttp_version = "3.12.5"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

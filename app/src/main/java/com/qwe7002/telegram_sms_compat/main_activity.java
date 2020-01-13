@@ -50,6 +50,7 @@ public class main_activity extends AppCompatActivity {
     private static boolean set_permission_back = false;
     private Context context = null;
     private final String TAG = "main_activity";
+    private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +91,7 @@ public class main_activity extends AppCompatActivity {
         final Button notify_app_set = findViewById(R.id.notify_app_set);
 
         Paper.init(context);
-        final SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
 
         String bot_token_save = sharedPreferences.getString("bot_token", "");
         String chat_id_save = sharedPreferences.getString("chat_id", "");
@@ -278,6 +279,10 @@ public class main_activity extends AppCompatActivity {
         });
 
         save_button.setOnClickListener(v -> {
+            if (!sharedPreferences.getBoolean("privacy_dialog_agree", false)) {
+                show_privacy_dialog();
+                return;
+            }
             if (bot_token.getText().toString().isEmpty() || chat_id.getText().toString().isEmpty()) {
                 Snackbar.make(v, R.string.chat_id_or_token_not_config, Snackbar.LENGTH_LONG).show();
                 return;
@@ -386,6 +391,10 @@ public class main_activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (!sharedPreferences.getBoolean("privacy_dialog_agree", false)) {
+            show_privacy_dialog();
+            return;
+        }
         boolean back_status = set_permission_back;
         set_permission_back = false;
         if (back_status) {
@@ -400,6 +409,28 @@ public class main_activity extends AppCompatActivity {
         return true;
     }
 
+    private void show_privacy_dialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.privacy_reminder_title);
+        builder.setMessage(R.string.privacy_reminder_information);
+        builder.setCancelable(false);
+        builder.setPositiveButton(getString(R.string.agree), (dialog, which) -> sharedPreferences.edit().putBoolean("privacy_dialog_agree", true).apply());
+        builder.setNegativeButton(R.string.decline, null);
+        builder.setNeutralButton(getString(R.string.visit_page), (dialog, which) -> {
+            Uri uri = Uri.parse("https://get.telegram-sms.com/wiki/" + context.getString(R.string.privacy_policy_url));
+            Intent intent = new Intent();
+            intent.setAction("android.intent.action.VIEW");
+            intent.setData(uri);
+            try {
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                e.printStackTrace();
+                Snackbar.make(findViewById(R.id.bot_token), "Browser not found.", Snackbar.LENGTH_LONG).show();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         String file_name = null;

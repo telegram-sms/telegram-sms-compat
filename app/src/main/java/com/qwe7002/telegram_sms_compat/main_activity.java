@@ -102,7 +102,10 @@ public class main_activity extends AppCompatActivity {
                 new Thread(() -> convert_data(sharedPreferences)).start();
             }
         }
-
+        if (!sharedPreferences.getBoolean("privacy_dialog_agree", false)) {
+            show_privacy_dialog();
+            return;
+        }
         bot_token.setText(bot_token_save);
         chat_id.setText(chat_id_save);
 
@@ -391,10 +394,6 @@ public class main_activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!sharedPreferences.getBoolean("privacy_dialog_agree", false)) {
-            show_privacy_dialog();
-            return;
-        }
         boolean back_status = set_permission_back;
         set_permission_back = false;
         if (back_status) {
@@ -414,9 +413,9 @@ public class main_activity extends AppCompatActivity {
         builder.setTitle(R.string.privacy_reminder_title);
         builder.setMessage(R.string.privacy_reminder_information);
         builder.setCancelable(false);
-        builder.setPositiveButton(getString(R.string.agree), (dialog, which) -> sharedPreferences.edit().putBoolean("privacy_dialog_agree", true).apply());
+        builder.setPositiveButton(R.string.agree, (dialog, which) -> sharedPreferences.edit().putBoolean("privacy_dialog_agree", true).apply());
         builder.setNegativeButton(R.string.decline, null);
-        builder.setNeutralButton(getString(R.string.visit_page), (dialog, which) -> {
+        builder.setNeutralButton(R.string.visit_page, (dialog, which) -> {
             Uri uri = Uri.parse("https://get.telegram-sms.com/wiki/" + context.getString(R.string.privacy_policy_url));
             Intent intent = new Intent();
             intent.setAction("android.intent.action.VIEW");
@@ -430,6 +429,9 @@ public class main_activity extends AppCompatActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setAllCaps(false);
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setAllCaps(false);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setAllCaps(false);
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

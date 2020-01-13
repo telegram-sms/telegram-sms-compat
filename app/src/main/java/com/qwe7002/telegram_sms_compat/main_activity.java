@@ -359,9 +359,10 @@ public class main_activity extends AppCompatActivity {
                     editor.putBoolean("charger_status", charger_status.isChecked());
                     editor.putBoolean("verification_code", verification_code.isChecked());
                     editor.putBoolean("doh_switch", doh_switch.isChecked());
+                    editor.putBoolean("privacy_mode", privacy_mode_switch.isChecked());
                     editor.putBoolean("initialized", true);
                     editor.putBoolean("conversion_data_structure", true);
-                    editor.putBoolean("privacy_mode", privacy_mode_switch.isChecked());
+                    editor.putBoolean("privacy_dialog_agree", true);
                     editor.apply();
                     new Thread(() -> {
                         public_func.stop_all_service(context);

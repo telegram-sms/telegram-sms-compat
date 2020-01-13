@@ -104,7 +104,6 @@ public class main_activity extends AppCompatActivity {
         }
         if (!sharedPreferences.getBoolean("privacy_dialog_agree", false)) {
             show_privacy_dialog();
-            return;
         }
         bot_token.setText(bot_token_save);
         chat_id.setText(chat_id_save);
@@ -282,16 +281,16 @@ public class main_activity extends AppCompatActivity {
         });
 
         save_button.setOnClickListener(v -> {
-            if (!sharedPreferences.getBoolean("privacy_dialog_agree", false)) {
-                show_privacy_dialog();
-                return;
-            }
             if (bot_token.getText().toString().isEmpty() || chat_id.getText().toString().isEmpty()) {
                 Snackbar.make(v, R.string.chat_id_or_token_not_config, Snackbar.LENGTH_LONG).show();
                 return;
             }
             if (fallback_sms.isChecked() && trusted_phone_number.getText().toString().isEmpty()) {
                 Snackbar.make(v, R.string.trusted_phone_number_empty, Snackbar.LENGTH_LONG).show();
+                return;
+            }
+            if (!sharedPreferences.getBoolean("privacy_dialog_agree", false)) {
+                show_privacy_dialog();
                 return;
             }
             final ProgressDialog progress_dialog = new ProgressDialog(main_activity.this);

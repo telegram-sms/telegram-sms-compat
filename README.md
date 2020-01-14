@@ -5,7 +5,9 @@
 
 A robot running on your outdated Android device. 
 
-You can come [https://reall.uk](https://reall.uk) to submit an issue or discuss any issues with this project.
+**Please visit [https://reall.uk](https://reall.uk) to submit and discuss issues regarding this project.**
+
+**请访问 [https://reall.uk](https://reall.uk) 提交并讨论有关此项目的问题。**
 
 [Download](https://github.com/telegram-sms/telegram-sms-compat/releases)
 
@@ -25,7 +27,7 @@ CodeauxLib is licensed under [BSD 3-Clause License](https://github.com/telegram-
 
 Copyright of the artwork belongs to [@walliant](https://www.pixiv.net/member.php?id=5600144). Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
-Download resource file: [mega.nz](https://mega.nz/#F!TmwQSYjD!XN-uVfciajwy3okjIdpCAQ)
+Download resource file: [mega.nz](https://mega.nz/#F!TmwQSYjD!XN-uVfciajwy3okjIdpCAQ).
 
 Character set：
 
@@ -34,7 +36,7 @@ Character set：
 - Birth sign: Libra
 - Habits: Eat sweets, Maid dress
 
-Designed by Reall with Love in Fujian, China
+Designed by Reall with Love in Fujian, China;
 
 ## Acknowledgements
 

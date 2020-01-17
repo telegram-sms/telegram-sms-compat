@@ -59,7 +59,6 @@ public class chat_command_service extends Service {
         Notification notification = public_func.get_notification_obj(getApplicationContext(), getString(R.string.chat_command_service_name));
         startForeground(2, notification);
         return START_STICKY;
-
     }
 
     @SuppressLint({"InvalidWakeLockTag", "WakelockTimeout"})
@@ -86,7 +85,7 @@ public class chat_command_service extends Service {
         thread_main = new Thread(new thread_main_runnable());
         thread_main.start();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(public_func.broadcast_stop_service);
+        intentFilter.addAction(public_func.BROADCAST_STOP_SERVICE);
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         broadcast_receiver = new broadcast_receiver();
         registerReceiver(broadcast_receiver, intentFilter);
@@ -455,7 +454,7 @@ public class chat_command_service extends Service {
         public void onReceive(Context context, Intent intent) {
             assert intent.getAction() != null;
             switch (intent.getAction()) {
-                case public_func.broadcast_stop_service:
+                case public_func.BROADCAST_STOP_SERVICE:
                     Log.i(TAG, "Received stop signal, quitting now...");
                     stopSelf();
                     android.os.Process.killProcess(android.os.Process.myPid());

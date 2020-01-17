@@ -58,7 +58,7 @@ import okhttp3.dnsoverhttps.DnsOverHttps;
 
 
 class public_func {
-    static final String broadcast_stop_service = "com.qwe7002.telegram_sms.stop_all";
+    static final String BROADCAST_STOP_SERVICE = "com.qwe7002.telegram_sms.stop_all";
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     static long parse_long(String long_str) {
@@ -322,7 +322,7 @@ class public_func {
     }
 
     static void stop_all_service(Context context) {
-        Intent intent = new Intent(broadcast_stop_service);
+        Intent intent = new Intent(BROADCAST_STOP_SERVICE);
         context.sendBroadcast(intent);
         try {
             Thread.sleep(1000);

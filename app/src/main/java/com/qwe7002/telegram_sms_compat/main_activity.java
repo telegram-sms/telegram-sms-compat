@@ -66,15 +66,6 @@ public class main_activity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Unsupported API version");
-            builder.setMessage("Current phone version is larger than API 21, please use Telegram sms.");
-            builder.setCancelable(false);
-            builder.setPositiveButton("ok", (dialog, which) -> finish());
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
 
         final EditText chat_id = findViewById(R.id.chat_id);
         final EditText bot_token = findViewById(R.id.bot_token);

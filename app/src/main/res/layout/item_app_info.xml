@@ -24,6 +24,7 @@
 
         <TextView
             android:id="@+id/app_name"
+            android:maxEms="15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
@@ -38,6 +39,7 @@
 
         <TextView
             android:id="@+id/package_name"
+            android:maxEms="15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"

@@ -101,16 +101,49 @@ public class main_activity extends AppCompatActivity {
 
         trusted_phone_number.setText(sharedPreferences.getString("trusted_phone_number", ""));
         battery_monitoring_switch.setChecked(sharedPreferences.getBoolean("battery_monitoring_switch", false));
-        battery_monitoring_switch.setChecked(sharedPreferences.getBoolean("battery_monitoring_switch", false));
-        battery_monitoring_switch.setOnClickListener(v -> charger_status.setEnabled(battery_monitoring_switch.isChecked()));
-        charger_status.setEnabled(battery_monitoring_switch.isChecked());
         charger_status.setChecked(sharedPreferences.getBoolean("charger_status", false));
+
+        if (!battery_monitoring_switch.isChecked()) {
+            charger_status.setChecked(false);
+            charger_status.setVisibility(View.GONE);
+        }
+
+        battery_monitoring_switch.setOnClickListener(v -> {
+            if (battery_monitoring_switch.isChecked()) {
+                charger_status.setVisibility(View.VISIBLE);
+            } else {
+                charger_status.setVisibility(View.GONE);
+            }
+        });
 
         fallback_sms.setChecked(sharedPreferences.getBoolean("fallback_sms", false));
         if (trusted_phone_number.length() == 0) {
-            fallback_sms.setEnabled(false);
+            fallback_sms.setVisibility(View.GONE);
             fallback_sms.setChecked(false);
         }
+        trusted_phone_number.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //ignore
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //ignore
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (trusted_phone_number.length() != 0) {
+                    fallback_sms.setVisibility(View.VISIBLE);
+                } else {
+                    fallback_sms.setVisibility(View.GONE);
+                    fallback_sms.setChecked(false);
+                }
+            }
+        });
+
+
         if (public_func.parse_long(chat_id.getText().toString()) < 0) {
             privacy_mode_switch.setVisibility(View.VISIBLE);
         } else {
@@ -119,31 +152,8 @@ public class main_activity extends AppCompatActivity {
         privacy_mode_switch.setChecked(sharedPreferences.getBoolean("privacy_mode", false));
         chat_command.setChecked(sharedPreferences.getBoolean("chat_command", false));
         verification_code.setChecked(sharedPreferences.getBoolean("verification_code", false));
-        verification_code.setEnabled(chat_command.isChecked());
         doh_switch.setChecked(sharedPreferences.getBoolean("doh_switch", true));
         chat_command.setOnClickListener(v -> verification_code.setEnabled(chat_command.isChecked()));
-        trusted_phone_number.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (trusted_phone_number.length() != 0) {
-                    fallback_sms.setEnabled(true);
-                }
-                if (trusted_phone_number.length() == 0) {
-                    fallback_sms.setEnabled(false);
-                    fallback_sms.setChecked(false);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
         chat_id.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

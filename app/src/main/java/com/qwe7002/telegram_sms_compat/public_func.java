@@ -299,6 +299,19 @@ class public_func {
         sms_manager.sendMultipartTextMessage(trust_number, null, divideContents, null, null);
     }
 
+    static void add_resend_loop(Context context, String message) {
+        ArrayList<String> resend_list;
+        Paper.init(context);
+        resend_list = Paper.book().read("resend_list", new ArrayList<>());
+        resend_list.add(message);
+        Paper.book().write("resend_list", resend_list);
+        start_resend(context);
+    }
+
+    static void start_resend(Context context) {
+        Intent intent = new Intent(context, resend_service.class);
+        context.startService(intent);
+    }
     static String get_message_id(String result) {
         JsonObject result_obj = JsonParser.parseString(result).getAsJsonObject().get("result").getAsJsonObject();
         return result_obj.get("message_id").getAsString();

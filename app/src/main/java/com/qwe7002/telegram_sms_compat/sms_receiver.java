@@ -130,6 +130,7 @@ public class sms_receiver extends BroadcastReceiver {
                 e.printStackTrace();
                 public_func.write_log(context, error_head + e.getMessage());
                 public_func.send_fallback_sms(context, final_raw_request_body_text);
+                public_func.add_resend_loop(context, request_body.text);
             }
 
             @Override
@@ -139,6 +140,7 @@ public class sms_receiver extends BroadcastReceiver {
                 if (response.code() != 200) {
                     public_func.write_log(context, error_head + response.code() + " " + result);
                     public_func.send_fallback_sms(context, final_raw_request_body_text);
+                    public_func.add_resend_loop(context, request_body.text);
                 } else {
                     if (!public_func.is_phone_number(message_address)) {
                         public_func.write_log(context, "[" + message_address + "] Not a regular phone number.");

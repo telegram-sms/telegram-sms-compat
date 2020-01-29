@@ -80,6 +80,7 @@ public class call_receiver extends BroadcastReceiver {
                         e.printStackTrace();
                         public_func.write_log(context, error_head + e.getMessage());
                         public_func.send_fallback_sms(context, request_body.text);
+                        public_func.add_resend_loop(context, request_body.text);
                     }
 
                     @Override
@@ -88,6 +89,7 @@ public class call_receiver extends BroadcastReceiver {
                         if (response.code() != 200) {
                             public_func.write_log(context, error_head + response.code() + " " + response.body().string());
                             public_func.send_fallback_sms(context, request_body.text);
+                            public_func.add_resend_loop(context, request_body.text);
                         } else {
                             String result = response.body().string();
                             JsonObject result_obj = JsonParser.parseString(result).getAsJsonObject().get("result").getAsJsonObject();

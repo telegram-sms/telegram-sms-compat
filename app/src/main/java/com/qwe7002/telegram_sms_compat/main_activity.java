@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -113,6 +114,7 @@ public class main_activity extends AppCompatActivity {
                 charger_status.setVisibility(View.VISIBLE);
             } else {
                 charger_status.setVisibility(View.GONE);
+                charger_status.setChecked(false);
             }
         });
 
@@ -148,12 +150,13 @@ public class main_activity extends AppCompatActivity {
             privacy_mode_switch.setVisibility(View.VISIBLE);
         } else {
             privacy_mode_switch.setVisibility(View.GONE);
+            privacy_mode_switch.setChecked(false);
         }
         privacy_mode_switch.setChecked(sharedPreferences.getBoolean("privacy_mode", false));
         chat_command.setChecked(sharedPreferences.getBoolean("chat_command", false));
+        chat_command.setOnClickListener(v -> set_privacy_mode_checkbox(chat_id, chat_command, privacy_mode_switch));
         verification_code.setChecked(sharedPreferences.getBoolean("verification_code", false));
         doh_switch.setChecked(sharedPreferences.getBoolean("doh_switch", true));
-        chat_command.setOnClickListener(v -> verification_code.setEnabled(chat_command.isChecked()));
         chat_id.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -161,16 +164,11 @@ public class main_activity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                set_privacy_mode_checkbox(chat_id, chat_command, privacy_mode_switch);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (public_func.parse_long(chat_id.getText().toString()) < 0) {
-                    privacy_mode_switch.setVisibility(View.VISIBLE);
-                } else {
-                    privacy_mode_switch.setVisibility(View.GONE);
-                }
             }
         });
         get_id.setOnClickListener(v -> {
@@ -390,6 +388,20 @@ public class main_activity extends AppCompatActivity {
             });
         }
 
+    }
+
+    private void set_privacy_mode_checkbox(TextView chat_id, Switch chat_command, Switch privacy_mode_switch) {
+        if (!chat_command.isChecked()) {
+            privacy_mode_switch.setVisibility(View.GONE);
+            privacy_mode_switch.setChecked(false);
+            return;
+        }
+        if (public_func.parse_long(chat_id.getText().toString()) < 0) {
+            privacy_mode_switch.setVisibility(View.VISIBLE);
+        } else {
+            privacy_mode_switch.setVisibility(View.GONE);
+            privacy_mode_switch.setChecked(false);
+        }
     }
 
     @Override

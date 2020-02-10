@@ -95,13 +95,12 @@ class public_func {
     }
 
     static OkHttpClient get_okhttp_obj(boolean doh_switch) {
-        ConnectionSpec spec;
         OkHttpClient.Builder okhttp = new OkHttpClient.Builder()
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .readTimeout(15, TimeUnit.SECONDS)
                 .writeTimeout(15, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true);
-        spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                 .cipherSuites(
                         CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
                         CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
@@ -128,7 +127,6 @@ class public_func {
         assert sc != null;
         //noinspection deprecation
         okhttp.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
-
         List<ConnectionSpec> specs = new ArrayList<>();
         specs.add(spec);
         specs.add(ConnectionSpec.COMPATIBLE_TLS);

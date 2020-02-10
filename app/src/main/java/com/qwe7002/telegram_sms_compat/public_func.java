@@ -56,7 +56,6 @@ import okhttp3.TlsVersion;
 import okhttp3.dnsoverhttps.DnsOverHttps;
 
 
-
 class public_func {
     static final String BROADCAST_STOP_SERVICE = "com.qwe7002.telegram_sms.stop_all";
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -102,47 +101,34 @@ class public_func {
                 .readTimeout(15, TimeUnit.SECONDS)
                 .writeTimeout(15, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                    .cipherSuites(
-                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
-                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-                            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
-                            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
-                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,
-                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
-                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
-                    )
-                    .tlsVersions(TlsVersion.TLS_1_2)
-                    .build();
-            SSLContext sc = null;
-            try {
-                sc = SSLContext.getInstance("TLSv1.2");
-                sc.init(null, null, null);
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
-            }
-            assert sc != null;
-            //noinspection deprecation
-            okhttp.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
-        } else {
-            Log.i("get_okhttp_obj", "An outdated encryption method is being used, and this method may be deprecated in 2020.");
-            spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                    .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1)
-                    .cipherSuites(
-                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-                            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
-                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
-                    ).build();
-
+        spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                .cipherSuites(
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+                        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
+                        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+                )
+                .tlsVersions(TlsVersion.TLS_1_2)
+                .build();
+        SSLContext sc = null;
+        try {
+            sc = SSLContext.getInstance("TLSv1.2");
+            sc.init(null, null, null);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
         }
+        assert sc != null;
+        //noinspection deprecation
+        okhttp.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
+
         List<ConnectionSpec> specs = new ArrayList<>();
         specs.add(spec);
         specs.add(ConnectionSpec.COMPATIBLE_TLS);
@@ -312,6 +298,7 @@ class public_func {
         Intent intent = new Intent(context, resend_service.class);
         context.startService(intent);
     }
+
     static String get_message_id(String result) {
         JsonObject result_obj = JsonParser.parseString(result).getAsJsonObject().get("result").getAsJsonObject();
         return result_obj.get("message_id").getAsString();
@@ -397,6 +384,7 @@ class public_func {
         }
         return result;
     }
+
     @SuppressWarnings("WeakerAccess")
     static String read_file_last_line(Context context, @SuppressWarnings("SameParameterValue") String file, int line) {
         StringBuilder builder = new StringBuilder();

@@ -58,16 +58,6 @@ public class main_activity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
         Log.i(TAG, "Current API address: " + public_func.get_url("", ""));
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Current program has security risks");
-            builder.setMessage("Your current system does not support TLS1.2 protocol and TLS1.1/TLS1.0 will be used instead. This may cause security or compatibility issues. Please update the system version to Android 4.1 or above.");
-            builder.setCancelable(false);
-            builder.setPositiveButton("ok", null);
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
-
         final EditText chat_id = findViewById(R.id.chat_id);
         final EditText bot_token = findViewById(R.id.bot_token);
         final EditText trusted_phone_number = findViewById(R.id.trusted_phone_number);

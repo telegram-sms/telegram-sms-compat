@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -310,13 +309,9 @@ class public_func {
                 .setTicker(context.getString(R.string.app_name))
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(notification_name + context.getString(R.string.service_is_running));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            //noinspection deprecation
-            return result_builder.setPriority(Notification.PRIORITY_MIN).build();
-        }
-        //noinspection deprecation
-        return result_builder.getNotification();
+                .setContentText(notification_name + context.getString(R.string.service_is_running))
+                .setPriority(Notification.PRIORITY_MIN);
+        return result_builder.build();
     }
 
     static void stop_all_service(Context context) {

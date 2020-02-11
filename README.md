@@ -5,11 +5,9 @@
 
 A robot running on your outdated Android device. 
 
-```
-Please note that the Bot API only accepts incoming TLS 1.2 connections (or higher). Kindly update your bot if it was using the outdated TLS 1.0 or TLS 1.1 protocol. 
+**Please note that the Bot API only accepts incoming TLS 1.2 connections (or higher). Kindly update your bot if it was using the outdated TLS 1.0 or TLS 1.1 protocol. **
 
-Android 4.0 (API Level 15) does not support TLS 1.2. The minimum supported version of Android will be Android 4.1 (API Level 16) for Telegram SMS compat.
-```
+**Android 4.0 (API Level 15) does not support TLS 1.2. The minimum supported version of Android will be Android 4.1 (API Level 16) for Telegram SMS compat.**
 
 **Please visit [https://reall.uk](https://reall.uk) to submit and discuss issues regarding this project.**
 

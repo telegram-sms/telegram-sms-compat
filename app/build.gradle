@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.qwe7002.telegram_sms_compat"
-        minSdkVersion 16
+        minSdkVersion 20
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 21
         versionCode System.getenv("VERSION_CODE") == null ? 1 : System.getenv("VERSION_CODE").toInteger()

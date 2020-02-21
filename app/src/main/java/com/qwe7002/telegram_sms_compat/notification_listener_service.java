@@ -34,7 +34,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class notification_listener_service extends NotificationListenerService {
     static Map<String, String> app_name_list = new HashMap<>();
     final String TAG = "notification_receiver";

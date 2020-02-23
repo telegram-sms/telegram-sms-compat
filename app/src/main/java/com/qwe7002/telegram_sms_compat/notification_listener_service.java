@@ -1,10 +1,7 @@
 package com.qwe7002.telegram_sms_compat;
 
 import android.app.Notification;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -38,7 +35,6 @@ public class notification_listener_service extends NotificationListenerService {
     static Map<String, String> app_name_list = new HashMap<>();
     final String TAG = "notification_receiver";
     Context context;
-    stop_receiver receiver;
     SharedPreferences sharedPreferences;
 
     @Override
@@ -47,20 +43,12 @@ public class notification_listener_service extends NotificationListenerService {
         context = getApplicationContext();
         Paper.init(context);
         sharedPreferences = context.getSharedPreferences("data", Context.MODE_PRIVATE);
-        receiver = new stop_receiver();
-        registerReceiver(receiver, new IntentFilter(public_func.BROADCAST_STOP_SERVICE));
         Notification notification = public_func.get_notification_obj(getApplicationContext(), getString(R.string.Notification_Listener_title));
         startForeground(3, notification);
-        if (!sharedPreferences.getBoolean("initialized", false)) {
-            Log.i(TAG, "Uninitialized, Notification receiver is deactivated.");
-            stopSelf();
-            android.os.Process.killProcess(android.os.Process.myPid());
-        }
     }
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(receiver);
         stopForeground(true);
         super.onDestroy();
     }
@@ -133,12 +121,4 @@ public class notification_listener_service extends NotificationListenerService {
         Log.d(TAG, "onNotificationRemoved: " + sbn.getPackageName());
     }
 
-    class stop_receiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.i("notification_listener", "Received stop signal, quitting now...");
-            stopSelf();
-            android.os.Process.killProcess(android.os.Process.myPid());
-        }
-    }
 }

@@ -32,11 +32,9 @@ import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.paperdb.Paper;
@@ -81,9 +79,6 @@ public class main_activity extends AppCompatActivity {
 
         if (sharedPreferences.getBoolean("initialized", false)) {
             public_func.start_service(context, sharedPreferences.getBoolean("battery_monitoring_switch", false), sharedPreferences.getBoolean("chat_command", false));
-            if (!sharedPreferences.getBoolean("conversion_data_structure", false)) {
-                new Thread(() -> convert_data(sharedPreferences)).start();
-            }
         }
         if (!sharedPreferences.getBoolean("privacy_dialog_agree", false)) {
             show_privacy_dialog();
@@ -462,37 +457,5 @@ public class main_activity extends AppCompatActivity {
         }
     }
 
-    private void convert_data(SharedPreferences sharedPreferences) {
-        String message_list_raw = null;
-        FileInputStream file_stream = null;
-        try {
-            file_stream = context.openFileInput("message.json");
-            int length = file_stream.available();
-            byte[] buffer = new byte[length];
-            //noinspection ResultOfMethodCallIgnored
-            file_stream.read(buffer);
-            message_list_raw = new String(buffer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (file_stream != null) {
-                try {
-                    file_stream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        if (message_list_raw != null) {
-            JsonObject message_list = JsonParser.parseString(message_list_raw).getAsJsonObject();
-            for (Map.Entry<String, JsonElement> entry_set : message_list.entrySet()) {
-                Paper.book().write(entry_set.getKey(), entry_set.getValue());
-                Log.d(TAG, "add_message_list: " + entry_set.getKey());
-            }
-            Log.d(TAG, "The conversion is complete.");
-            public_func.write_file(context, "message.json", "", Context.MODE_PRIVATE);
-        }
-        sharedPreferences.edit().putBoolean("conversion_data_structure", true).apply();
-    }
 }
 

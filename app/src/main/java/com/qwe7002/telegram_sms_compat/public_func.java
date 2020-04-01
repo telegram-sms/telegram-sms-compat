@@ -20,7 +20,8 @@ import androidx.core.app.NotificationManagerCompat;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.squareup.okhttp3.extend.Tls12SocketFactory;
+
+import org.conscrypt.Conscrypt;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -29,29 +30,22 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.SSLContext;
-
 import io.paperdb.Paper;
 import okhttp3.Call;
-import okhttp3.CipherSuite;
-import okhttp3.ConnectionSpec;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.TlsVersion;
 import okhttp3.dnsoverhttps.DnsOverHttps;
 
 
@@ -94,36 +88,12 @@ class public_func {
     }
 
     static OkHttpClient get_okhttp_obj(boolean doh_switch) {
+        Security.insertProviderAt(Conscrypt.newProvider(), 1);
         OkHttpClient.Builder okhttp = new OkHttpClient.Builder()
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .readTimeout(15, TimeUnit.SECONDS)
                 .writeTimeout(15, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true);
-        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                .cipherSuites(
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-                        CipherSuite.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
-                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
-                        CipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
-                )
-                .tlsVersions(TlsVersion.TLS_1_2)
-                .build();
-        SSLContext sc = null;
-        try {
-            sc = SSLContext.getInstance("TLSv1.2");
-            sc.init(null, null, null);
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            e.printStackTrace();
-        }
-        assert sc != null;
-        //noinspection deprecation
-        okhttp.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
-        List<ConnectionSpec> specs = new ArrayList<>();
-        specs.add(spec);
-        specs.add(ConnectionSpec.COMPATIBLE_TLS);
-        specs.add(ConnectionSpec.CLEARTEXT);
-        okhttp.connectionSpecs(specs);
         if (doh_switch) {
             okhttp.dns(new DnsOverHttps.Builder().client(okhttp.build())
                     .url(HttpUrl.get("https://cloudflare-dns.com/dns-query"))

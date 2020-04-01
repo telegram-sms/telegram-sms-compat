@@ -1,25 +1,9 @@
 # Telegram SMS compat
 
-![Min Android Version](https://img.shields.io/badge/Min%20Android%20Version-5.0-red.svg)
+![Min Android Version](https://img.shields.io/badge/Min%20Android%20Version-4.1-red.svg)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/telegram-sms/telegram-sms-compat/blob/master/LICENSE)
 
-A robot running on your outdated Android device. 
-
-**I have recently identified a breaking change implemented by Telegram regarding the change in SSL chain, where Telegram has removed support to all non-GCM algorithms.**
-
-**Telegram API supports 5 TLS 1.2 ciphers, but unfortunately they were all unsupported in Android 4.4 (API Level 20) or lower.**
-
-Supported SSL ciphers:
-
-```
-TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
-TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
-```
-
-More information about TLS compatibility: https://developer.android.com/reference/javax/net/ssl/SSLSocket.html 
+A robot running on your outdated Android device.
 
 **Please visit [https://reall.uk](https://reall.uk) to submit and discuss issues regarding this project.**
 

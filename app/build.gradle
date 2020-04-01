@@ -33,6 +33,15 @@ android {
         release {
             minifyEnabled false
             signingConfig signingConfigs.releaseConfig
+            ndk {
+                abiFilters "armeabi-v7a", "x86"
+            }
+        }
+        debug {
+            minifyEnabled false
+            ndk {
+                abiFilters "armeabi-v7a", "x86"
+            }
         }
     }
 }

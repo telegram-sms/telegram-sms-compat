@@ -439,17 +439,7 @@ public class main_activity extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        String file_name = null;
         switch (item.getItemId()) {
-            case R.id.user_manual:
-                file_name = "/wiki/" + context.getString(R.string.user_manual_url);
-                break;
-            case R.id.privacy_policy:
-                file_name = "/wiki/" + context.getString(R.string.privacy_policy_url);
-                break;
-            case R.id.donate:
-                file_name = "/donate";
-                break;
             case R.id.scan:
                 Intent intent = new Intent(context, scanner_activity.class);
                 startActivityForResult(intent, 1);
@@ -459,18 +449,7 @@ public class main_activity extends AppCompatActivity {
                 startActivity(logcat_intent);
                 return true;
         }
-        assert file_name != null;
-        Uri uri = Uri.parse("https://get.telegram-sms.com" + file_name);
-        Intent intent = new Intent();
-        intent.setAction("android.intent.action.VIEW");
-        intent.setData(uri);
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-            Snackbar.make(findViewById(R.id.bot_token), "Browser not found.", Snackbar.LENGTH_LONG).show();
-        }
-        return true;
+        return false;
     }
 
     @Override

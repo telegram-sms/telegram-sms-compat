@@ -365,17 +365,19 @@ public class main_activity extends AppCompatActivity {
                 }
             });
         });
-        notify_app_set.setVisibility(View.VISIBLE);
-        notify_app_set.setOnClickListener(v -> {
-            if (!public_func.is_notify_listener(context)) {
-                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                set_permission_back = true;
-                return;
-            }
-            startActivity(new Intent(main_activity.this, notify_apps_list_activity.class));
-        });
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            notify_app_set.setVisibility(View.VISIBLE);
+            notify_app_set.setOnClickListener(v -> {
+                if (!public_func.is_notify_listener(context)) {
+                    Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    set_permission_back = true;
+                    return;
+                }
+                startActivity(new Intent(main_activity.this, notify_apps_list_activity.class));
+            });
+        }
 
     }
 

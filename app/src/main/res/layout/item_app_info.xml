@@ -18,6 +18,8 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
             android:src="@mipmap/ic_launcher"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="12dp"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -32,6 +34,7 @@
             android:singleLine="true"
             android:textColor="#000000"
             android:text="@string/app_name"
+            android:layout_toRightOf="@id/app_icon"
             tools:ignore="RelativeOverlap" />
 
         <TextView
@@ -46,6 +49,7 @@
             android:singleLine="true"
             android:textColor="#000000"
             android:text="com.example.apps"
+            android:layout_toRightOf="@id/app_icon"
             tools:ignore="HardcodedText,RelativeOverlap" />
 
         <CheckBox
@@ -56,6 +60,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
+            android:layout_alignParentRight="true"
             android:gravity="center_vertical" />
 
     </RelativeLayout>

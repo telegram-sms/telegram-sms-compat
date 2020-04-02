@@ -204,7 +204,6 @@ public class notify_apps_list_activity extends AppCompatActivity {
             TextView package_name;
             CheckBox app_checkbox;
         }
-
     }
 
     static class app_info {

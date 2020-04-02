@@ -197,7 +197,12 @@ public class chat_command_service extends Service {
                 break;
             case "/ping":
             case "/getinfo":
-                request_body.text = getString(R.string.system_message_head) + "\n" + context.getString(R.string.current_battery_level) + get_battery_info(context) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + "\nSIM:" + public_func.get_sim_name(context);
+                String spam_count = "";
+                ArrayList<String> spam_list = Paper.book().read("spam_sms_list", new ArrayList<>());
+                if (spam_list.size() != 0) {
+                    spam_count = "\n" + getString(R.string.spam_count_title) + spam_list.size();
+                }
+                request_body.text = getString(R.string.system_message_head) + "\n" + context.getString(R.string.current_battery_level) + get_battery_info(context) + "\n" + getString(R.string.current_network_connection_status) + public_func.get_network_type(context) + spam_count + "\nSIM:" + public_func.get_sim_name(context);
                 has_command = true;
                 break;
             case "/log":

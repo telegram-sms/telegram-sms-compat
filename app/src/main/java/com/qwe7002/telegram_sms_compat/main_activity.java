@@ -442,11 +442,9 @@ public class main_activity extends AppCompatActivity {
             case R.id.set_notify:
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
                     if (!public_func.is_notify_listener(context)) {
-                        Intent setting_intent;
+                        Intent setting_intent = new Intent("android.settings.NOTIFICATION_LISTENER_SETTINGS");
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
                             setting_intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-                        } else {
-                            setting_intent = new Intent("android.settings.NOTIFICATION_LISTENER_SETTINGS");
                         }
                         setting_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(setting_intent);

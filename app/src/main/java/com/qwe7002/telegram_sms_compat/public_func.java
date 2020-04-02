@@ -97,14 +97,14 @@ class public_func {
         if (doh_switch) {
             okhttp.dns(new DnsOverHttps.Builder().client(okhttp.build())
                     .url(HttpUrl.get("https://cloudflare-dns.com/dns-query"))
-                    .bootstrapDnsHosts(getByIp("1.0.0.1"), getByIp("9.9.9.9"), getByIp("185.222.222.222"), getByIp("2606:4700:4700::1001"), getByIp("2620:fe::fe"), getByIp("2a09::"))
+                    .bootstrapDnsHosts(get_by_ip("2606:4700:4700::1001"), get_by_ip("2606:4700:4700::1111"), get_by_ip("1.0.0.1"), get_by_ip("1.1.1.1"))
                     .includeIPv6(true)
                     .build());
         }
         return okhttp.build();
     }
 
-    private static InetAddress getByIp(String host) {
+    private static InetAddress get_by_ip(String host) {
         try {
             return InetAddress.getByName(host);
         } catch (UnknownHostException e) {

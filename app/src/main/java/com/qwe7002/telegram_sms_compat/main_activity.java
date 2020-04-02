@@ -396,7 +396,7 @@ public class main_activity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             MenuItem mItem;
-            mItem = menu.getItem(R.id.spam_sms_keyword);
+            mItem = menu.findItem(R.id.set_notify);
             mItem.setVisible(true);
         }
         return true;

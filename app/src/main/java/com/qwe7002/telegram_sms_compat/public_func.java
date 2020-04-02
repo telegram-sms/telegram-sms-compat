@@ -329,25 +329,24 @@ class public_func {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.UK);
         Date ts = new Date(System.currentTimeMillis());
         String write_string = "\n" + simpleDateFormat.format(ts) + " " + log;
-        write_file(context, "error.log", write_string, new_file_mode);
+        write_file(context, write_string, new_file_mode);
     }
 
     static String read_log(Context context, int line) {
         String result = "\n" + context.getString(R.string.no_logs);
-        String log_content = public_func.read_file_last_line(context, "error.log", line);
+        String log_content = public_func.read_log_last_line(context, line);
         if (!log_content.isEmpty()) {
             result = log_content;
         }
         return result;
     }
 
-    @SuppressWarnings("WeakerAccess")
-    static String read_file_last_line(Context context, @SuppressWarnings("SameParameterValue") String file, int line) {
+    static String read_log_last_line(Context context, int line) {
         StringBuilder builder = new StringBuilder();
         FileInputStream file_stream = null;
         FileChannel channel = null;
         try {
-            file_stream = context.openFileInput(file);
+            file_stream = context.openFileInput("error.log");
             channel = file_stream.getChannel();
             ByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
             buffer.position((int) channel.size());
@@ -380,10 +379,10 @@ class public_func {
         }
     }
 
-    static void write_file(Context context, String file_name, String write_string, int mode) {
+    static void write_file(Context context, String write_string, int mode) {
         FileOutputStream file_stream = null;
         try {
-            file_stream = context.openFileOutput(file_name, mode);
+            file_stream = context.openFileOutput("error.log", mode);
             byte[] bytes = write_string.getBytes();
             file_stream.write(bytes);
         } catch (IOException e) {

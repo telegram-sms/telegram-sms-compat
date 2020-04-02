@@ -52,12 +52,9 @@
     <string name="sim_card_lock">SIM card locked.</string>
     <string name="no_logs">No logs yet.</string>
     <string name="using_verification_code_identification">Verification code automatic extraction (Alpha)</string>
-    <string name="user_manual">User manual</string>
-    <string name="privacy_policy">Privacy policy</string>
     <string name="enter_number">Please enter the number you want to send.</string>
     <string name="enter_content">Please enter the content of the message to be sent.</string>
     <string name="unable_get_phone_number">Unable to get phone number.</string>
-    <string name="donate">Donate</string>
     <string name="current_battery_level">"Battery level: "</string>
     <string name="charging">Charging</string>
     <string name="not_charging">Not charging</string>

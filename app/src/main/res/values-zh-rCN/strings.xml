@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="time_format">"yyyy-MM-dd HH:mm:ss z"</string>
     <string name="content">"内容: "</string>
     <string name="from">"来自: "</string>
     <string name="to">"发送到: "</string>
@@ -78,4 +79,12 @@
     <string name="decline">"我稍后再决定"</string>
     <string name="visit_page">访问“隐私条款”页面</string>
     <string name="failed_resend">重新发送</string>
+    <string name="keywords">关键词</string>
+    <string name="spam_sms_keyword_title">短信黑名单</string>
+    <string name="spam_keyword_dialog_title">请使用\"; \"分割关键字。</string>
+    <string name="set_notification_listener">通知侦听器</string>
+    <string name="time">"时间: "</string>
+    <string name="get_spam_sms">/getspamsms - 获取被过滤的垃圾短信</string>
+    <string name="spam_count_title">"过滤的垃圾短信: "</string>
+    <string name="no_spam_history">没有垃圾短信历史</string>
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="time_format">dd/MMM/yyyy HH:mm:ss z</string>
     <string name="content">"Content: "</string>
     <string name="from">"From: "</string>
     <string name="to">"To: "</string>
@@ -78,4 +79,12 @@
     <string name="decline">"I'll decide later"</string>
     <string name="visit_page">Visit the Privacy Terms page</string>
     <string name="failed_resend">"Failed message resend "</string>
+    <string name="keywords">Keywords</string>
+    <string name="time">"Time: "</string>
+    <string name="spam_sms_keyword_title">SMS blacklist</string>
+    <string name="spam_keyword_dialog_title">Please use \";\" to split keywords.</string>
+    <string name="set_notification_listener">Notification listener</string>
+    <string name="get_spam_sms">/getspamsms - Get filtered spam messages</string>
+    <string name="spam_count_title">"Filtered spam: "</string>
+    <string name="no_spam_history">No spam history</string>
 </resources>

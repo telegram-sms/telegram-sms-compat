@@ -8,9 +8,11 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -69,7 +72,6 @@ public class main_activity extends AppCompatActivity {
         final Switch privacy_mode_switch = findViewById(R.id.privacy_switch);
         final Button save_button = findViewById(R.id.save);
         final Button get_id = findViewById(R.id.get_id);
-        final Button notify_app_set = findViewById(R.id.notify_app_set);
 
         Paper.init(context);
         sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
@@ -143,6 +145,7 @@ public class main_activity extends AppCompatActivity {
         chat_command.setOnClickListener(v -> set_privacy_mode_checkbox(chat_id, chat_command, privacy_mode_switch));
         verification_code.setChecked(sharedPreferences.getBoolean("verification_code", false));
         doh_switch.setChecked(sharedPreferences.getBoolean("doh_switch", true));
+
         chat_id.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -360,19 +363,6 @@ public class main_activity extends AppCompatActivity {
                 }
             });
         });
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            notify_app_set.setVisibility(View.VISIBLE);
-            notify_app_set.setOnClickListener(v -> {
-                if (!public_func.is_notify_listener(context)) {
-                    Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    set_permission_back = true;
-                    return;
-                }
-                startActivity(new Intent(main_activity.this, notify_apps_list_activity.class));
-            });
-        }
 
     }
 
@@ -404,6 +394,11 @@ public class main_activity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            MenuItem mItem;
+            mItem = menu.getItem(R.id.spam_sms_keyword);
+            mItem.setVisible(true);
+        }
         return true;
     }
 
@@ -434,6 +429,7 @@ public class main_activity extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        LayoutInflater inflater = this.getLayoutInflater();
         switch (item.getItemId()) {
             case R.id.scan:
                 Intent intent = new Intent(context, scanner_activity.class);
@@ -442,6 +438,46 @@ public class main_activity extends AppCompatActivity {
             case R.id.logcat:
                 Intent logcat_intent = new Intent(main_activity.this, logcat_activity.class);
                 startActivity(logcat_intent);
+                return true;
+            case R.id.set_notify:
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                    if (!public_func.is_notify_listener(context)) {
+                        Intent setting_intent;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+                            setting_intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+                        } else {
+                            setting_intent = new Intent("android.settings.NOTIFICATION_LISTENER_SETTINGS");
+                        }
+                        setting_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(setting_intent);
+                        set_permission_back = true;
+                        return false;
+                    }
+                    startActivity(new Intent(main_activity.this, notify_apps_list_activity.class));
+                }
+                return true;
+            case R.id.spam_sms_keyword:
+                View spam_dialog_view = inflater.inflate(R.layout.set_keyword_layout, null);
+                final EditText editText = spam_dialog_view.findViewById(R.id.spam_sms_keyword);
+                ArrayList<String> black_keyword_list_old = Paper.book().read("black_keyword_list", new ArrayList<>());
+                StringBuilder black_keyword_list_old_string = new StringBuilder();
+                int count = 0;
+                for (String list_item : black_keyword_list_old) {
+                    if (count != 0) {
+                        black_keyword_list_old_string.append(";");
+                    }
+                    ++count;
+                    black_keyword_list_old_string.append(list_item);
+                }
+                editText.setText(black_keyword_list_old_string);
+                new AlertDialog.Builder(this).setTitle(R.string.spam_keyword_dialog_title)
+                        .setView(spam_dialog_view)
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            String input = editText.getText().toString();
+                            String[] black_keyword_list = input.split(";");
+                            Paper.book().write("black_keyword_list", new ArrayList<>(Arrays.asList(black_keyword_list)));
+                        })
+                        .show();
                 return true;
         }
         return false;

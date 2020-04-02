@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="time_format">"yyyy-MM-dd HH:mm:ss z"</string>
     <string name="receive_sms_head">收到簡訊</string>
     <string name="content">"內容: "</string>
     <string name="from">"來自: "</string>
@@ -78,4 +79,12 @@
     <string name="decline">我稍后再決定</string>
     <string name="visit_page">訪問“隱私條款”頁面</string>
     <string name="failed_resend">重新發送</string>
+    <string name="keywords">關鍵詞</string>
+    <string name="spam_sms_keyword_title">簡訊黑名單</string>
+    <string name="spam_keyword_dialog_title">請使用\"; \"分割關鍵字。</string>
+    <string name="set_notification_listener">通知偵聽器</string>
+    <string name="time">"時間: "</string>
+    <string name="get_spam_sms">/getspamsms - 獲取被過濾的垃圾簡訊</string>
+    <string name="spam_count_title">"過濾的垃圾簡訊: "</string>
+    <string name="no_spam_history">没有垃圾簡訊历史</string>
 </resources>

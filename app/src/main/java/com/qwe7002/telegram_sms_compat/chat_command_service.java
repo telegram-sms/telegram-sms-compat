@@ -23,7 +23,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -54,6 +57,7 @@ public class chat_command_service extends Service {
     static Thread thread_main;
     private boolean have_bot_username = false;
     private boolean privacy_mode;
+    private SharedPreferences sharedPreferences;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Notification notification = public_func.get_notification_obj(getApplicationContext(), getString(R.string.chat_command_service_name));
@@ -67,7 +71,7 @@ public class chat_command_service extends Service {
         super.onCreate();
         context = getApplicationContext();
         Paper.init(context);
-        SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
         chat_id = sharedPreferences.getString("chat_id", "");
         bot_token = sharedPreferences.getString("bot_token", "");
         okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));
@@ -181,9 +185,13 @@ public class chat_command_service extends Service {
         switch (command) {
             case "/help":
             case "/start":
-                request_body.text = getString(R.string.system_message_head) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms);
+            case "/commandlist":
+                request_body.text = getString(R.string.system_message_head) + "\n" + getString(R.string.available_command) + "\n" + getString(R.string.sendsms) + "\n" + getString(R.string.get_spam_sms);
                 if (!message_type_is_private && privacy_mode && !bot_username.equals("")) {
                     request_body.text = request_body.text.replace(" -", "@" + bot_username + " -");
+                }
+                if (command.equals("/commandlist")) {
+                    request_body.text = request_body.text.replace("/", "");
                 }
                 has_command = true;
                 break;
@@ -196,6 +204,43 @@ public class chat_command_service extends Service {
                 request_body.text = getString(R.string.system_message_head) + public_func.read_log(context, 10);
                 has_command = true;
                 break;
+            case "/getspamsms":
+                ArrayList<String> spam_sms_list = Paper.book().read("spam_sms_list", new ArrayList<>());
+                if (spam_sms_list.size() == 0) {
+                    request_body.text = context.getString(R.string.system_message_head) + "\n" + getString(R.string.no_spam_history);
+                    break;
+                }
+                new Thread(() -> {
+                    if (public_func.check_network_status(context)) {
+                        OkHttpClient okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));
+                        for (String item : spam_sms_list) {
+                            message_json send_sms_request_body = new message_json();
+                            send_sms_request_body.chat_id = chat_id;
+                            send_sms_request_body.text = item;
+                            String request_uri = public_func.get_url(bot_token, "sendMessage");
+                            String request_body_json = new Gson().toJson(send_sms_request_body);
+                            RequestBody body = RequestBody.create(public_func.JSON, request_body_json);
+                            Request request_obj = new Request.Builder().url(request_uri).method("POST", body).build();
+                            Call call = okhttp_client.newCall(request_obj);
+                            call.enqueue(new Callback() {
+                                @Override
+                                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                    Log.d(TAG, "onFailure: ");
+                                }
+
+                                @Override
+                                public void onResponse(@NotNull Call call, @NotNull Response response) {
+
+                                }
+                            });
+                            ArrayList<String> resend_list_local = Paper.book().read("spam_sms_list", new ArrayList<>());
+                            resend_list_local.remove(item);
+                            Paper.book().write("spam_sms_list", resend_list_local);
+                        }
+                    }
+                    public_func.write_log(context, "Send spam message is complete.");
+                }).start();
+                return;
             case "/sendsms":
                 String[] msg_send_list = request_msg.split("\n");
                 if (msg_send_list.length > 2) {

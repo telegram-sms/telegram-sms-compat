@@ -15,6 +15,10 @@ import com.github.sumimakito.codeauxlib.CodeauxLibStatic;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import io.paperdb.Paper;
 import okhttp3.Call;
@@ -81,6 +85,7 @@ public class sms_receiver extends BroadcastReceiver {
         String message_body_html = message_body;
         final String message_head = "[" + context.getString(R.string.receive_sms_head) + "]" + "\n" + context.getString(R.string.from) + message_address + "\n" + context.getString(R.string.content);
         String raw_request_body_text = message_head + message_body;
+        boolean is_verification_code = false;
         if (sharedPreferences.getBoolean("verification_code", false) && !is_trusted_phone) {
             String verification = CodeauxLibStatic.parsecode(message_body);
             if (verification != null) {
@@ -90,6 +95,7 @@ public class sms_receiver extends BroadcastReceiver {
                         .replace(">", "&gt;")
                         .replace("&", "&amp;")
                         .replace(verification, "<code>" + verification + "</code>");
+                is_verification_code = true;
             }
         }
         request_body.text = message_head + message_body_html;
@@ -117,6 +123,27 @@ public class sms_receiver extends BroadcastReceiver {
                 return;
             }
         }
+
+        if (!is_verification_code && !is_trusted_phone) {
+            ArrayList<String> black_list_array = Paper.book().read("black_keyword_list");
+            for (String black_list_item : black_list_array) {
+                if (message_body.contains(black_list_item)) {
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(context.getString(R.string.time_format), Locale.UK);
+                    String write_message = request_body.text + "\n" + context.getString(R.string.time) + simpleDateFormat.format(new Date(System.currentTimeMillis()));
+                    ArrayList<String> spam_sms_list;
+                    Paper.init(context);
+                    spam_sms_list = Paper.book().read("spam_sms_list", new ArrayList<>());
+                    if (spam_sms_list.size() >= 5) {
+                        spam_sms_list.remove(0);
+                    }
+                    spam_sms_list.add(write_message);
+                    Paper.book().write("spam_sms_list", spam_sms_list);
+                    Log.i(TAG, "Detected message contains blacklist keywords, add spam list");
+                    return;
+                }
+            }
+        }
+
         String request_body_json = new Gson().toJson(request_body);
         RequestBody body = RequestBody.create(public_func.JSON, request_body_json);
         OkHttpClient okhttp_client = public_func.get_okhttp_obj(sharedPreferences.getBoolean("doh_switch", true));

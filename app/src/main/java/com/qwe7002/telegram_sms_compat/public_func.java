@@ -231,13 +231,13 @@ class public_func {
     static void send_fallback_sms(Context context, String content) {
         String TAG = "send_fallback_sms";
         SharedPreferences sharedPreferences = context.getSharedPreferences("data", android.content.Context.MODE_PRIVATE);
+        if (!sharedPreferences.getBoolean("fallback_sms", false)) {
+            Log.i(TAG, "Did not open the SMS to fall back.");
+            return;
+        }
         String trust_number = sharedPreferences.getString("trusted_phone_number", null);
         if (trust_number == null) {
             Log.i(TAG, "The trusted number is empty.");
-            return;
-        }
-        if (!sharedPreferences.getBoolean("fallback_sms", false)) {
-            Log.i(TAG, "Did not open the SMS to fall back.");
             return;
         }
         android.telephony.SmsManager sms_manager = android.telephony.SmsManager.getDefault();

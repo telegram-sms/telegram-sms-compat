@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.Objects;
 
@@ -72,7 +74,7 @@ public class sms_send_receiver extends BroadcastReceiver {
         final String error_head = "Send SMS status failed:";
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
                 public_func.write_log(context, error_head + e.getMessage());
                 public_func.send_fallback_sms(context, request_body.text);
@@ -80,7 +82,7 @@ public class sms_send_receiver extends BroadcastReceiver {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.code() != 200) {
                     assert response.body() != null;
                     public_func.write_log(context, error_head + response.code() + " " + response.body().string());

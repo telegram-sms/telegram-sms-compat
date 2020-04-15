@@ -29,7 +29,7 @@ import io.paperdb.Paper;
 
 public class notify_apps_list_activity extends AppCompatActivity {
     private app_adapter app_adapter;
-
+    private final static String TAG = "notify_apps_list";
     static List<app_info> scan_app_list(PackageManager packageManager) {
         List<app_info> app_info_list = new ArrayList<>();
         try {
@@ -40,6 +40,7 @@ public class notify_apps_list_activity extends AppCompatActivity {
                 app_info.package_name = package_info.packageName;
                 app_info.app_name = package_info.applicationInfo.loadLabel(packageManager).toString();
                 if (package_info.applicationInfo.loadIcon(packageManager) == null) {
+                    Log.d(TAG, "scan_app_list: Could not load icon: " + package_info.packageName);
                     continue;
                 }
                 app_info.app_icon = package_info.applicationInfo.loadIcon(packageManager);

@@ -21,6 +21,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.conscrypt.Conscrypt;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -62,7 +64,8 @@ class public_func {
         return result;
     }
 
-    static String get_send_phone_number(String phone_number) {
+    @NotNull
+    static String get_send_phone_number(@NotNull String phone_number) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < phone_number.length(); ++i) {
             char c = phone_number.charAt(i);
@@ -73,7 +76,7 @@ class public_func {
         return result.toString();
     }
 
-    static boolean check_network_status(Context context) {
+    static boolean check_network_status(@NotNull Context context) {
         ConnectivityManager manager = (ConnectivityManager) context
                 .getApplicationContext().getSystemService(
                         Context.CONNECTIVITY_SERVICE);
@@ -82,10 +85,13 @@ class public_func {
         return networkinfo != null && networkinfo.isConnected();
     }
 
+    @NotNull
+    @Contract(pure = true)
     static String get_url(String token, String func) {
         return "https://api.telegram.org/bot" + token + "/" + func;
     }
 
+    @NotNull
     static OkHttpClient get_okhttp_obj(boolean doh_switch) {
         Security.insertProviderAt(Conscrypt.newProvider(), 1);
         OkHttpClient.Builder okhttp = new OkHttpClient.Builder()
@@ -112,7 +118,7 @@ class public_func {
         }
     }
 
-    static boolean is_phone_number(String str) {
+    static boolean is_phone_number(@NotNull String str) {
         for (int i = str.length(); --i >= 0; ) {
             char c = str.charAt(i);
             if (c == '+') {
@@ -125,7 +131,7 @@ class public_func {
         return true;
     }
 
-    static String get_network_type(Context context) {
+    static String get_network_type(@NotNull Context context) {
         String net_type = "Unknown";
         ConnectivityManager connect_manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         assert connect_manager != null;
@@ -215,7 +221,7 @@ class public_func {
         sms_manager.sendMultipartTextMessage(send_to, null, divideContents, send_receiver_list, null);
     }
 
-    static void send_fallback_sms(Context context, String content) {
+    static void send_fallback_sms(@NotNull Context context, String content) {
         String TAG = "send_fallback_sms";
         SharedPreferences sharedPreferences = context.getSharedPreferences("data", android.content.Context.MODE_PRIVATE);
         if (!sharedPreferences.getBoolean("fallback_sms", false)) {
@@ -251,6 +257,7 @@ class public_func {
         return result_obj.get("message_id").getAsString();
     }
 
+    @NotNull
     static Notification get_notification_obj(Context context, String notification_name) {
         Notification.Builder result_builder = new Notification.Builder(context)
                 .setAutoCancel(false)
@@ -264,7 +271,7 @@ class public_func {
         return result_builder.build();
     }
 
-    static void stop_all_service(Context context) {
+    static void stop_all_service(@NotNull Context context) {
         Intent intent = new Intent(BROADCAST_STOP_SERVICE);
         context.sendBroadcast(intent);
         try {
@@ -296,7 +303,7 @@ class public_func {
 
     }
 
-    static String get_sim_name(Context context) {
+    static String get_sim_name(@NotNull Context context) {
         String result = "Unknown";
         TelephonyManager telephonyManager = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE));
         assert telephonyManager != null;
@@ -319,7 +326,7 @@ class public_func {
         write_file(context, write_string, new_file_mode);
     }
 
-    static String read_log(Context context, int line) {
+    static String read_log(@NotNull Context context, int line) {
         String result = "\n" + context.getString(R.string.no_logs);
         String log_content = public_func.read_log_last_line(context, line);
         if (!log_content.isEmpty()) {
@@ -366,7 +373,7 @@ class public_func {
         }
     }
 
-    static void write_file(Context context, String write_string, int mode) {
+    static void write_file(@NotNull Context context, @NotNull String write_string, int mode) {
         FileOutputStream file_stream = null;
         try {
             file_stream = context.openFileOutput("error.log", mode);

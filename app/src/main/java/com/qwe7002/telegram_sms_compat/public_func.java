@@ -53,6 +53,10 @@ import okhttp3.dnsoverhttps.DnsOverHttps;
 class public_func {
     static final String BROADCAST_STOP_SERVICE = "com.qwe7002.telegram_sms_compat.stop_all";
     static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    static final int battery_notify_id = 1;
+    static final int chat_command_notify_id = 2;
+    static final int notification_listener_service_notify_id = 3;
+    static final int resend_service_notify_id = 5;
 
     static long parse_long(String long_str) {
         long result = 0;

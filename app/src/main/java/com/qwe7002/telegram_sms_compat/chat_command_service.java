@@ -377,6 +377,7 @@ public class chat_command_service extends Service {
     }
 
     class thread_main_runnable implements Runnable {
+        @SuppressWarnings("BusyWait")
         @Override
         public void run() {
             Log.d(TAG, "run: thread main start");

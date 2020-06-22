@@ -16,7 +16,19 @@
         android:title="@string/spam_sms_keyword_title"
         app:showAsAction="never" />
     <item
+        android:id="@+id/config_qrcode"
+        android:title="@string/transfer_configuration"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/logcat"
         android:title="@string/logcat"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/about"
+        android:title="@string/about_title"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/donate"
+        android:title="@string/donate"
         app:showAsAction="never" />
 </menu>

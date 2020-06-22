@@ -58,7 +58,7 @@ public class notify_apps_list_activity extends AppCompatActivity {
         Context context = getApplicationContext();
         Paper.init(context);
         this.setTitle(getString(R.string.app_list));
-        setContentView(R.layout.notify_apps_list_activity);
+        setContentView(R.layout.activity_notify_apps_list);
         final ListView app_list = findViewById(R.id.app_list_view);
         final SearchView filter_edit = findViewById(R.id.filter_editor);
         filter_edit.setIconifiedByDefault(false);
@@ -96,8 +96,8 @@ public class notify_apps_list_activity extends AppCompatActivity {
         List<String> listen_list;
         List<app_info> app_info_list = new ArrayList<>();
         List<app_info> view_app_info_list = new ArrayList<>();
-        private Context context;
-        private Filter filter = new Filter() {
+        private final Context context;
+        private final Filter filter = new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();

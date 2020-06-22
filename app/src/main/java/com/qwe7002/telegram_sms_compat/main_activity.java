@@ -1,10 +1,13 @@
 package com.qwe7002.telegram_sms_compat;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
@@ -19,7 +22,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -38,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.paperdb.Paper;
@@ -142,7 +145,7 @@ public class main_activity extends AppCompatActivity {
         }
         privacy_mode_switch.setChecked(sharedPreferences.getBoolean("privacy_mode", false));
         chat_command.setChecked(sharedPreferences.getBoolean("chat_command", false));
-        chat_command.setOnClickListener(v -> set_privacy_mode_checkbox(chat_id, chat_command, privacy_mode_switch));
+        chat_command.setOnClickListener(v -> set_privacy_mode_checkbox(chat_id.getText().toString(), chat_command, privacy_mode_switch));
         verification_code.setChecked(sharedPreferences.getBoolean("verification_code", false));
         doh_switch.setChecked(sharedPreferences.getBoolean("doh_switch", true));
 
@@ -153,7 +156,7 @@ public class main_activity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                set_privacy_mode_checkbox(chat_id, chat_command, privacy_mode_switch);
+                set_privacy_mode_checkbox(chat_id.getText().toString(), chat_command, privacy_mode_switch);
             }
 
             @Override
@@ -366,13 +369,13 @@ public class main_activity extends AppCompatActivity {
 
     }
 
-    private void set_privacy_mode_checkbox(TextView chat_id, Switch chat_command, Switch privacy_mode_switch) {
+    private void set_privacy_mode_checkbox(String chat_id, Switch chat_command, Switch privacy_mode_switch) {
         if (!chat_command.isChecked()) {
             privacy_mode_switch.setVisibility(View.GONE);
             privacy_mode_switch.setChecked(false);
             return;
         }
-        if (public_func.parse_long(chat_id.getText().toString()) < 0) {
+        if (public_func.parse_long(chat_id) < 0) {
             privacy_mode_switch.setVisibility(View.VISIBLE);
         } else {
             privacy_mode_switch.setVisibility(View.GONE);
@@ -427,10 +430,29 @@ public class main_activity extends AppCompatActivity {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setAllCaps(false);
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setAllCaps(false);
     }
+
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         LayoutInflater inflater = this.getLayoutInflater();
         switch (item.getItemId()) {
+            case R.id.about:
+                PackageManager packageManager = context.getPackageManager();
+                PackageInfo packageInfo;
+                String versionName = "";
+                try {
+                    packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+                    versionName = packageInfo.versionName;
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.about_title);
+                builder.setMessage(getString(R.string.about_content) + versionName);
+                builder.setCancelable(false);
+                builder.setPositiveButton(R.string.ok_button, null);
+                builder.show();
+                return true;
             case R.id.scan:
                 Intent intent = new Intent(context, scanner_activity.class);
                 startActivityForResult(intent, 1);
@@ -438,6 +460,13 @@ public class main_activity extends AppCompatActivity {
             case R.id.logcat:
                 Intent logcat_intent = new Intent(main_activity.this, logcat_activity.class);
                 startActivity(logcat_intent);
+                return true;
+            case R.id.config_qrcode:
+                if (sharedPreferences.getBoolean("initialized", false)) {
+                    startActivity(new Intent(this, qrcode_show_activity.class));
+                } else {
+                    Snackbar.make(findViewById(R.id.bot_token), "Uninitialized.", Snackbar.LENGTH_LONG).show();
+                }
                 return true;
             case R.id.set_notify:
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
@@ -487,11 +516,46 @@ public class main_activity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                ((EditText) findViewById(R.id.bot_token)).setText(data.getStringExtra("bot_token"));
+            switch (resultCode) {
+                case RESULT_OK:
+                    JsonObject json_config = JsonParser.parseString(Objects.requireNonNull(data.getStringExtra("config_json"))).getAsJsonObject();
+                    ((EditText) findViewById(R.id.bot_token)).setText(json_config.get("bot_token").getAsString());
+                    ((EditText) findViewById(R.id.chat_id)).setText(json_config.get("chat_id").getAsString());
+                    ((Switch) findViewById(R.id.battery_monitoring)).setChecked(json_config.get("battery_monitoring_switch").getAsBoolean());
+                    ((Switch) findViewById(R.id.verification_code_switch)).setChecked(json_config.get("verification_code").getAsBoolean());
+
+                    Switch charger_status = findViewById(R.id.charger_status);
+                    if (json_config.get("battery_monitoring_switch").getAsBoolean()) {
+                        charger_status.setChecked(json_config.get("charger_status").getAsBoolean());
+                        charger_status.setVisibility(View.VISIBLE);
+                    } else {
+                        charger_status.setChecked(false);
+                        charger_status.setVisibility(View.GONE);
+                    }
+
+                    Switch chat_command = findViewById(R.id.chat_command);
+                    chat_command.setChecked(json_config.get("chat_command").getAsBoolean());
+                    Switch privacy_mode_switch = findViewById(R.id.privacy_switch);
+                    privacy_mode_switch.setChecked(json_config.get("privacy_mode").getAsBoolean());
+
+                    set_privacy_mode_checkbox(json_config.get("chat_id").getAsString(), chat_command, privacy_mode_switch);
+
+                    EditText trusted_phone_number = findViewById(R.id.trusted_phone_number);
+                    trusted_phone_number.setText(json_config.get("trusted_phone_number").getAsString());
+                    Switch fallback_sms = findViewById(R.id.fallback_sms);
+                    fallback_sms.setChecked(json_config.get("fallback_sms").getAsBoolean());
+                    if (trusted_phone_number.length() != 0) {
+                        fallback_sms.setVisibility(View.VISIBLE);
+                    } else {
+                        fallback_sms.setVisibility(View.GONE);
+                        fallback_sms.setChecked(false);
+                    }
+                    break;
+                case RESULT_FIRST_USER:
+                    ((EditText) findViewById(R.id.bot_token)).setText(data.getStringExtra("bot_token"));
+                    break;
             }
         }
     }
-
 }
 

@@ -14,17 +14,17 @@ public class logcat_activity extends AppCompatActivity {
 
     private Context context;
     private file_observer observer;
-    private TextView logcat;
+    private TextView logcat_textvew;
     private final int line = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(R.layout.activity_logcat);
-        logcat = findViewById(R.id.logcat_view);
+        logcat_textvew = findViewById(R.id.logcat_textview);
         this.setTitle(R.string.logcat);
-        logcat.setText(public_func.read_log(context, line));
-        observer = new file_observer(context, logcat);
+        logcat_textvew.setText(public_func.read_log(context, line));
+        observer = new file_observer(context, logcat_textvew);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class logcat_activity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        logcat.setText(public_func.read_log(context, line));
+        logcat_textvew.setText(public_func.read_log(context, line));
         observer.startWatching();
     }
 

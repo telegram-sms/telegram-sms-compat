@@ -63,13 +63,10 @@ public class sms_receiver extends BroadcastReceiver {
         for (int i = 0; i < pdus.length; ++i) {
             messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
         }
-
         if (messages.length == 0) {
             public_func.write_log(context, "Message length is equal to 0.");
             return;
         }
-
-
         StringBuilder message_body_builder = new StringBuilder();
         for (SmsMessage item : messages) {
             message_body_builder.append(item.getMessageBody());

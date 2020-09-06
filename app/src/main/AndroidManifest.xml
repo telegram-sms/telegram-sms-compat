@@ -33,6 +33,7 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
         <service android:name=".resend_service" />
         <service
             android:name=".chat_command_service"

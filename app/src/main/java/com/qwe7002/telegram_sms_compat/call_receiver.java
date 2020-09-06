@@ -44,7 +44,7 @@ public class call_receiver extends BroadcastReceiver {
     }
 
     static class call_status_listener extends PhoneStateListener {
-        private static int lastState = TelephonyManager.CALL_STATE_IDLE;
+        private static int last_state = TelephonyManager.CALL_STATE_IDLE;
         private static String incoming_number;
         private final Context context;
 
@@ -54,9 +54,9 @@ public class call_receiver extends BroadcastReceiver {
             call_status_listener.incoming_number = incoming_number;
         }
 
-        public void onCallStateChanged(int state, String incomingNumber) {
-            if (lastState == TelephonyManager.CALL_STATE_RINGING
-                    && state == TelephonyManager.CALL_STATE_IDLE) {
+        public void onCallStateChanged(int now_state, String now_incoming_number) {
+            if (last_state == TelephonyManager.CALL_STATE_RINGING
+                    && now_state == TelephonyManager.CALL_STATE_IDLE) {
                 final SharedPreferences sharedPreferences = context.getSharedPreferences("data", MODE_PRIVATE);
                 if (!sharedPreferences.getBoolean("initialized", false)) {
                     Log.i("call_status_listener", "Uninitialized, Phone receiver is deactivated.");
@@ -104,7 +104,7 @@ public class call_receiver extends BroadcastReceiver {
                 });
             }
 
-            lastState = state;
+            last_state = now_state;
         }
 
     }

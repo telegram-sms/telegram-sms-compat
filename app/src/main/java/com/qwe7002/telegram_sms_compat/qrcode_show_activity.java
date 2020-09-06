@@ -32,13 +32,12 @@ public class qrcode_show_activity extends AppCompatActivity {
         config.trusted_phone_number = sharedPreferences.getString("trusted_phone_number", "");
         config.fallback_sms = sharedPreferences.getBoolean("fallback_sms", false);
         config.chat_command = sharedPreferences.getBoolean("chat_command", false);
-        config.battery_monitoring_switch = sharedPreferences.getBoolean("battery_monitoring_switch", false);
+        config.battery_monitoring = sharedPreferences.getBoolean("battery_monitoring_switch", false);
         config.charger_status = sharedPreferences.getBoolean("charger_status", false);
         config.verification_code = sharedPreferences.getBoolean("verification_code", false);
         config.privacy_mode = sharedPreferences.getBoolean("privacy_mode", false);
-        ImageView qr_image = findViewById(R.id.qr_image);
+        ImageView qr_image = findViewById(R.id.qr_imageview);
         qr_image.setImageBitmap(gen_qrcode_bitmap(new Gson().toJson(config)));
-
     }
 
     private Bitmap gen_qrcode_bitmap(String content) {
@@ -69,7 +68,7 @@ public class qrcode_show_activity extends AppCompatActivity {
         String trusted_phone_number = "";
         boolean fallback_sms = false;
         boolean chat_command = false;
-        boolean battery_monitoring_switch = false;
+        boolean battery_monitoring = false;
         boolean charger_status = false;
         boolean verification_code = false;
         boolean privacy_mode = false;

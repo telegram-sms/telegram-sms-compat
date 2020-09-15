@@ -283,7 +283,7 @@ public class chat_command_service extends Service {
         if (!has_command && send_sms_next_status != SEND_SMS_STATUS.STANDBY_STATUS) {
             Log.i(TAG, "receive_handle: Enter the interactive SMS sending mode.");
             String result_send = getString(R.string.failed_to_get_information);
-            Log.d(TAG, "Sending mode status: " + send_sms_next_status);
+            //Log.d(TAG, "Sending mode status: " + send_sms_next_status);
             switch (send_sms_next_status) {
                 case SEND_SMS_STATUS.PHONE_INPUT_STATUS:
                     send_sms_next_status = SEND_SMS_STATUS.MESSAGE_INPUT_STATUS;

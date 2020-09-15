@@ -14,6 +14,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 
 import io.paperdb.Paper;
@@ -30,7 +32,7 @@ public class call_receiver extends BroadcastReceiver {
     private static String incoming_number;
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, @NotNull Intent intent) {
         Paper.init(context);
         Log.d("call_receiver", "onReceive: " + intent.getAction());
         if (intent.getStringExtra("incoming_number") != null) {
@@ -103,7 +105,6 @@ public class call_receiver extends BroadcastReceiver {
                     }
                 });
             }
-
             last_state = now_state;
         }
 

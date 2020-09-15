@@ -26,6 +26,7 @@ import android.widget.Switch;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -51,7 +52,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-@SuppressLint("UseSwitchCompatOrMaterialCode")
 public class main_activity extends AppCompatActivity {
     private static boolean set_permission_back = false;
     private Context context = null;
@@ -66,13 +66,13 @@ public class main_activity extends AppCompatActivity {
         final EditText chat_id_editview = findViewById(R.id.chat_id_editview);
         final EditText bot_token_editview = findViewById(R.id.bot_token_editview);
         final EditText trusted_phone_number_editview = findViewById(R.id.trusted_phone_number_editview);
-        final Switch chat_command_switch = findViewById(R.id.chat_command_switch);
-        final Switch fallback_sms_switch = findViewById(R.id.fallback_sms_switch);
-        final Switch battery_monitoring_switch = findViewById(R.id.battery_monitoring_switch);
-        final Switch charger_status_switch = findViewById(R.id.charger_status_switch);
-        final Switch doh_switch = findViewById(R.id.doh_switch);
-        final Switch verification_code_switch = findViewById(R.id.verification_code_switch);
-        final Switch privacy_switch = findViewById(R.id.privacy_switch);
+        final SwitchCompat chat_command_switch = findViewById(R.id.chat_command_switch);
+        final SwitchCompat fallback_sms_switch = findViewById(R.id.fallback_sms_switch);
+        final SwitchCompat battery_monitoring_switch = findViewById(R.id.battery_monitoring_switch);
+        final SwitchCompat charger_status_switch = findViewById(R.id.charger_status_switch);
+        final SwitchCompat doh_switch = findViewById(R.id.doh_switch);
+        final SwitchCompat verification_code_switch = findViewById(R.id.verification_code_switch);
+        final SwitchCompat privacy_switch = findViewById(R.id.privacy_switch);
         final Button save_button = findViewById(R.id.save_button);
         final Button get_id_button = findViewById(R.id.get_id_button);
 
@@ -369,7 +369,7 @@ public class main_activity extends AppCompatActivity {
 
     }
 
-    private void set_privacy_mode_checkbox(String chat_id, Switch chat_command, Switch privacy_mode_switch) {
+    private void set_privacy_mode_checkbox(String chat_id, SwitchCompat chat_command, SwitchCompat privacy_mode_switch) {
         if (!chat_command.isChecked()) {
             privacy_mode_switch.setVisibility(View.GONE);
             privacy_mode_switch.setChecked(false);
@@ -524,7 +524,7 @@ public class main_activity extends AppCompatActivity {
                     ((Switch) findViewById(R.id.battery_monitoring_switch)).setChecked(json_config.get("battery_monitoring_switch").getAsBoolean());
                     ((Switch) findViewById(R.id.verification_code_switch)).setChecked(json_config.get("verification_code").getAsBoolean());
 
-                    Switch charger_status = findViewById(R.id.charger_status_switch);
+                    SwitchCompat charger_status = findViewById(R.id.charger_status_switch);
                     if (json_config.get("battery_monitoring_switch").getAsBoolean()) {
                         charger_status.setChecked(json_config.get("charger_status").getAsBoolean());
                         charger_status.setVisibility(View.VISIBLE);
@@ -533,16 +533,16 @@ public class main_activity extends AppCompatActivity {
                         charger_status.setVisibility(View.GONE);
                     }
 
-                    Switch chat_command = findViewById(R.id.chat_command_switch);
+                    SwitchCompat chat_command = findViewById(R.id.chat_command_switch);
                     chat_command.setChecked(json_config.get("chat_command").getAsBoolean());
-                    Switch privacy_mode_switch = findViewById(R.id.privacy_switch);
+                    SwitchCompat privacy_mode_switch = findViewById(R.id.privacy_switch);
                     privacy_mode_switch.setChecked(json_config.get("privacy_mode").getAsBoolean());
 
                     set_privacy_mode_checkbox(json_config.get("chat_id").getAsString(), chat_command, privacy_mode_switch);
 
                     EditText trusted_phone_number = findViewById(R.id.trusted_phone_number_editview);
                     trusted_phone_number.setText(json_config.get("trusted_phone_number").getAsString());
-                    Switch fallback_sms = findViewById(R.id.fallback_sms_switch);
+                    SwitchCompat fallback_sms = findViewById(R.id.fallback_sms_switch);
                     fallback_sms.setChecked(json_config.get("fallback_sms").getAsBoolean());
                     if (trusted_phone_number.length() != 0) {
                         fallback_sms.setVisibility(View.VISIBLE);

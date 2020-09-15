@@ -10,12 +10,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.jetbrains.annotations.NotNull;
+
 public class logcat_activity extends AppCompatActivity {
 
     private Context context;
     private file_observer observer;
     private TextView logcat_textvew;
     private final int line = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +59,7 @@ public class logcat_activity extends AppCompatActivity {
         private final Context context;
         private final TextView logcat;
 
-        file_observer(Context context, TextView logcat) {
+        file_observer(@NotNull Context context, TextView logcat) {
             super(context.getFilesDir().getAbsolutePath());
             this.context = context;
             this.logcat = logcat;

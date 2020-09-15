@@ -74,7 +74,7 @@
                     tools:ignore="TextFields" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/fallback_sms_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
                 android:text="@string/network_error_falls_back_to_sms"
                 tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/battery_monitoring_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
                 android:text="@string/battery_monitoring"
                 tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/charger_status_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
                 android:text="@string/charger_status"
                 tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/chat_command_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
                 android:text="@string/chat_command"
                 tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/verification_code_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -119,7 +119,7 @@
                 android:text="@string/using_verification_code_identification"
                 tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/privacy_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -128,7 +128,7 @@
                 android:text="@string/using_privacy_mode"
                 tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/doh_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -50,7 +50,7 @@ public class chat_command_service extends Service {
     private broadcast_receiver broadcast_receiver = null;
     private PowerManager.WakeLock wakelock;
     private WifiManager.WifiLock wifiLock;
-    private int send_sms_status = -1;
+    private int send_sms_next_status = -1;
     private String send_to_temp;
     private String bot_username = "";
     private final String TAG = "chat_command_service";
@@ -263,7 +263,7 @@ public class chat_command_service extends Service {
                     }
                     has_command = true;
                 } else if (message_type_is_private) {
-                    send_sms_status = 0;
+                    send_sms_next_status = SEND_SMS_STATUS.PHONE_INPUT_STATUS;
                     has_command = false;
                 }
                 request_body.text = "[" + context.getString(R.string.send_sms_head) + "]" + "\n" + getString(R.string.failed_to_get_information);
@@ -277,32 +277,32 @@ public class chat_command_service extends Service {
                 break;
         }
         if (has_command) {
-            send_sms_status = -1;
+            send_sms_next_status = SEND_SMS_STATUS.STANDBY_STATUS;
             send_to_temp = null;
         }
-        if (!has_command && send_sms_status != -1) {
+        if (!has_command && send_sms_next_status != SEND_SMS_STATUS.STANDBY_STATUS) {
             Log.i(TAG, "receive_handle: Enter the interactive SMS sending mode.");
             String result_send = getString(R.string.failed_to_get_information);
-            Log.d(TAG, "Sending mode status: " + send_sms_status);
-            switch (send_sms_status) {
-                case 0:
-                    send_sms_status = 1;
+            Log.d(TAG, "Sending mode status: " + send_sms_next_status);
+            switch (send_sms_next_status) {
+                case SEND_SMS_STATUS.PHONE_INPUT_STATUS:
+                    send_sms_next_status = SEND_SMS_STATUS.MESSAGE_INPUT_STATUS;
                     result_send = getString(R.string.enter_number);
                     break;
-                case 1:
+                case SEND_SMS_STATUS.MESSAGE_INPUT_STATUS:
                     String temp_to = public_func.get_send_phone_number(request_msg);
                     Log.d(TAG, "receive_handle: " + temp_to);
                     if (public_func.is_phone_number(temp_to)) {
                         send_to_temp = temp_to;
                         result_send = getString(R.string.enter_content);
-                        send_sms_status = 2;
+                        send_sms_next_status = SEND_SMS_STATUS.WAITING_TO_SEND_STATUS;
                     } else {
-                        send_sms_status = -1;
+                        send_sms_next_status = SEND_SMS_STATUS.STANDBY_STATUS;
                         send_to_temp = null;
                         result_send = getString(R.string.unable_get_phone_number);
                     }
                     break;
-                case 2:
+                case SEND_SMS_STATUS.WAITING_TO_SEND_STATUS:
                     public_func.send_sms(context, send_to_temp, request_msg);
                     return;
             }
@@ -329,6 +329,13 @@ public class chat_command_service extends Service {
                 }
             }
         });
+    }
+
+    private static class SEND_SMS_STATUS {
+        public static final int STANDBY_STATUS = -1;
+        public static final int PHONE_INPUT_STATUS = 0;
+        public static final int MESSAGE_INPUT_STATUS = 1;
+        public static final int WAITING_TO_SEND_STATUS = 2;
     }
 
     @Override
